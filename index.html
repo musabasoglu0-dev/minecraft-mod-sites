@@ -404,12 +404,12 @@
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // Image fallback engine (Resim kırılmasını engelleyen proxy motoru)
+    // Safe Image Resolver & Proxy Engine
     function getSafeImageUrl(rawUrl, title) {
       if (!rawUrl || rawUrl.includes('placehold.co')) {
         return `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent((title || 'MC').substring(0, 5))}`;
       }
-      if (rawUrl.includes('cdn.modrinth.com')) {
+      if (rawUrl.includes('cdn.modrinth.com') || rawUrl.includes('curseforge')) {
         return `https://images.weserv.nl/?url=${encodeURIComponent(rawUrl)}`;
       }
       return rawUrl;
@@ -663,7 +663,7 @@
       },
       {
         id: '18',
-        title: 'Better Animations Collection',
+        title: 'Better Animations',
         author: 'Fuzss',
         loader: 'Fabric',
         version: '1.20.1',
@@ -677,7 +677,7 @@
       },
       {
         id: '19',
-        title: 'Krypton',
+        title: 'Krypton Engine',
         author: 'Tux',
         loader: 'Fabric',
         version: '1.20.4',
@@ -733,7 +733,7 @@
       },
       {
         id: '23',
-        title: 'ModernFix',
+        title: 'ModernFix Engine',
         author: 'embeddedt',
         loader: 'Forge',
         version: '1.20.1',

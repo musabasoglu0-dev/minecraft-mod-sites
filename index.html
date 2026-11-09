@@ -374,8 +374,13 @@
         </div>
 
         <div>
+          <label class="block text-xs font-bold text-gray-300 uppercase mb-1">İkonal Resmi (URL)</label>
+          <input type="url" id="upIcon" placeholder="Örn: https://cdn.modrinth.com/..." class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div>
           <label class="block text-xs font-bold text-gray-300 uppercase mb-1">İndirme Linki (Modrinth / CurseForge)</label>
-          <input type="url" id="upUrl" placeholder="Örn: https://modrinth.com/mod/..." class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
+          <input type="url" id="upUrl" required placeholder="Örn: https://modrinth.com/mod/..." class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
         </div>
 
         <div class="pt-2 flex justify-end gap-3">
@@ -399,7 +404,7 @@
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // Pre-populated Mods Data with External Download URLs
+    // Pre-populated Mods Data with Download URLs and Custom Icons
     const defaultMods = [
       {
         id: '1',
@@ -412,7 +417,7 @@
         likes: 42000,
         size: '1.8 MB',
         description: 'Minecraft için modern ve son derece gelişmiş grafik render motoru. Kare hızını (FPS) dramatik ölçüde artırır.',
-        icon: 'https://placehold.co/100x100/4dabf7/ffffff?text=Sodium',
+        icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png',
         downloadUrl: 'https://modrinth.com/mod/sodium'
       },
       {
@@ -426,7 +431,7 @@
         likes: 31500,
         size: '14.2 MB',
         description: 'Dönme gücü, çarklar, bant sistemleri ve otomatik üretim hatları ekleyen benzersiz mühendislik modu.',
-        icon: 'https://placehold.co/100x100/ff6b6b/ffffff?text=Create',
+        icon: 'https://cdn.modrinth.com/data/LN9MBDws/icon.png',
         downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/create'
       },
       {
@@ -440,11 +445,25 @@
         likes: 28000,
         size: '3.4 MB',
         description: 'Kullanıcı dostu tam ekran harita modülü. Dünyanızı detaylıca gösterir, işaret yerleştirme (waypoint) ve yeraltı görünümü sunar.',
-        icon: 'https://placehold.co/100x100/10b981/ffffff?text=Xaero',
+        icon: 'https://cdn.modrinth.com/data/1eAoo2hA/icon.png',
         downloadUrl: 'https://modrinth.com/mod/xaeros-world-map'
       },
       {
         id: '4',
+        title: 'Bobby Chunk Modu',
+        author: 'Johni0702',
+        loader: 'Fabric',
+        version: '1.20.1',
+        category: 'Optimizasyon',
+        downloads: 4500,
+        likes: 320,
+        size: '2.1 MB',
+        description: 'Aternos/Exaroton sunucularda düşük görüş mesafesine takılmadan önbelleğe alma mekanizmasıyla yüksek chunk render etmenizi sağlar.',
+        icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/bobby'
+      },
+      {
+        id: '5',
         title: 'Biomes O\' Plenty',
         author: 'For 大陸',
         loader: 'NeoForge',
@@ -458,20 +477,6 @@
         downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty'
       },
       {
-        id: '5',
-        title: 'Iron Chests',
-        author: 'ProgWML6',
-        loader: 'Forge',
-        version: '1.19.4',
-        category: 'Teknoloji',
-        downloads: 510000,
-        likes: 12300,
-        size: '850 KB',
-        description: 'Bakır, Demir, Altın ve Elmas gibi madenlerle yükseltilebilir yüksek kapasiteli sandıklar ekler.',
-        icon: 'https://placehold.co/100x100/e8590c/ffffff?text=Chests',
-        downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/iron-chests'
-      },
-      {
         id: '6',
         title: 'Waystones',
         author: 'BlayTheNinth',
@@ -482,7 +487,7 @@
         likes: 15800,
         size: '1.2 MB',
         description: 'Dünyanızın farklı noktaları arasında deneyim puanı kullanarak hızlı seyahat yapmanızı sağlayan ışınlanma taşları.',
-        icon: 'https://placehold.co/100x100/845ef7/ffffff?text=Waystone',
+        icon: 'https://cdn.modrinth.com/data/wbzg2yuh/icon.png',
         downloadUrl: 'https://modrinth.com/mod/waystones'
       }
     ];
@@ -501,7 +506,6 @@
         userLikes = [];
       }
 
-      // Load clean default mods
       mods = defaultMods;
 
       updateGlobalStats();
@@ -632,148 +636,4 @@
       document.getElementById('searchInput').value = '';
       document.getElementById('mobileSearchInput').value = '';
       document.getElementById('categorySelect').value = 'all';
-      document.getElementById('versionSelect').value = 'all';
-      document.getElementById('sortSelect').value = 'downloads';
-      setFilter('loader', 'all');
-    }
-
-    // Detail Modal Actions
-    function openDetailModal(id) {
-      const mod = mods.find(m => m.id === id);
-      if(!mod) return;
-      selectedModId = id;
-
-      document.getElementById('modalTitle').innerText = mod.title;
-      document.getElementById('modalAuthor').innerText = `Geliştirici: ${mod.author}`;
-      document.getElementById('modalDescription').innerText = mod.description;
-      document.getElementById('modalDownloads').innerText = mod.downloads.toLocaleString();
-      document.getElementById('modalLikes').innerText = mod.likes.toLocaleString();
-      document.getElementById('modalSize').innerText = mod.size || '2.4 MB';
-      document.getElementById('modalIcon').src = mod.icon;
-      document.getElementById('modalLoaderText').innerText = mod.loader;
-
-      const isLiked = userLikes.includes(id);
-      document.getElementById('likeBtnText').innerText = isLiked ? 'Beğenildi' : 'Beğen';
-
-      const badges = document.getElementById('modalBadges');
-      badges.innerHTML = `
-        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">${mod.loader}</span>
-        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-teal-500/10 text-teal-400 border-teal-500/20">${mod.version}</span>
-        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-gray-800 text-gray-300 border-gray-700">${mod.category}</span>
-      `;
-
-      document.getElementById('detailModal').classList.remove('hidden');
-      lucide.createIcons();
-    }
-
-    function closeDetailModal() {
-      document.getElementById('detailModal').classList.add('hidden');
-    }
-
-    function toggleLikeCurrentMod() {
-      if (!selectedModId) return;
-      const mod = mods.find(m => m.id === selectedModId);
-      if (!mod) return;
-
-      const index = userLikes.indexOf(selectedModId);
-      if (index === -1) {
-        userLikes.push(selectedModId);
-        mod.likes += 1;
-        showToast('Mod beğenilenlere eklendi!');
-      } else {
-        userLikes.splice(index, 1);
-        mod.likes -= 1;
-        showToast('Beğeni kaldırıldı.');
-      }
-
-      try {
-        localStorage.setItem('craft_hub_likes', JSON.stringify(userLikes));
-      } catch (e) {}
-
-      document.getElementById('modalLikes').innerText = mod.likes.toLocaleString();
-      document.getElementById('likeBtnText').innerText = userLikes.includes(selectedModId) ? 'Beğenildi' : 'Beğen';
-      renderMods();
-    }
-
-    // Trigger External Download Link
-    function triggerDownload() {
-      const mod = mods.find(m => m.id === selectedModId);
-      if(mod) {
-        mod.downloads += 1;
-        updateGlobalStats();
-        renderMods();
-
-        if (mod.downloadUrl) {
-          window.open(mod.downloadUrl, '_blank');
-          showToast(`'${mod.title}' mod sayfasına yönlendiriliyorsunuz...`);
-        } else {
-          showToast(`'${mod.title}' indiriliyor... (.jar)`);
-        }
-
-        closeDetailModal();
-      }
-    }
-
-    // Upload Modal Actions
-    function openUploadModal() {
-      document.getElementById('uploadModal').classList.remove('hidden');
-    }
-
-    function closeUploadModal() {
-      document.getElementById('uploadModal').classList.add('hidden');
-      document.getElementById('uploadForm').reset();
-    }
-
-    function handleModUpload(e) {
-      e.preventDefault();
-
-      const title = document.getElementById('upTitle').value;
-      const author = document.getElementById('upAuthor').value;
-      const loader = document.getElementById('upLoader').value;
-      const version = document.getElementById('upVersion').value;
-      const category = document.getElementById('upCategory').value;
-      const description = document.getElementById('upDescription').value;
-      const customUrl = document.getElementById('upUrl').value || 'https://modrinth.com';
-
-      const newMod = {
-        id: Date.now().toString(),
-        title,
-        author,
-        loader,
-        version,
-        category,
-        downloads: 1,
-        likes: 0,
-        size: '1.5 MB',
-        description,
-        icon: `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent(title.substring(0, 5))}`,
-        downloadUrl: customUrl
-      };
-
-      mods.unshift(newMod);
-
-      updateGlobalStats();
-      renderMods();
-      closeUploadModal();
-      showToast('Modunuz başarıyla yüklendi!');
-    }
-
-    // Helpers
-    function formatNumber(num) {
-      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-      return num;
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toastMessage').innerText = msg;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
-    }
-  </script>
-</body>
-</html>
+      document.getElementById('versionSelect').value

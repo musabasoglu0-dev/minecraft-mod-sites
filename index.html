@@ -242,7 +242,7 @@
       <!-- Modal Header -->
       <div class="p-6 border-b border-mc-border flex items-start justify-between bg-mc-bg/50">
         <div class="flex gap-4">
-          <img id="modalIcon" src="" alt="Mod Icon" class="w-16 h-16 rounded-2xl object-cover border border-mc-border shadow-md">
+          <img id="modalIcon" src="" alt="Mod Icon" onerror="handleImgError(this)" class="w-16 h-16 rounded-2xl object-cover border border-mc-border shadow-md">
           <div>
             <h3 id="modalTitle" class="text-xl font-bold text-white"></h3>
             <p id="modalAuthor" class="text-xs text-emerald-400 font-medium mt-0.5"></p>
@@ -374,7 +374,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-gray-300 uppercase mb-1">İkonal Resmi (URL)</label>
+          <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Görsel URL</label>
           <input type="url" id="upIcon" placeholder="Örn: https://cdn.modrinth.com/..." class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
         </div>
 
@@ -404,8 +404,25 @@
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // Pre-populated Mods Data with Download URLs and Custom Icons
-   const defaultMods = [
+    // Image fallback engine (Resim kırılmasını engelleyen proxy motoru)
+    function getSafeImageUrl(rawUrl, title) {
+      if (!rawUrl || rawUrl.includes('placehold.co')) {
+        return `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent((title || 'MC').substring(0, 5))}`;
+      }
+      if (rawUrl.includes('cdn.modrinth.com')) {
+        return `https://images.weserv.nl/?url=${encodeURIComponent(rawUrl)}`;
+      }
+      return rawUrl;
+    }
+
+    function handleImgError(img) {
+      const title = img.alt || 'MC';
+      img.onerror = null;
+      img.src = `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent(title.substring(0, 5))}`;
+    }
+
+    // 25 Popüler Minecraft Modu
+    const defaultMods = [
       {
         id: '1',
         title: 'Sodium Performance',
@@ -416,8 +433,8 @@
         downloads: 1850000,
         likes: 42000,
         size: '1.8 MB',
-        description: 'Minecraft için modern ve son derece gelişmiş grafik render motoru. Kare hızını (FPS) dramatik ölçüde artırır.',
-        icon: 'https://images.weserv.nl/?url=https://cdn.modrinth.com/data/AANobbAy/icon.png',
+        description: 'Minecraft için modern ve gelişmiş render motoru. FPS hızını katlar.',
+        icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png',
         downloadUrl: 'https://modrinth.com/mod/sodium'
       },
       {
@@ -430,12 +447,26 @@
         downloads: 940000,
         likes: 31500,
         size: '14.2 MB',
-        description: 'Dönme gücü, çarklar, bant sistemleri ve otomatik üretim hatları ekleyen benzersiz mühendislik modu.',
-        icon: 'https://images.weserv.nl/?url=https://cdn.modrinth.com/data/LN9MBDws/icon.png',
+        description: 'Dönme gücü, çarklar ve otomatik üretim hatları ekleyen mühendislik modu.',
+        icon: 'https://cdn.modrinth.com/data/LN9MBDws/icon.png',
         downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/create'
       },
       {
         id: '3',
+        title: 'Bobby Chunk Modu',
+        author: 'Johni0702',
+        loader: 'Fabric',
+        version: '1.20.1',
+        category: 'Optimizasyon',
+        downloads: 450000,
+        likes: 12300,
+        size: '2.1 MB',
+        description: 'Aternos/Exaroton gibi sunucularda düşük görüş mesafesine takılmadan yüksek chunk render etmenizi sağlar.',
+        icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/bobby'
+      },
+      {
+        id: '4',
         title: 'Xaero\'s World Map',
         author: 'Xaero96',
         loader: 'Fabric',
@@ -444,40 +475,40 @@
         downloads: 1200000,
         likes: 28000,
         size: '3.4 MB',
-        description: 'Kullanıcı dostu tam ekran harita modülü. Dünyanızı detaylıca gösterir, işaret yerleştirme (waypoint) ve yeraltı görünümü sunar.',
-        icon: 'https://images.weserv.nl/?url=https://cdn.modrinth.com/data/1eAoo2hA/icon.png',
+        description: 'Detaylı tam ekran harita modülü. İşaretler (waypoint) koymanızı ve yer altını incelemenizi sağlar.',
+        icon: 'https://cdn.modrinth.com/data/1eAoo2hA/icon.png',
         downloadUrl: 'https://modrinth.com/mod/xaeros-world-map'
       },
       {
-        id: '4',
-        title: 'Bobby Chunk Modu',
-        author: 'Johni0702',
-        loader: 'Fabric',
-        version: '1.20.1',
-        category: 'Optimizasyon',
-        downloads: 4500,
-        likes: 320,
-        size: '2.1 MB',
-        description: 'Aternos/Exaroton sunucularda düşük görüş mesafesine takılmadan önbelleğe alma mekanizmasıyla yüksek chunk render etmenizi sağlar.',
-        icon: 'https://images.weserv.nl/?url=https://cdn.modrinth.com/data/51EZ1WAK/icon.png',
-        downloadUrl: 'https://modrinth.com/mod/bobby'
-      },
-      {
         id: '5',
-        title: 'Biomes O\' Plenty',
-        author: 'For 大陸',
-        loader: 'NeoForge',
-        version: '1.20.1',
-        category: 'Dünya Oluşumu',
-        downloads: 780000,
-        likes: 19400,
-        size: '8.7 MB',
-        description: 'Overworld ve Nether dünyasına onlarca yeni biyom, özel bitkiler, ağaçlar ve yapı taşları ekler.',
-        icon: 'https://placehold.co/100x100/fcc419/ffffff?text=Biomes',
-        downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty'
+        title: 'Lithium Engine',
+        author: 'JellySquid',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Optimizasyon',
+        downloads: 1400000,
+        likes: 35000,
+        size: '1.2 MB',
+        description: 'Oyun içi fizik, mob yapay zekası ve chunk yüklemelerini optimize eden genel performans modu.',
+        icon: 'https://cdn.modrinth.com/data/gvQqBUqZ/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/lithium'
       },
       {
         id: '6',
+        title: 'Iris Shaders',
+        author: 'IrisTeam',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Optimizasyon',
+        downloads: 1650000,
+        likes: 39000,
+        size: '2.8 MB',
+        description: 'Sodium ile tam uyumlu çalışan, yüksek performanslı açık kaynaklı shader (gölge) motoru.',
+        icon: 'https://cdn.modrinth.com/data/YL57xq9U/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/iris'
+      },
+      {
+        id: '7',
         title: 'Waystones',
         author: 'BlayTheNinth',
         loader: 'Fabric',
@@ -486,11 +517,277 @@
         downloads: 630000,
         likes: 15800,
         size: '1.2 MB',
-        description: 'Dünyanızın farklı noktaları arasında deneyim puanı kullanarak hızlı seyahat yapmanızı sağlayan ışınlanma taşları.',
-        icon: 'https://images.weserv.nl/?url=https://cdn.modrinth.com/data/wbzg2yuh/icon.png',
+        description: 'Haritanın farklı yerlerine ışınlanma taşları koyarak hızlı seyahat yapmanızı sağlar.',
+        icon: 'https://cdn.modrinth.com/data/wbzg2yuh/icon.png',
         downloadUrl: 'https://modrinth.com/mod/waystones'
+      },
+      {
+        id: '8',
+        title: 'AppleSkin',
+        author: 'squeek502',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Harita & Arayüz',
+        downloads: 2100000,
+        likes: 48000,
+        size: '450 KB',
+        description: 'Yiyeceklerin ne kadar açlık ve doymuşluk verdiğini envanterde gösteren faydalı gösterge modu.',
+        icon: 'https://cdn.modrinth.com/data/12vOa769/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/appleskin'
+      },
+      {
+        id: '9',
+        title: 'Sophisticated Backpacks',
+        author: 'P3pp3rFly',
+        loader: 'Forge',
+        version: '1.20.1',
+        category: 'Teknoloji',
+        downloads: 890000,
+        likes: 24000,
+        size: '3.1 MB',
+        description: 'Geliştirilebilir, renkli, otomatik toplayan ve taşınabilir sırt çantaları ekler.',
+        icon: 'https://cdn.modrinth.com/data/alTEZ3wZ/icon.png',
+        downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks'
+      },
+      {
+        id: '10',
+        title: 'Just Enough Items (JEI)',
+        author: 'mezz',
+        loader: 'Forge',
+        version: '1.20.4',
+        category: 'Harita & Arayüz',
+        downloads: 3500000,
+        likes: 65000,
+        size: '1.9 MB',
+        description: 'Tüm eşyaların tariflerini ve kullanım alanlarını ekranda listeleyen vazgeçilmez rehber mod.',
+        icon: 'https://cdn.modrinth.com/data/u6dRKJwZ/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/jei'
+      },
+      {
+        id: '11',
+        title: 'Clumps',
+        author: 'Jaredbbb',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Optimizasyon',
+        downloads: 1300000,
+        likes: 27000,
+        size: '320 KB',
+        description: 'Yerdeki deneyim (XP) kürelerini tek bir büyük kürede birleştirerek sunucu ve istemci kastırmasını önler.',
+        icon: 'https://cdn.modrinth.com/data/4E06P8FP/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/clumps'
+      },
+      {
+        id: '12',
+        title: 'FerriteCore',
+        author: 'malte0811',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Optimizasyon',
+        downloads: 980000,
+        likes: 21000,
+        size: '800 KB',
+        description: 'Minecraft\'ın RAM (bellek) kullanımını önemli ölçüde azaltan performans optimizasyonu.',
+        icon: 'https://cdn.modrinth.com/data/uXXizFIs/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/ferritecore'
+      },
+      {
+        id: '13',
+        title: 'Farmer\'s Delight',
+        author: 'vectorwing',
+        loader: 'Forge',
+        version: '1.20.1',
+        category: 'Büyü & Macera',
+        downloads: 1100000,
+        likes: 31000,
+        size: '5.2 MB',
+        description: 'Tarımı ve yemek pişirmeyi genişleten; yeni bitkiler, tencereler ve tarifler ekleyen lezzetli mod.',
+        icon: 'https://cdn.modrinth.com/data/qjgWdG8C/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/farmers-delight'
+      },
+      {
+        id: '14',
+        title: 'Biomes O\' Plenty',
+        author: 'For 大陸',
+        loader: 'NeoForge',
+        version: '1.20.1',
+        category: 'Dünya Oluşumu',
+        downloads: 780000,
+        likes: 19400,
+        size: '8.7 MB',
+        description: 'Overworld ve Nether dünyasına onlarca yeni biyom, özel bitkiler ve yapı taşları ekler.',
+        icon: 'https://placehold.co/100x100/fcc419/ffffff?text=Biomes',
+        downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty'
+      },
+      {
+        id: '15',
+        title: 'Journeymap',
+        author: 'techbrew',
+        loader: 'Forge',
+        version: '1.20.1',
+        category: 'Harita & Arayüz',
+        downloads: 2400000,
+        likes: 41000,
+        size: '7.8 MB',
+        description: 'Oyun içinde veya taranan web tarayıcısında anlık olarak dünyanızı haritalandırır.',
+        icon: 'https://cdn.modrinth.com/data/wo5L4d50/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/journeymap'
+      },
+      {
+        id: '16',
+        title: 'Mouse Tweaks',
+        author: 'YaLTeR',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Harita & Arayüz',
+        downloads: 1900000,
+        likes: 38000,
+        size: '250 KB',
+        description: 'Fare tekerleği ve sürükleme ile envanter yönetimini son derece kolaylaştıran pratik mod.',
+        icon: 'https://cdn.modrinth.com/data/nS031wU0/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/mouse-tweaks'
+      },
+      {
+        id: '17',
+        title: 'Skin Layers 3D',
+        author: 'tr7zw',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Harita & Arayüz',
+        downloads: 820000,
+        likes: 23000,
+        size: '620 KB',
+        description: 'Oyuncu katman skinlerini (şapka, ceket vb.) 2D düzlemsellikten 3D hacimli yapıya dönüştürür.',
+        icon: 'https://cdn.modrinth.com/data/1b24l26b/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/3dskinlayers'
+      },
+      {
+        id: '18',
+        title: 'Better Animations Collection',
+        author: 'Fuzss',
+        loader: 'Fabric',
+        version: '1.20.1',
+        category: 'Harita & Arayüz',
+        downloads: 410000,
+        likes: 11000,
+        size: '1.1 MB',
+        description: 'Hayvan ve mob hareketlerine daha gerçekçi ve akıcı eklem animasyonları kazandırır.',
+        icon: 'https://placehold.co/100x100/10b981/ffffff?text=Anim',
+        downloadUrl: 'https://modrinth.com/mod/better-animations-collection'
+      },
+      {
+        id: '19',
+        title: 'Krypton',
+        author: 'Tux',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Optimizasyon',
+        downloads: 670000,
+        likes: 14500,
+        size: '410 KB',
+        description: 'Minecraft ağ trafiğini ve paket aktarımını optimize ederek gecikmeyi (ping/lag) azaltır.',
+        icon: 'https://cdn.modrinth.com/data/fAL18fwA/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/krypton'
+      },
+      {
+        id: '20',
+        title: 'Iron Chests',
+        author: 'ProgWML6',
+        loader: 'Forge',
+        version: '1.19.4',
+        category: 'Teknoloji',
+        downloads: 510000,
+        likes: 12300,
+        size: '850 KB',
+        description: 'Bakır, Demir, Altın ve Elmas gibi madenlerle geliştirilebilir yüksek kapasiteli sandıklar.',
+        icon: 'https://placehold.co/100x100/e8590c/ffffff?text=Chests',
+        downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/iron-chests'
+      },
+      {
+        id: '21',
+        title: 'Entity Culling',
+        author: 'tr7zw',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Optimizasyon',
+        downloads: 1150000,
+        likes: 29000,
+        size: '780 KB',
+        description: 'Duvarların arkasında kalan veya görünmeyen mob/eşya kaplamalarını çizdirmeyerek FPS kazandırır.',
+        icon: 'https://cdn.modrinth.com/data/NNAgCjsB/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/entityculling'
+      },
+      {
+        id: '22',
+        title: 'Architectury API',
+        author: 'shedaniel',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Teknoloji',
+        downloads: 2900000,
+        likes: 51000,
+        size: '1.1 MB',
+        description: 'Çoklu mod yükleyici desteği sunan diğer karmaşık modlar için gerekli olan ana kütüphane.',
+        icon: 'https://cdn.modrinth.com/data/lhDYURrr/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/architectury-api'
+      },
+      {
+        id: '23',
+        title: 'ModernFix',
+        author: 'embeddedt',
+        loader: 'Forge',
+        version: '1.20.1',
+        category: 'Optimizasyon',
+        downloads: 870000,
+        likes: 19800,
+        size: '2.3 MB',
+        description: 'Modern Minecraft sürümlerindeki bellek sızıntılarını ve açılış süresi yavaşlıklarını giderir.',
+        icon: 'https://cdn.modrinth.com/data/rIav7E48/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/modernfix'
+      },
+      {
+        id: '24',
+        title: 'Controlling',
+        author: 'Jaredbbb',
+        loader: 'Fabric',
+        version: '1.20.4',
+        category: 'Harita & Arayüz',
+        downloads: 1550000,
+        likes: 31000,
+        size: '340 KB',
+        description: 'Tuş atamalarını aramanızı ve çakışan tuşları kolayca bulup düzeltmenizi sağlayan tuş ayarı modu.',
+        icon: 'https://cdn.modrinth.com/data/D41qwbfa/icon.png',
+        downloadUrl: 'https://modrinth.com/mod/controlling'
+      },
+      {
+        id: '25',
+        title: 'Dynamic Lights',
+        author: 'AtomicStryker',
+        loader: 'Fabric',
+        version: '1.20.1',
+        category: 'Harita & Arayüz',
+        downloads: 740000,
+        likes: 18200,
+        size: '510 KB',
+        description: 'Elinizde meşale tutarken veya yere atıldığında etrafı dinamik olarak aydınlatan gerçekçi ışık modu.',
+        icon: 'https://placehold.co/100x100/10b981/ffffff?text=Light',
+        downloadUrl: 'https://modrinth.com/mod/dynamic-lights'
       }
     ];
+
+    // App State
+    let mods = [];
+    let userLikes = [];
+    let currentFilter = { loader: 'all', category: 'all', version: 'all', sort: 'downloads', search: '' };
+    let selectedModId = null;
+
+    // Initialize App
+    window.onload = () => {
+      try {
+        userLikes = JSON.parse(localStorage.getItem('craft_hub_likes') || '[]');
+      } catch (e) {
+        userLikes = [];
+      }
 
       mods = defaultMods;
 
@@ -547,10 +844,12 @@
           if (mod.loader === 'Fabric') loaderBadge = 'bg-mc-fabric/10 text-mc-fabric border-mc-fabric/20';
           if (mod.loader === 'NeoForge') loaderBadge = 'bg-mc-neoforge/10 text-mc-neoforge border-mc-neoforge/20';
 
+          const safeImg = getSafeImageUrl(mod.icon, mod.title);
+
           card.innerHTML = `
             <div>
               <div class="flex items-start gap-3 mb-3">
-                <img src="${mod.icon}" alt="${mod.title}" class="w-12 h-12 rounded-xl object-cover border border-mc-border shadow-sm">
+                <img src="${safeImg}" alt="${mod.title}" onerror="handleImgError(this)" class="w-12 h-12 rounded-xl object-cover border border-mc-border shadow-sm bg-mc-bg">
                 <div class="overflow-hidden">
                   <h3 class="font-bold text-white group-hover:text-emerald-400 transition truncate text-sm">${mod.title}</h3>
                   <p class="text-xs text-gray-400 truncate">geliştirici: <span class="text-gray-300 font-medium">${mod.author}</span></p>
@@ -639,7 +938,11 @@
       document.getElementById('modalDownloads').innerText = mod.downloads.toLocaleString();
       document.getElementById('modalLikes').innerText = mod.likes.toLocaleString();
       document.getElementById('modalSize').innerText = mod.size || '2.4 MB';
-      document.getElementById('modalIcon').src = mod.icon;
+      
+      const modalIconImg = document.getElementById('modalIcon');
+      modalIconImg.src = getSafeImageUrl(mod.icon, mod.title);
+      modalIconImg.alt = mod.title;
+
       document.getElementById('modalLoaderText').innerText = mod.loader;
 
       const isLiked = userLikes.includes(id);

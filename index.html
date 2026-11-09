@@ -60,10 +60,6 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #3b4257;
     }
-    
-    .pixelated {
-      image-rendering: pixelated;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
@@ -72,15 +68,10 @@
   <header class="sticky top-0 z-30 bg-mc-bg/90 backdrop-blur-md border-b border-mc-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       
-      <!-- Logo & Stats (Orijinal Minecraft Koyun Kafası) -->
+      <!-- Logo & Stats (Yeşil Minecraft Koyun Kafası Canvas) -->
       <div class="flex items-center gap-3.5 cursor-pointer group" onclick="resetFilters()">
-        <div class="w-10 h-10 rounded-xl bg-mc-card border border-mc-border overflow-hidden p-0.5 flex items-center justify-center shadow-lg shadow-emerald-950/20 group-hover:border-emerald-500/50 group-hover:scale-105 transition duration-200">
-          <img 
-            src="https://images.weserv.nl/?url=https://minecraft.wiki/images/Sheep_Face.png" 
-            alt="Minecraft Sheep" 
-            class="w-full h-full object-cover rounded-lg pixelated"
-            onerror="this.onerror=null; this.src='https://placehold.co/100x100/10b981/ffffff?text=Sheep';"
-          >
+        <div class="w-10 h-10 rounded-xl bg-mc-card border border-mc-border overflow-hidden p-1 flex items-center justify-center shadow-lg shadow-emerald-950/20 group-hover:border-emerald-500/50 group-hover:scale-105 transition duration-200">
+          <canvas id="sheepLogoCanvas" width="8" height="8" class="w-full h-full rounded-md" style="image-rendering: pixelated;"></canvas>
         </div>
 
         <div>
@@ -358,6 +349,42 @@
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
+    // Draw Minecraft Sheep Head on 8x8 Canvas
+    function drawSheepLogo() {
+      const canvas = document.getElementById('sheepLogoCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // Color Palette (Emerald Theme Adapted Sheep)
+      const W1 = '#a7f3d0'; // Light emerald wool
+      const W2 = '#34d399'; // Mid emerald wool
+      const W3 = '#059669'; // Dark emerald wool
+      const S1 = '#065f46'; // Face base skin
+      const S2 = '#044e3a'; // Dark face shade
+      const P  = '#064e3b'; // Snout / Nose
+      const K  = '#000000'; // Eye Pupil
+      const W  = '#ffffff'; // Eye White
+
+      // 8x8 Pixel Grid representation of Sheep Face
+      const pixels = [
+        [W1, W2, W1, W2, W1, W2, W1, W2],
+        [W2, W1, W2, W1, W2, W1, W2, W1],
+        [W1, S1, S1, S1, S1, S1, S1, W2],
+        [W2, K,  W,  S1, S1, W,  K,  W1],
+        [W1, S1, S1, S1, S1, S1, S1, W2],
+        [W2, S1, S1, P,  P,  S1, S1, W1],
+        [W1, W2, S2, P,  P,  S2, W1, W2],
+        [W2, W1, W2, W1, W2, W1, W2, W1]
+      ];
+
+      for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+          ctx.fillStyle = pixels[y][x];
+          ctx.fillRect(x, y, 1, 1);
+        }
+      }
+    }
+
     // Safe Image Resolver & Proxy Engine
     function getSafeImageUrl(rawUrl, title) {
       if (!rawUrl || rawUrl.includes('placehold.co')) {
@@ -745,6 +772,7 @@
 
       mods = defaultMods;
 
+      drawSheepLogo();
       updateGlobalStats();
       renderMods();
       lucide.createIcons();

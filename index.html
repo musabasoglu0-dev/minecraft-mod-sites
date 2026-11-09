@@ -68,11 +68,26 @@
   <header class="sticky top-0 z-30 bg-mc-bg/90 backdrop-blur-md border-b border-mc-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       
-      <!-- Logo & Stats -->
+      <!-- Logo & Stats (Green Minecraft Sheep Head Logo) -->
       <div class="flex items-center gap-4 cursor-pointer" onclick="resetFilters()">
-        <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-700 rounded-xl flex items-center justify-center p-2 shadow-lg shadow-emerald-950">
-          <i data-lucide="box" class="w-full h-full text-white"></i>
+        <div class="w-10 h-10 bg-emerald-600 rounded-xl flex flex-col justify-between p-1 shadow-lg shadow-emerald-950 border border-emerald-400/30 relative overflow-hidden group hover:scale-105 transition-transform duration-200">
+          <!-- Wool Cap Top -->
+          <div class="w-full h-3 bg-emerald-400 rounded-t-md opacity-90"></div>
+          <!-- Face Area -->
+          <div class="w-full flex-1 bg-emerald-800 p-1 flex items-center justify-between">
+            <!-- Left Eye -->
+            <div class="w-2 h-2 bg-white rounded-sm flex items-center justify-start">
+              <div class="w-1 h-1 bg-black"></div>
+            </div>
+            <!-- Right Eye -->
+            <div class="w-2 h-2 bg-white rounded-sm flex items-center justify-end">
+              <div class="w-1 h-1 bg-black"></div>
+            </div>
+          </div>
+          <!-- Snout Base -->
+          <div class="w-4 h-1 bg-emerald-950 mx-auto rounded-xs opacity-70"></div>
         </div>
+
         <div>
           <span class="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">
             CRAFTMODS

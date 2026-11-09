@@ -132,7 +132,7 @@
           Minecraft Dünyanı En İyi Modlarla Güçlendir
         </h1>
         <p class="text-gray-400 text-xs md:text-sm mb-4">
-          Fabric, Forge ve NeoForge destekli optimizasyon, teknik, büyü ve harita modlarını güvenle indirin veya kendi modlarınızı paylaşın.
+          Fabric, Forge ve NeoForge destekli optimizasyon, teknik, büyü ve harita modlarını güvenle indirin.
         </p>
 
         <!-- Popular Tags Chips -->
@@ -313,81 +313,25 @@
     </div>
   </div>
 
-  <!-- ================= UPLOAD MOD MODAL ================= -->
+  <!-- ================= COMING SOON MODAL (MOD YÜKLE) ================= -->
   <div id="uploadModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-mc-card border border-mc-border rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
+    <div class="bg-mc-card border border-mc-border rounded-3xl w-full max-w-md overflow-hidden shadow-2xl p-6 text-center">
       
-      <div class="p-6 border-b border-mc-border flex justify-between items-center bg-mc-bg/50">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <i data-lucide="upload" class="w-5 h-5 text-emerald-500"></i>
-          Yeni Mod Yükle
-        </h3>
-        <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white">
-          <i data-lucide="x" class="w-6 h-6"></i>
-        </button>
+      <div class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 text-emerald-400">
+        <i data-lucide="sparkles" class="w-8 h-8"></i>
       </div>
 
-      <form id="uploadForm" onsubmit="handleModUpload(event)" class="p-6 space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Mod Adı</label>
-          <input type="text" id="upTitle" required placeholder="Örn: Create Automations" class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-        </div>
+      <h3 class="text-xl font-bold text-white mb-2">Çok Yakında!</h3>
+      <p class="text-gray-400 text-xs leading-relaxed mb-6">
+        Kullanıcıların kendi Minecraft modlarını platformumuzda doğrudan paylaşabileceği topluluk yükleme altyapısı üzerinde çalışıyoruz. Takipte kalın!
+      </p>
 
-        <div>
-          <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Geliştirici / Yazar</label>
-          <input type="text" id="upAuthor" required placeholder="Örn: SteveDev" class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-        </div>
-
-        <div class="grid grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Yükleyici</label>
-            <select id="upLoader" class="w-full bg-mc-bg border border-mc-border rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-              <option value="Fabric">Fabric</option>
-              <option value="Forge">Forge</option>
-              <option value="NeoForge">NeoForge</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Sürüm</label>
-            <select id="upVersion" class="w-full bg-mc-bg border border-mc-border rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-              <option value="1.20.4">1.20.4</option>
-              <option value="1.20.1">1.20.1</option>
-              <option value="1.19.4">1.19.4</option>
-              <option value="1.16.5">1.16.5</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Kategori</label>
-            <select id="upCategory" class="w-full bg-mc-bg border border-mc-border rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-              <option value="Optimizasyon">Optimizasyon</option>
-              <option value="Teknoloji">Teknoloji</option>
-              <option value="Büyü & Macera">Büyü & Macera</option>
-              <option value="Harita & Arayüz">Harita & Arayüz</option>
-              <option value="Dünya Oluşumu">Dünya Oluşumu</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Açıklama</label>
-          <textarea id="upDescription" rows="3" required placeholder="Modun sunduğu özellikleri detaylandırın..." class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"></textarea>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-300 uppercase mb-1">Görsel URL</label>
-          <input type="url" id="upIcon" placeholder="Örn: https://cdn.modrinth.com/..." class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-300 uppercase mb-1">İndirme Linki (Modrinth / CurseForge)</label>
-          <input type="url" id="upUrl" required placeholder="Örn: https://modrinth.com/mod/..." class="w-full bg-mc-bg border border-mc-border rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-emerald-500">
-        </div>
-
-        <div class="pt-2 flex justify-end gap-3">
-          <button type="button" onclick="closeUploadModal()" class="px-4 py-2 bg-mc-bg hover:bg-mc-border text-gray-300 text-xs font-semibold rounded-xl">İptal</button>
-          <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-950">Yayınla</button>
-        </div>
-      </form>
+      <button 
+        onclick="closeUploadModal()"
+        class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-950 transition"
+      >
+        Anladım
+      </button>
     </div>
   </div>
 
@@ -1007,49 +951,13 @@
       }
     }
 
-    // Upload Modal Actions
+    // Upload Modal Actions (Coming Soon)
     function openUploadModal() {
       document.getElementById('uploadModal').classList.remove('hidden');
     }
 
     function closeUploadModal() {
       document.getElementById('uploadModal').classList.add('hidden');
-      document.getElementById('uploadForm').reset();
-    }
-
-    function handleModUpload(e) {
-      e.preventDefault();
-
-      const title = document.getElementById('upTitle').value;
-      const author = document.getElementById('upAuthor').value;
-      const loader = document.getElementById('upLoader').value;
-      const version = document.getElementById('upVersion').value;
-      const category = document.getElementById('upCategory').value;
-      const description = document.getElementById('upDescription').value;
-      const icon = document.getElementById('upIcon').value || `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent(title.substring(0, 5))}`;
-      const customUrl = document.getElementById('upUrl').value || 'https://modrinth.com';
-
-      const newMod = {
-        id: Date.now().toString(),
-        title,
-        author,
-        loader,
-        version,
-        category,
-        downloads: 1,
-        likes: 0,
-        size: '1.5 MB',
-        description,
-        icon,
-        downloadUrl: customUrl
-      };
-
-      mods.unshift(newMod);
-
-      updateGlobalStats();
-      renderMods();
-      closeUploadModal();
-      showToast('Modunuz başarıyla yüklendi!');
     }
 
     // Helpers

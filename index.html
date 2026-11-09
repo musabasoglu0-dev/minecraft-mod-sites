@@ -636,4 +636,149 @@
       document.getElementById('searchInput').value = '';
       document.getElementById('mobileSearchInput').value = '';
       document.getElementById('categorySelect').value = 'all';
-      document.getElementById('versionSelect').value
+      document.getElementById('versionSelect').value = 'all';
+      document.getElementById('sortSelect').value = 'downloads';
+      setFilter('loader', 'all');
+    }
+
+    // Detail Modal Actions
+    function openDetailModal(id) {
+      const mod = mods.find(m => m.id === id);
+      if(!mod) return;
+      selectedModId = id;
+
+      document.getElementById('modalTitle').innerText = mod.title;
+      document.getElementById('modalAuthor').innerText = `Geliştirici: ${mod.author}`;
+      document.getElementById('modalDescription').innerText = mod.description;
+      document.getElementById('modalDownloads').innerText = mod.downloads.toLocaleString();
+      document.getElementById('modalLikes').innerText = mod.likes.toLocaleString();
+      document.getElementById('modalSize').innerText = mod.size || '2.4 MB';
+      document.getElementById('modalIcon').src = mod.icon;
+      document.getElementById('modalLoaderText').innerText = mod.loader;
+
+      const isLiked = userLikes.includes(id);
+      document.getElementById('likeBtnText').innerText = isLiked ? 'Beğenildi' : 'Beğen';
+
+      const badges = document.getElementById('modalBadges');
+      badges.innerHTML = `
+        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">${mod.loader}</span>
+        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-teal-500/10 text-teal-400 border-teal-500/20">${mod.version}</span>
+        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-gray-800 text-gray-300 border-gray-700">${mod.category}</span>
+      `;
+
+      document.getElementById('detailModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    function toggleLikeCurrentMod() {
+      if (!selectedModId) return;
+      const mod = mods.find(m => m.id === selectedModId);
+      if (!mod) return;
+
+      const index = userLikes.indexOf(selectedModId);
+      if (index === -1) {
+        userLikes.push(selectedModId);
+        mod.likes += 1;
+        showToast('Mod beğenilenlere eklendi!');
+      } else {
+        userLikes.splice(index, 1);
+        mod.likes -= 1;
+        showToast('Beğeni kaldırıldı.');
+      }
+
+      try {
+        localStorage.setItem('craft_hub_likes', JSON.stringify(userLikes));
+      } catch (e) {}
+
+      document.getElementById('modalLikes').innerText = mod.likes.toLocaleString();
+      document.getElementById('likeBtnText').innerText = userLikes.includes(selectedModId) ? 'Beğenildi' : 'Beğen';
+      renderMods();
+    }
+
+    // Trigger External Download Link
+    function triggerDownload() {
+      const mod = mods.find(m => m.id === selectedModId);
+      if(mod) {
+        mod.downloads += 1;
+        updateGlobalStats();
+        renderMods();
+
+        if (mod.downloadUrl) {
+          window.open(mod.downloadUrl, '_blank');
+          showToast(`'${mod.title}' mod sayfasına yönlendiriliyorsunuz...`);
+        } else {
+          showToast(`'${mod.title}' indiriliyor... (.jar)`);
+        }
+
+        closeDetailModal();
+      }
+    }
+
+    // Upload Modal Actions
+    function openUploadModal() {
+      document.getElementById('uploadModal').classList.remove('hidden');
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.add('hidden');
+      document.getElementById('uploadForm').reset();
+    }
+
+    function handleModUpload(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('upTitle').value;
+      const author = document.getElementById('upAuthor').value;
+      const loader = document.getElementById('upLoader').value;
+      const version = document.getElementById('upVersion').value;
+      const category = document.getElementById('upCategory').value;
+      const description = document.getElementById('upDescription').value;
+      const icon = document.getElementById('upIcon').value || `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent(title.substring(0, 5))}`;
+      const customUrl = document.getElementById('upUrl').value || 'https://modrinth.com';
+
+      const newMod = {
+        id: Date.now().toString(),
+        title,
+        author,
+        loader,
+        version,
+        category,
+        downloads: 1,
+        likes: 0,
+        size: '1.5 MB',
+        description,
+        icon,
+        downloadUrl: customUrl
+      };
+
+      mods.unshift(newMod);
+
+      updateGlobalStats();
+      renderMods();
+      closeUploadModal();
+      showToast('Modunuz başarıyla yüklendi!');
+    }
+
+    // Helpers
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return num;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

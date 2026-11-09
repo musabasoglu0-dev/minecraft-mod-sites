@@ -60,6 +60,11 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #31384a;
     }
+
+    .pixel-art {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
@@ -68,33 +73,14 @@
   <header class="sticky top-0 z-30 bg-mc-bg/90 backdrop-blur-md border-b border-mc-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       
-      <!-- Logo & Brand (Sade & Modern Yeşil 2D Piksel Koyun Kafası) -->
+      <!-- Logo & Brand (Orijinal Minecraft Koyun Kafası) -->
       <div class="flex items-center gap-3.5 cursor-pointer group" onclick="resetFilters()">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 p-1.5 flex items-center justify-center shadow-lg shadow-emerald-950/40 group-hover:border-emerald-400 group-hover:scale-105 transition duration-200">
-          
-          <!-- Vector Pixel Sheep Head SVG -->
-          <svg viewBox="0 0 8 8" class="w-full h-full text-emerald-400 fill-current">
-            <!-- Wool Outer Top -->
-            <rect x="0" y="0" width="8" height="2" fill="#10b981"/>
-            <rect x="0" y="2" width="1" height="1" fill="#10b981"/>
-            <rect x="7" y="2" width="1" height="1" fill="#10b981"/>
-            
-            <!-- Face Base Skin -->
-            <rect x="1" y="2" width="6" height="4" fill="#047857"/>
-            
-            <!-- Eyes (White + Black Pupil) -->
-            <rect x="1" y="3" width="2" height="1" fill="#ffffff"/>
-            <rect x="1" y="3" width="1" height="1" fill="#000000"/>
-            <rect x="5" y="3" width="2" height="1" fill="#ffffff"/>
-            <rect x="6" y="3" width="1" height="1" fill="#000000"/>
-            
-            <!-- Snout/Nose -->
-            <rect x="3" y="4" width="2" height="2" fill="#064e3b"/>
-            
-            <!-- Wool Bottom Trim -->
-            <rect x="0" y="6" width="8" height="2" fill="#059669"/>
-            <rect x="2" y="6" width="4" height="1" fill="#047857"/>
-          </svg>
+        <div class="w-10 h-10 rounded-xl bg-mc-card border border-mc-border p-1 flex items-center justify-center shadow-lg shadow-emerald-950/40 group-hover:border-emerald-500/50 group-hover:scale-105 transition duration-200">
+          <img 
+            src="data:image/png;base64,iVBORw0KGgoAAAANSU56AAAAB4AAR1hHCgAAAAF0Uk5TAEDm2GYAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAA8SURBVAjXY2CgE/j/n8EAxmAFYj4g4gNjVjBmgzIQ5sKmAaqBAZgNxmaA2wFjM4LVM4LVw9ig9jAAmc0DAH4nDC0kXy+2AAAAAElFTkSuQmCC" 
+            alt="Minecraft Sheep Logo" 
+            class="w-full h-full object-cover rounded-md pixel-art"
+          >
         </div>
 
         <div>
@@ -158,7 +144,7 @@
           Minecraft Dünyanı En İyi Modlarla Güçlendir
         </h1>
         <p class="text-gray-400 text-xs md:text-sm mb-5 leading-relaxed">
-          Fabric, Forge ve NeoForge destekli optimizasyon, teknik, büyü ve arayüz modlarını doğrudan güvenilir kaynaklardan indirin.
+          Fabric, Forge ve NeoForge destekli optimizasyon, teknik, büyü ve arayüz modlarını geniş sürüm aralığı desteğiyle doğrudan indirin.
         </p>
 
         <!-- Popular Tags Chips -->
@@ -312,8 +298,9 @@
         <div class="bg-emerald-950/20 border border-emerald-500/20 p-4 rounded-2xl">
           <h4 class="text-xs font-bold uppercase text-emerald-400 mb-2 flex items-center gap-1.5">
             <i data-lucide="info" class="w-4 h-4"></i>
-            Kurulum Talimatı
+            Kurulum & Uyumluluk Bilgisi
           </h4>
+          <p class="text-xs text-gray-300 mb-2">Desteklenen Sürümler: <strong id="modalVersionRange" class="text-emerald-400"></strong></p>
           <ol class="list-decimal list-inside text-xs text-gray-300 space-y-1">
             <li>Minecraft sürümünüz ile mod yükleyicisinin (<span id="modalLoaderText" class="font-semibold text-emerald-400"></span>) uyumlu olduğundan emin olun.</li>
             <li>İndirdiğiniz <strong>.jar</strong> dosyasını <code class="bg-mc-bg px-1.5 py-0.5 rounded text-gray-200">.minecraft/mods</code> klasörüne taşıyın.</li>
@@ -391,14 +378,15 @@
       img.src = `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent(title.substring(0, 5))}`;
     }
 
-    // Popüler 25 Minecraft Modu
+    // Popüler 25 Minecraft Modu (Sürüm Aralıkları Güncellendi)
     const defaultMods = [
       {
         id: '1',
         title: 'Sodium Performance',
         author: 'JellySquid',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Optimizasyon',
         downloads: 1850000,
         likes: 42000,
@@ -412,7 +400,8 @@
         title: 'Create Automations',
         author: 'Simibubi',
         loader: 'Forge',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Teknoloji',
         downloads: 940000,
         likes: 31500,
@@ -426,7 +415,8 @@
         title: 'Bobby Chunk Modu',
         author: 'Johni0702',
         loader: 'Fabric',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Optimizasyon',
         downloads: 450000,
         likes: 12300,
@@ -440,7 +430,8 @@
         title: 'Xaero\'s World Map',
         author: 'Xaero96',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Harita & Arayüz',
         downloads: 1200000,
         likes: 28000,
@@ -454,7 +445,8 @@
         title: 'Lithium Engine',
         author: 'JellySquid',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Optimizasyon',
         downloads: 1400000,
         likes: 35000,
@@ -468,7 +460,8 @@
         title: 'Iris Shaders',
         author: 'IrisTeam',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Optimizasyon',
         downloads: 1650000,
         likes: 39000,
@@ -482,7 +475,8 @@
         title: 'Waystones',
         author: 'BlayTheNinth',
         loader: 'Fabric',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Büyü & Macera',
         downloads: 630000,
         likes: 15800,
@@ -496,7 +490,8 @@
         title: 'AppleSkin',
         author: 'squeek502',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Harita & Arayüz',
         downloads: 2100000,
         likes: 48000,
@@ -510,7 +505,8 @@
         title: 'Sophisticated Backpacks',
         author: 'P3pp3rFly',
         loader: 'Forge',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Teknoloji',
         downloads: 890000,
         likes: 24000,
@@ -524,7 +520,8 @@
         title: 'Just Enough Items (JEI)',
         author: 'mezz',
         loader: 'Forge',
-        version: '1.20.4',
+        versionRange: '1.12.2 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Harita & Arayüz',
         downloads: 3500000,
         likes: 65000,
@@ -538,7 +535,8 @@
         title: 'Clumps',
         author: 'Jaredbbb',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Optimizasyon',
         downloads: 1300000,
         likes: 27000,
@@ -552,7 +550,8 @@
         title: 'FerriteCore',
         author: 'malte0811',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Optimizasyon',
         downloads: 980000,
         likes: 21000,
@@ -566,7 +565,8 @@
         title: 'Farmer\'s Delight',
         author: 'vectorwing',
         loader: 'Forge',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Büyü & Macera',
         downloads: 1100000,
         likes: 31000,
@@ -580,7 +580,8 @@
         title: 'Biomes O\' Plenty',
         author: 'For 大陸',
         loader: 'NeoForge',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Dünya Oluşumu',
         downloads: 780000,
         likes: 19400,
@@ -594,7 +595,8 @@
         title: 'Journeymap',
         author: 'techbrew',
         loader: 'Forge',
-        version: '1.20.1',
+        versionRange: '1.12.2 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Harita & Arayüz',
         downloads: 2400000,
         likes: 41000,
@@ -608,7 +610,8 @@
         title: 'Mouse Tweaks',
         author: 'YaLTeR',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Harita & Arayüz',
         downloads: 1900000,
         likes: 38000,
@@ -622,7 +625,8 @@
         title: 'Skin Layers 3D',
         author: 'tr7zw',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Harita & Arayüz',
         downloads: 820000,
         likes: 23000,
@@ -636,7 +640,8 @@
         title: 'Better Animations',
         author: 'Fuzss',
         loader: 'Fabric',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Harita & Arayüz',
         downloads: 410000,
         likes: 11000,
@@ -650,7 +655,8 @@
         title: 'Krypton Engine',
         author: 'Tux',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Optimizasyon',
         downloads: 670000,
         likes: 14500,
@@ -664,7 +670,8 @@
         title: 'Iron Chests',
         author: 'ProgWML6',
         loader: 'Forge',
-        version: '1.19.4',
+        versionRange: '1.16.5 - 1.19.4',
+        supportedVersions: ['1.16.5', '1.19.4'],
         category: 'Teknoloji',
         downloads: 510000,
         likes: 12300,
@@ -678,7 +685,8 @@
         title: 'Entity Culling',
         author: 'tr7zw',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Optimizasyon',
         downloads: 1150000,
         likes: 29000,
@@ -692,7 +700,8 @@
         title: 'Architectury API',
         author: 'shedaniel',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Teknoloji',
         downloads: 2900000,
         likes: 51000,
@@ -706,7 +715,8 @@
         title: 'ModernFix Engine',
         author: 'embeddedt',
         loader: 'Forge',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Optimizasyon',
         downloads: 870000,
         likes: 19800,
@@ -720,7 +730,8 @@
         title: 'Controlling',
         author: 'Jaredbbb',
         loader: 'Fabric',
-        version: '1.20.4',
+        versionRange: '1.16.5 - 1.20.4',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1', '1.20.4'],
         category: 'Harita & Arayüz',
         downloads: 1550000,
         likes: 31000,
@@ -734,7 +745,8 @@
         title: 'Dynamic Lights',
         author: 'AtomicStryker',
         loader: 'Fabric',
-        version: '1.20.1',
+        versionRange: '1.16.5 - 1.20.1',
+        supportedVersions: ['1.16.5', '1.19.4', '1.20.1'],
         category: 'Harita & Arayüz',
         downloads: 740000,
         likes: 18200,
@@ -782,7 +794,12 @@
       let filtered = mods.filter(m => {
         const matchesLoader = currentFilter.loader === 'all' || m.loader === currentFilter.loader;
         const matchesCategory = currentFilter.category === 'all' || m.category === currentFilter.category;
-        const matchesVersion = currentFilter.version === 'all' || m.version === currentFilter.version;
+        
+        // Dynamic Version Match
+        const matchesVersion = currentFilter.version === 'all' || 
+                               (m.supportedVersions && m.supportedVersions.includes(currentFilter.version)) ||
+                               m.versionRange.includes(currentFilter.version);
+                               
         const matchesSearch = m.title.toLowerCase().includes(currentFilter.search.toLowerCase()) || 
                               m.author.toLowerCase().includes(currentFilter.search.toLowerCase()) ||
                               (m.category && m.category.toLowerCase().includes(currentFilter.search.toLowerCase()));
@@ -828,7 +845,9 @@
             <div>
               <div class="flex flex-wrap items-center gap-1.5 mb-3">
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-md border ${loaderBadge}">${mod.loader}</span>
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md border bg-mc-bg text-gray-300 border-mc-border">${mod.version}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md border bg-mc-bg text-emerald-400 border-mc-border flex items-center gap-1">
+                  <i data-lucide="tag" class="w-3 h-3"></i> ${mod.versionRange}
+                </span>
                 <span class="text-[10px] font-medium px-2 py-0.5 rounded-md border bg-emerald-950/30 text-emerald-400 border-emerald-500/20">${mod.category}</span>
               </div>
               <div class="flex items-center justify-between pt-3 border-t border-mc-border text-xs">
@@ -905,6 +924,7 @@
       document.getElementById('modalDownloads').innerText = mod.downloads.toLocaleString();
       document.getElementById('modalLikes').innerText = mod.likes.toLocaleString();
       document.getElementById('modalSize').innerText = mod.size || '2.4 MB';
+      document.getElementById('modalVersionRange').innerText = mod.versionRange;
       
       const modalIconImg = document.getElementById('modalIcon');
       modalIconImg.src = getSafeImageUrl(mod.icon, mod.title);
@@ -918,7 +938,7 @@
       const badges = document.getElementById('modalBadges');
       badges.innerHTML = `
         <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">${mod.loader}</span>
-        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-teal-500/10 text-teal-400 border-teal-500/20">${mod.version}</span>
+        <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-teal-500/10 text-teal-400 border-teal-500/20">${mod.versionRange}</span>
         <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-gray-800 text-gray-300 border-gray-700">${mod.category}</span>
       `;
 

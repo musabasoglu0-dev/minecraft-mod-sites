@@ -16,10 +16,10 @@
         extend: {
           colors: {
             mc: {
-              bg: '#0f1115',
-              card: '#161920',
-              cardHover: '#1e222d',
-              border: '#272c3a',
+              bg: '#0b0d10',
+              card: '#13161c',
+              cardHover: '#1a1e27',
+              border: '#222734',
               accent: '#10b981',
               accentHover: '#059669',
               forge: '#ff6b6b',
@@ -39,11 +39,11 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #0f1115;
+      background-color: #0b0d10;
       color: #e2e8f0;
     }
     
@@ -51,14 +51,14 @@
       width: 8px;
     }
     ::-webkit-scrollbar-track {
-      background: #0f1115;
+      background: #0b0d10;
     }
     ::-webkit-scrollbar-thumb {
-      background: #272c3a;
+      background: #222734;
       border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #3b4257;
+      background: #31384a;
     }
   </style>
 </head>
@@ -68,28 +68,51 @@
   <header class="sticky top-0 z-30 bg-mc-bg/90 backdrop-blur-md border-b border-mc-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       
-      <!-- Logo & Stats (Yeşil Minecraft Koyun Kafası Canvas) -->
+      <!-- Logo & Brand (Sade & Modern Yeşil 2D Piksel Koyun Kafası) -->
       <div class="flex items-center gap-3.5 cursor-pointer group" onclick="resetFilters()">
-        <div class="w-10 h-10 rounded-xl bg-mc-card border border-mc-border overflow-hidden p-1 flex items-center justify-center shadow-lg shadow-emerald-950/20 group-hover:border-emerald-500/50 group-hover:scale-105 transition duration-200">
-          <canvas id="sheepLogoCanvas" width="8" height="8" class="w-full h-full rounded-md" style="image-rendering: pixelated;"></canvas>
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 p-1.5 flex items-center justify-center shadow-lg shadow-emerald-950/40 group-hover:border-emerald-400 group-hover:scale-105 transition duration-200">
+          
+          <!-- Vector Pixel Sheep Head SVG -->
+          <svg viewBox="0 0 8 8" class="w-full h-full text-emerald-400 fill-current">
+            <!-- Wool Outer Top -->
+            <rect x="0" y="0" width="8" height="2" fill="#10b981"/>
+            <rect x="0" y="2" width="1" height="1" fill="#10b981"/>
+            <rect x="7" y="2" width="1" height="1" fill="#10b981"/>
+            
+            <!-- Face Base Skin -->
+            <rect x="1" y="2" width="6" height="4" fill="#047857"/>
+            
+            <!-- Eyes (White + Black Pupil) -->
+            <rect x="1" y="3" width="2" height="1" fill="#ffffff"/>
+            <rect x="1" y="3" width="1" height="1" fill="#000000"/>
+            <rect x="5" y="3" width="2" height="1" fill="#ffffff"/>
+            <rect x="6" y="3" width="1" height="1" fill="#000000"/>
+            
+            <!-- Snout/Nose -->
+            <rect x="3" y="4" width="2" height="2" fill="#064e3b"/>
+            
+            <!-- Wool Bottom Trim -->
+            <rect x="0" y="6" width="8" height="2" fill="#059669"/>
+            <rect x="2" y="6" width="4" height="1" fill="#047857"/>
+          </svg>
         </div>
 
         <div>
-          <span class="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">
+          <span class="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-200 bg-clip-text text-transparent">
             CRAFTMODS
           </span>
-          <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-500 block -mt-1">HUB</span>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-500 block -mt-1">HUB</span>
         </div>
       </div>
 
       <!-- Quick Global Stats -->
       <div class="hidden lg:flex items-center gap-6 px-4 py-1.5 bg-mc-card/80 border border-mc-border rounded-xl text-xs text-gray-400">
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-2">
           <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
           <span>Toplam Mod: <strong id="statTotalMods" class="text-white">0</strong></span>
         </div>
         <div class="w-px h-3 bg-mc-border"></div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-2">
           <i data-lucide="download" class="w-4 h-4 text-teal-400"></i>
           <span>İndirme: <strong id="statTotalDownloads" class="text-white">0</strong></span>
         </div>
@@ -103,7 +126,7 @@
           id="searchInput"
           placeholder="Mod adı veya geliştirici ara..." 
           oninput="handleSearch()"
-          class="w-full pl-10 pr-4 py-2 bg-mc-card border border-mc-border rounded-xl text-sm focus:outline-none focus:border-emerald-500 text-gray-200 placeholder-gray-500 transition"
+          class="w-full pl-10 pr-4 py-2 bg-mc-card border border-mc-border rounded-xl text-sm focus:outline-none focus:border-emerald-500 text-gray-200 placeholder-gray-500 transition shadow-inner"
         >
       </div>
 
@@ -111,7 +134,7 @@
       <div class="flex items-center gap-3">
         <button 
           onclick="openUploadModal()"
-          class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-lg shadow-emerald-950 active:scale-95"
+          class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-lg shadow-emerald-950/50 active:scale-95 border border-emerald-400/20"
         >
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
           <span>Mod Yükle</span>
@@ -124,25 +147,27 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
     
     <!-- Hero Banner -->
-    <section class="relative rounded-3xl bg-gradient-to-r from-emerald-950/60 via-mc-card to-mc-card p-6 md:p-8 border border-mc-border overflow-hidden mb-8 shadow-2xl">
+    <section class="relative rounded-3xl bg-gradient-to-r from-emerald-950/40 via-mc-card to-mc-card p-6 md:p-8 border border-mc-border overflow-hidden mb-8 shadow-2xl">
+      <div class="absolute -right-12 -top-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
       <div class="relative z-10 max-w-3xl">
-        <span class="bg-emerald-500/10 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/20 inline-block mb-3">
+        <span class="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/20 inline-block mb-3">
           Minecraft Topluluk Portalı
         </span>
-        <h1 class="text-2xl md:text-4xl font-extrabold text-white tracking-tight mb-2">
+        <h1 class="text-2xl md:text-4xl font-black text-white tracking-tight mb-2">
           Minecraft Dünyanı En İyi Modlarla Güçlendir
         </h1>
-        <p class="text-gray-400 text-xs md:text-sm mb-4">
-          Fabric, Forge ve NeoForge destekli optimizasyon, teknik, büyü ve harita modlarını güvenle indirin.
+        <p class="text-gray-400 text-xs md:text-sm mb-5 leading-relaxed">
+          Fabric, Forge ve NeoForge destekli optimizasyon, teknik, büyü ve arayüz modlarını doğrudan güvenilir kaynaklardan indirin.
         </p>
 
         <!-- Popular Tags Chips -->
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs text-gray-500 font-medium">Popüler Etiketler:</span>
-          <button onclick="quickTagFilter('Fabric')" class="text-xs bg-mc-bg border border-mc-border hover:border-emerald-500 text-gray-300 px-2.5 py-1 rounded-lg transition">Fabric</button>
-          <button onclick="quickTagFilter('Forge')" class="text-xs bg-mc-bg border border-mc-border hover:border-emerald-500 text-gray-300 px-2.5 py-1 rounded-lg transition">Forge</button>
-          <button onclick="quickTagFilter('Optimizasyon')" class="text-xs bg-mc-bg border border-mc-border hover:border-emerald-500 text-gray-300 px-2.5 py-1 rounded-lg transition">Optimizasyon</button>
-          <button onclick="quickTagFilter('1.20.1')" class="text-xs bg-mc-bg border border-mc-border hover:border-emerald-500 text-gray-300 px-2.5 py-1 rounded-lg transition">1.20.1</button>
+          <span class="text-xs text-gray-500 font-semibold">Hızlı Filtre:</span>
+          <button onclick="quickTagFilter('Fabric')" class="text-xs bg-mc-bg border border-mc-border hover:border-emerald-500/60 text-gray-300 px-3 py-1 rounded-lg transition font-medium">Fabric</button>
+          <button onclick="quickTagFilter('Forge')" class="text-xs bg-mc-bg border border-mc-border hover:border-emerald-500/60 text-gray-300 px-3 py-1 rounded-lg transition font-medium">Forge</button>
+          <button onclick="quickTagFilter('Optimizasyon')" class="text-xs bg-mc-bg border border-mc-border hover:border-emerald-500/60 text-gray-300 px-3 py-1 rounded-lg transition font-medium">Optimizasyon</button>
+          <button onclick="quickTagFilter('1.20.1')" class="text-xs bg-mc-bg border border-mc-border hover:border-emerald-500/60 text-gray-300 px-3 py-1 rounded-lg transition font-medium">1.20.1</button>
         </div>
       </div>
     </section>
@@ -162,15 +187,15 @@
     </div>
 
     <!-- Filters Bar -->
-    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-8 bg-mc-card p-4 rounded-2xl border border-mc-border">
+    <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-8 bg-mc-card p-4 rounded-2xl border border-mc-border shadow-lg">
       
       <!-- Loader Filters -->
       <div class="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0">
         <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1 hidden sm:inline">Yükleyici:</span>
-        <button onclick="setFilter('loader', 'all')" id="btn-loader-all" class="filter-loader-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white transition">Tümü</button>
-        <button onclick="setFilter('loader', 'Fabric')" id="btn-loader-Fabric" class="filter-loader-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-mc-bg hover:bg-mc-border text-gray-300 transition">Fabric</button>
-        <button onclick="setFilter('loader', 'Forge')" id="btn-loader-Forge" class="filter-loader-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-mc-bg hover:bg-mc-border text-gray-300 transition">Forge</button>
-        <button onclick="setFilter('loader', 'NeoForge')" id="btn-loader-NeoForge" class="filter-loader-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-mc-bg hover:bg-mc-border text-gray-300 transition">NeoForge</button>
+        <button onclick="setFilter('loader', 'all')" id="btn-loader-all" class="filter-loader-btn active px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white transition">Tümü</button>
+        <button onclick="setFilter('loader', 'Fabric')" id="btn-loader-Fabric" class="filter-loader-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-mc-bg hover:bg-mc-border text-gray-300 transition">Fabric</button>
+        <button onclick="setFilter('loader', 'Forge')" id="btn-loader-Forge" class="filter-loader-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-mc-bg hover:bg-mc-border text-gray-300 transition">Forge</button>
+        <button onclick="setFilter('loader', 'NeoForge')" id="btn-loader-NeoForge" class="filter-loader-btn px-3.5 py-1.5 rounded-lg text-xs font-bold bg-mc-bg hover:bg-mc-border text-gray-300 transition">NeoForge</button>
       </div>
 
       <!-- Select Dropdowns -->
@@ -178,7 +203,7 @@
         <!-- Category Filter -->
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold text-gray-400 uppercase">Kategori:</span>
-          <select id="categorySelect" onchange="setFilter('category', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 cursor-pointer">
+          <select id="categorySelect" onchange="setFilter('category', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 cursor-pointer font-medium">
             <option value="all">Tüm Kategoriler</option>
             <option value="Optimizasyon">Optimizasyon</option>
             <option value="Teknoloji">Teknoloji</option>
@@ -191,7 +216,7 @@
         <!-- Version Filter -->
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold text-gray-400 uppercase">Sürüm:</span>
-          <select id="versionSelect" onchange="setFilter('version', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 cursor-pointer">
+          <select id="versionSelect" onchange="setFilter('version', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 cursor-pointer font-medium">
             <option value="all">Tüm Sürümler</option>
             <option value="1.20.4">1.20.4</option>
             <option value="1.20.1">1.20.1</option>
@@ -203,7 +228,7 @@
         <!-- Sort By -->
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold text-gray-400 uppercase">Sırala:</span>
-          <select id="sortSelect" onchange="setFilter('sort', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 cursor-pointer">
+          <select id="sortSelect" onchange="setFilter('sort', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-3 py-1.5 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 cursor-pointer font-medium">
             <option value="downloads">En Çok İndirilen</option>
             <option value="rating">En Yüksek Puanlı</option>
             <option value="newest">En Yeni</option>
@@ -214,11 +239,11 @@
 
     <!-- Mod Grid Section Header -->
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-bold text-white flex items-center gap-2">
+      <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
         <i data-lucide="grid" class="w-5 h-5 text-emerald-500"></i>
-        <span>Mod Listesi</span>
+        <span>Mod Kütüphanesi</span>
       </h2>
-      <span id="modCount" class="text-xs text-gray-400 font-medium">0 mod görüntüleniyor</span>
+      <span id="modCount" class="text-xs text-gray-400 font-semibold">0 mod görüntüleniyor</span>
     </div>
 
     <!-- Mod Cards Grid -->
@@ -231,7 +256,7 @@
       <i data-lucide="folder-search" class="w-12 h-12 text-gray-500 mx-auto mb-3"></i>
       <h3 class="text-gray-300 font-semibold mb-1">Eşleşen Mod Bulunamadı</h3>
       <p class="text-gray-500 text-sm">Filtrelerinizi değiştirmeyi veya arama terimini temizlemeyi deneyin.</p>
-      <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl">Filtreleri Sıfırla</button>
+      <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition">Filtreleri Sıfırla</button>
     </div>
 
   </main>
@@ -243,14 +268,14 @@
       <!-- Modal Header -->
       <div class="p-6 border-b border-mc-border flex items-start justify-between bg-mc-bg/50">
         <div class="flex gap-4">
-          <img id="modalIcon" src="" alt="Mod Icon" onerror="handleImgError(this)" class="w-16 h-16 rounded-2xl object-cover border border-mc-border shadow-md">
+          <img id="modalIcon" src="" alt="Mod Icon" onerror="handleImgError(this)" class="w-16 h-16 rounded-2xl object-cover border border-mc-border shadow-md bg-mc-bg">
           <div>
-            <h3 id="modalTitle" class="text-xl font-bold text-white"></h3>
-            <p id="modalAuthor" class="text-xs text-emerald-400 font-medium mt-0.5"></p>
+            <h3 id="modalTitle" class="text-xl font-extrabold text-white"></h3>
+            <p id="modalAuthor" class="text-xs text-emerald-400 font-semibold mt-0.5"></p>
             <div class="flex flex-wrap items-center gap-2 mt-2" id="modalBadges"></div>
           </div>
         </div>
-        <button onclick="closeDetailModal()" class="text-gray-400 hover:text-white transition">
+        <button onclick="closeDetailModal()" class="text-gray-400 hover:text-white transition p-1">
           <i data-lucide="x" class="w-6 h-6"></i>
         </button>
       </div>
@@ -276,7 +301,7 @@
             </span>
           </div>
           <div>
-            <span class="text-[10px] text-gray-400 uppercase font-bold block">Dosya Boyutu</span>
+            <span class="text-[10px] text-gray-400 uppercase font-bold block">Boyut</span>
             <span id="modalSize" class="text-sm font-extrabold text-white flex items-center justify-center gap-1 mt-1">
               <i data-lucide="file" class="w-4 h-4 text-teal-400"></i> -
             </span>
@@ -304,7 +329,7 @@
           <span id="likeBtnText">Beğen</span>
         </button>
         <div class="flex gap-2">
-          <button onclick="closeDetailModal()" class="px-4 py-2 bg-mc-bg hover:bg-mc-border text-gray-300 text-xs font-semibold rounded-xl">Kapat</button>
+          <button onclick="closeDetailModal()" class="px-4 py-2 bg-mc-bg hover:bg-mc-border text-gray-300 text-xs font-semibold rounded-xl transition">Kapat</button>
           <button onclick="triggerDownload()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-950 transition">
             <i data-lucide="download-cloud" class="w-4 h-4"></i>
             <span>Modu İndir (.jar)</span>
@@ -344,48 +369,12 @@
 
   <!-- Footer -->
   <footer class="border-t border-mc-border bg-mc-bg/40 py-6 text-center text-xs text-gray-500">
-    <p>© 2026 CraftMods Hub - Topluluk Odaklı Minecraft Mod Dağıtım Altyapısı.</p>
+    <p>© 2026 CraftMods Hub - Topluluk Odaklı Minecraft Mod Dağıtım Portalı.</p>
   </footer>
 
   <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // Draw Minecraft Sheep Head on 8x8 Canvas
-    function drawSheepLogo() {
-      const canvas = document.getElementById('sheepLogoCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-
-      // Color Palette (Emerald Theme Adapted Sheep)
-      const W1 = '#a7f3d0'; // Light emerald wool
-      const W2 = '#34d399'; // Mid emerald wool
-      const W3 = '#059669'; // Dark emerald wool
-      const S1 = '#065f46'; // Face base skin
-      const S2 = '#044e3a'; // Dark face shade
-      const P  = '#064e3b'; // Snout / Nose
-      const K  = '#000000'; // Eye Pupil
-      const W  = '#ffffff'; // Eye White
-
-      // 8x8 Pixel Grid representation of Sheep Face
-      const pixels = [
-        [W1, W2, W1, W2, W1, W2, W1, W2],
-        [W2, W1, W2, W1, W2, W1, W2, W1],
-        [W1, S1, S1, S1, S1, S1, S1, W2],
-        [W2, K,  W,  S1, S1, W,  K,  W1],
-        [W1, S1, S1, S1, S1, S1, S1, W2],
-        [W2, S1, S1, P,  P,  S1, S1, W1],
-        [W1, W2, S2, P,  P,  S2, W1, W2],
-        [W2, W1, W2, W1, W2, W1, W2, W1]
-      ];
-
-      for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
-          ctx.fillStyle = pixels[y][x];
-          ctx.fillRect(x, y, 1, 1);
-        }
-      }
-    }
-
-    // Safe Image Resolver & Proxy Engine
+    // Safe Image Resolver
     function getSafeImageUrl(rawUrl, title) {
       if (!rawUrl || rawUrl.includes('placehold.co')) {
         return `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent((title || 'MC').substring(0, 5))}`;
@@ -402,7 +391,7 @@
       img.src = `https://placehold.co/100x100/10b981/ffffff?text=${encodeURIComponent(title.substring(0, 5))}`;
     }
 
-    // 25 Popüler Minecraft Modu
+    // Popüler 25 Minecraft Modu
     const defaultMods = [
       {
         id: '1',
@@ -756,13 +745,13 @@
       }
     ];
 
-    // App State
+    // State
     let mods = [];
     let userLikes = [];
     let currentFilter = { loader: 'all', category: 'all', version: 'all', sort: 'downloads', search: '' };
     let selectedModId = null;
 
-    // Initialize App
+    // Init
     window.onload = () => {
       try {
         userLikes = JSON.parse(localStorage.getItem('craft_hub_likes') || '[]');
@@ -771,8 +760,6 @@
       }
 
       mods = defaultMods;
-
-      drawSheepLogo();
       updateGlobalStats();
       renderMods();
       lucide.createIcons();
@@ -785,14 +772,13 @@
       document.getElementById('statTotalDownloads').innerText = formatNumber(totalDownloads);
     }
 
-    // Render Mod Cards
+    // Render Cards
     function renderMods() {
       const grid = document.getElementById('modGrid');
       const emptyState = document.getElementById('emptyState');
       const modCount = document.getElementById('modCount');
       grid.innerHTML = '';
 
-      // Filtering Logic
       let filtered = mods.filter(m => {
         const matchesLoader = currentFilter.loader === 'all' || m.loader === currentFilter.loader;
         const matchesCategory = currentFilter.category === 'all' || m.category === currentFilter.category;
@@ -803,7 +789,6 @@
         return matchesLoader && matchesCategory && matchesVersion && matchesSearch;
       });
 
-      // Sorting Logic
       filtered.sort((a, b) => {
         if (currentFilter.sort === 'downloads') return b.downloads - a.downloads;
         if (currentFilter.sort === 'rating') return b.likes - a.likes;
@@ -820,7 +805,7 @@
         filtered.forEach(mod => {
           const isLiked = userLikes.includes(mod.id);
           const card = document.createElement('div');
-          card.className = "bg-mc-card border border-mc-border rounded-2xl p-4 hover:border-emerald-500/50 hover:bg-mc-cardHover transition duration-300 flex flex-col justify-between group shadow-lg";
+          card.className = "bg-mc-card border border-mc-border rounded-2xl p-4 hover:border-emerald-500/40 hover:bg-mc-cardHover transition duration-300 flex flex-col justify-between group shadow-lg";
 
           let loaderBadge = 'bg-mc-forge/10 text-mc-forge border-mc-forge/20';
           if (mod.loader === 'Fabric') loaderBadge = 'bg-mc-fabric/10 text-mc-fabric border-mc-fabric/20';
@@ -863,7 +848,7 @@
       }
     }
 
-    // Filter Trigger Helpers
+    // Filter Logic
     function setFilter(type, value) {
       currentFilter[type] = value;
       if (type === 'loader') {
@@ -908,7 +893,7 @@
       setFilter('loader', 'all');
     }
 
-    // Detail Modal Actions
+    // Modal
     function openDetailModal(id) {
       const mod = mods.find(m => m.id === id);
       if(!mod) return;
@@ -970,7 +955,6 @@
       renderMods();
     }
 
-    // Trigger External Download Link
     function triggerDownload() {
       const mod = mods.find(m => m.id === selectedModId);
       if(mod) {
@@ -980,7 +964,7 @@
 
         if (mod.downloadUrl) {
           window.open(mod.downloadUrl, '_blank');
-          showToast(`'${mod.title}' mod sayfasına yönlendiriliyorsunuz...`);
+          showToast(`'${mod.title}' indirme sayfasına yönlendiriliyorsunuz...`);
         } else {
           showToast(`'${mod.title}' indiriliyor... (.jar)`);
         }
@@ -989,7 +973,6 @@
       }
     }
 
-    // Upload Modal Actions (Coming Soon)
     function openUploadModal() {
       document.getElementById('uploadModal').classList.remove('hidden');
     }
@@ -998,7 +981,6 @@
       document.getElementById('uploadModal').classList.add('hidden');
     }
 
-    // Helpers
     function formatNumber(num) {
       if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
       if (num >= 1000) return (num / 1000).toFixed(1) + 'K';

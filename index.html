@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CraftMods Hub - Minecraft Mod, Shader & Texture Pack Platformu</title>
+  <title>McPusula - Minecraft Mod, Shader & Kaynak Paketi Portalı</title>
   
-  <!-- Favicon (2D Yeşil Minecraft Koyun Kafası) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'><rect x='0' y='0' width='8' height='2' fill='%2310b981'/><rect x='0' y='2' width='1' height='1' fill='%2310b981'/><rect x='7' y='2' width='1' height='1' fill='%2310b981'/><rect x='1' y='2' width='6' height='4' fill='%23047857'/><rect x='1' y='3' width='2' height='1' fill='%23ffffff'/><rect x='1' y='3' width='1' height='1' fill='%23000000'/><rect x='5' y='3' width='2' height='1' fill='%23ffffff'/><rect x='6' y='3' width='1' height='1' fill='%23000000'/><rect x='3' y='4' width='2' height='2' fill='%23064e3b'/><rect x='0' y='6' width='8' height='2' fill='%23059669'/><rect x='2' y='6' width='4' height='1' fill='%23047857'/></svg>">
+  <!-- Favicon (Pusula Simgesi) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2'><circle cx='12' cy='12' r='10'/><polygon points='16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76'/></svg>">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -43,7 +43,24 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0b0d10; }
     ::-webkit-scrollbar-thumb { background: #222734; border-radius: 4px; }
-    .pixel-art { image-rendering: pixelated; image-rendering: crisp-edges; }
+    
+    /* Hareketli Minecraft Pusula Animasyonu */
+    .compass-spin {
+      animation: compassRotate 12s infinite linear;
+    }
+    .compass-needle {
+      transform-origin: center;
+      animation: needleSway 2.5s infinite ease-in-out alternate;
+    }
+    @keyframes compassRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes needleSway {
+      0% { transform: rotate(-25deg); }
+      50% { transform: rotate(35deg); }
+      100% { transform: rotate(-15deg); }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
@@ -52,47 +69,45 @@
   <header class="sticky top-0 z-30 bg-mc-bg/95 backdrop-blur-md border-b border-mc-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
       
-      <!-- Logo & Brand -->
+      <!-- Logo & Brand (McPusula & Hareketli Pusula) -->
       <div class="flex items-center gap-2.5 cursor-pointer group" onclick="switchContentType('mods')">
-        <div class="w-9 h-9 rounded-xl bg-mc-card border border-mc-border p-1 flex items-center justify-center shadow-lg shadow-emerald-950/40">
-          <img 
-            src="data:image/png;base64,iVBORw0KGgoAAAANSU56AAAAB4AAR1hHCgAAAAF0Uk5TAEDm2GYAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAA8SURBVAjXY2CgE/j/n8EAxmAFYj4g4gNjVjBmgzIQ5sKmAaqBAZgNxmaA2wFjM4LVM4LVw9ig9jAAmc0DAH4nDC0kXy+2AAAAAElFTkSuQmCC" 
-            alt="Minecraft Sheep Logo" 
-            class="w-full h-full object-cover rounded-md pixel-art"
-          >
+        <div class="w-10 h-10 rounded-xl bg-mc-card border border-mc-border p-2 flex items-center justify-center shadow-lg shadow-emerald-950/40 group-hover:border-emerald-500/50 transition duration-200">
+          <svg class="w-full h-full text-emerald-400 compass-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke-dasharray="2 2"/>
+            <polygon class="compass-needle" points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" fill-opacity="0.3"/>
+          </svg>
         </div>
         <div>
-          <span class="text-lg font-black tracking-wider bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-200 bg-clip-text text-transparent">
-            CRAFTMODS
+          <span class="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-200 bg-clip-text text-transparent">
+            MC PUSULA
           </span>
-          <span class="text-[9px] font-extrabold uppercase tracking-widest text-emerald-500 block -mt-1">HUB</span>
+          <span class="text-[9px] font-extrabold uppercase tracking-widest text-emerald-500 block -mt-1">MOD HUB</span>
         </div>
       </div>
 
-      <!-- Main Navigation Tabs (Desktop & Mobile Scroll) -->
-      <nav class="flex items-center gap-1 bg-mc-card/80 p-1 rounded-xl border border-mc-border text-xs font-bold overflow-x-auto max-w-[55%] sm:max-w-none">
-        <button onclick="switchContentType('mods')" id="tab-mods" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0">
+      <!-- Main Navigation Tabs -->
+      <nav class="flex items-center gap-1 bg-mc-card/80 p-1 rounded-xl border border-mc-border text-xs font-bold overflow-x-auto max-w-[50%] sm:max-w-none">
+        <button onclick="switchContentType('mods')" id="tab-mods" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0 font-bold">
           <i data-lucide="layers" class="w-3.5 h-3.5"></i> <span>Modlar</span>
         </button>
         <button onclick="switchContentType('shaders')" id="tab-shaders" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span>Shader</span>
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span>Shaderlar</span>
         </button>
         <button onclick="switchContentType('textures')" id="tab-textures" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0">
-          <i data-lucide="image" class="w-3.5 h-3.5"></i> <span>Paketler</span>
+          <i data-lucide="image" class="w-3.5 h-3.5"></i> <span>Kaynak Paketleri</span>
         </button>
         <button onclick="switchContentType('help')" id="tab-help" class="px-3 py-1.5 rounded-lg text-amber-400 hover:text-amber-300 transition flex items-center gap-1.5 shrink-0">
-          <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> <span>Yardım</span>
+          <i data-lucide="youtube" class="w-3.5 h-3.5"></i> <span>Rehber & Videos</span>
         </button>
       </nav>
 
-      <!-- Right Actions: Admin Button -->
+      <!-- Mod Yükle Button -->
       <button 
-        onclick="handleAdminButtonClick()"
-        id="adminNavBtn"
-        class="flex items-center gap-1.5 bg-mc-card hover:bg-mc-border text-gray-300 px-3 py-1.5 rounded-xl text-xs font-bold transition border border-mc-border shrink-0 active:scale-95"
+        onclick="openUploadModal()"
+        class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-950/40 active:scale-95 shrink-0"
       >
-        <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-400"></i>
-        <span id="adminBtnText" class="hidden sm:inline">Admin Girişi</span>
+        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Mod Yükle</span>
       </button>
     </div>
   </header>
@@ -104,13 +119,13 @@
     <section id="heroBanner" class="relative rounded-2xl bg-gradient-to-r from-emerald-950/40 via-mc-card to-mc-card p-5 md:p-8 border border-mc-border overflow-hidden mb-6 shadow-xl">
       <div class="relative z-10 max-w-3xl">
         <span id="heroBadge" class="bg-emerald-500/10 text-emerald-400 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/20 inline-block mb-2">
-          Minecraft Mobil & PC Portalı
+          Minecraft Türkiye Mod & İçerik Rehberi
         </span>
         <h1 id="heroTitle" class="text-xl sm:text-3xl font-black text-white tracking-tight mb-2">
-          Minecraft Dünyanı En İyi Modlarla Güçlendir
+          McPusula ile Doğru Mod ve Shader'a Ulaşın
         </h1>
         <p id="heroDesc" class="text-gray-400 text-xs sm:text-sm mb-2 leading-relaxed">
-          Modrinth API destekli canlı sürüm kontrolü ile en güncel Mod, Shader ve Kaynak Paketlerini doğrudan indirin.
+          Sürüm uyumlulukları test edilmiş en popüler Modlar, Shaderlar ve Kaynak Paketleri bir arada.
         </p>
       </div>
     </section>
@@ -122,14 +137,14 @@
         <input 
           type="text" 
           id="searchInput" 
-          placeholder="Mod veya içerik ara..." 
+          placeholder="İçerik veya geliştirici ara..." 
           oninput="handleSearch()"
           class="w-full pl-9 pr-3 py-2 bg-mc-card border border-mc-border rounded-xl text-xs focus:outline-none focus:border-emerald-500 text-gray-200 placeholder-gray-500"
         >
       </div>
     </div>
 
-    <!-- Content Section Header & Filter Controls -->
+    <!-- Filters Section -->
     <div id="filterSection" class="flex flex-wrap items-center justify-between gap-3 mb-6 bg-mc-card p-3 rounded-xl border border-mc-border shadow-lg">
       <div class="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
         <button onclick="setFilter('loader', 'all')" id="btn-loader-all" class="filter-loader-btn active px-3 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white transition">Tümü</button>
@@ -138,7 +153,7 @@
       </div>
 
       <div class="flex items-center gap-2 w-full sm:w-auto justify-between">
-        <select id="versionSelect" onchange="setFilter('version', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-2.5 py-1 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 font-medium flex-1 sm:flex-none">
+        <select id="versionSelect" onchange="setFilter('version', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-2.5 py-1 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 font-medium">
           <option value="all">Tüm Sürümler</option>
           <option value="1.20.4">1.20.4</option>
           <option value="1.20.1">1.20.1</option>
@@ -146,7 +161,7 @@
           <option value="1.16.5">1.16.5</option>
         </select>
 
-        <select id="sortSelect" onchange="setFilter('sort', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-2.5 py-1 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 font-medium flex-1 sm:flex-none">
+        <select id="sortSelect" onchange="setFilter('sort', this.value)" class="bg-mc-bg border border-mc-border rounded-xl px-2.5 py-1 text-xs text-gray-200 focus:outline-none focus:border-emerald-500 font-medium">
           <option value="downloads">En Çok İndirilen</option>
           <option value="rating">En Yüksek Puanlı</option>
         </select>
@@ -158,139 +173,149 @@
       <div class="flex items-center justify-between mb-3">
         <h2 id="gridSectionTitle" class="text-base font-extrabold text-white flex items-center gap-2">
           <i data-lucide="grid" class="w-4 h-4 text-emerald-500"></i>
-          <span>İçerikler</span>
+          <span>Kütüphane</span>
         </h2>
         <span id="contentCount" class="text-[11px] text-gray-400 font-semibold">0 içerik</span>
       </div>
 
       <div id="itemGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <!-- Kartlar JS ile dinamik çizilir -->
+        <!-- Dynamic Cards -->
       </div>
     </div>
 
-    <!-- YARDIM ALANI -->
+    <!-- YARDIM & @frealnds YOUTUBE KÜTÜPHANESİ -->
     <div id="helpSection" class="hidden space-y-6">
-      <div class="border-b border-mc-border pb-3">
-        <h2 class="text-xl font-black text-white flex items-center gap-2">
-          <i data-lucide="video" class="w-6 h-6 text-amber-400"></i>
-          Kurulum & Yardım Videoları
-        </h2>
-        <p class="text-gray-400 text-xs mt-1">Minecraft kurulum rehberleri ve eğitim içerikleri.</p>
+      <div class="border-b border-mc-border pb-3 flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-black text-white flex items-center gap-2">
+            <i data-lucide="youtube" class="w-6 h-6 text-red-500"></i>
+            @frealnds Rehber & Shorts Kütüphanesi
+          </h2>
+          <p class="text-gray-400 text-xs mt-1">Minecraft sunucu, mod ve chunk optimizasyon videoları.</p>
+        </div>
+        <a href="https://youtube.com/@frealnds" target="_blank" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Kanalı Aç
+        </a>
       </div>
-      <div id="videoGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      <div id="videoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
     </div>
 
   </main>
 
-  <!-- ================= GİZLİ ADMİN PANELİ MODAL ================= -->
-  <div id="adminModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-mc-card border border-mc-border rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
-      
-      <!-- Password Prompt View -->
-      <div id="adminAuthView" class="p-6 text-center">
-        <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3 text-emerald-400">
+  <!-- MOD YÜKLE / ÇOK YAKINDA MODAL -->
+  <div id="uploadModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-mc-card border border-mc-border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl p-6 text-center">
+      <div class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3 text-emerald-400">
+        <i data-lucide="sparkles" class="w-7 h-7"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-2">Çok Yakında!</h3>
+      <p class="text-gray-400 text-xs leading-relaxed mb-5">
+        Kullanıcıların kendi mod, shader ve paketlerini doğrudan yükleyebileceği topluluk modülü hazırlanıyor.
+      </p>
+      <button onclick="closeUploadModal()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition">
+        Anladım
+      </button>
+    </div>
+  </div>
+
+  <!-- GİZLİ ADMİN PANELİ MODAL -->
+  <div id="adminModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-mc-card border border-mc-border rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-5">
+      <div id="adminAuthView" class="text-center">
+        <div class="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center mx-auto mb-3 text-emerald-400">
           <i data-lucide="shield-check" class="w-6 h-6"></i>
         </div>
-        <h3 class="text-lg font-extrabold text-white mb-1">Yönetici Paneli Girişi</h3>
-        <p class="text-gray-400 text-xs mb-4">Şifrenizi girerek içerik ekleme sistemine erişin.</p>
-        
-        <input 
-          type="password" 
-          id="adminPassInput" 
-          placeholder="Admin Şifresi..." 
-          class="w-full px-4 py-2.5 bg-mc-bg border border-mc-border rounded-xl text-sm focus:outline-none focus:border-emerald-500 text-white mb-4 text-center tracking-widest"
-        >
-        
+        <h3 class="text-base font-extrabold text-white mb-1">Yönetici Doğrulaması</h3>
+        <p class="text-gray-400 text-xs mb-4">Erişim anahtarını girin.</p>
+        <input type="password" id="adminPassInput" placeholder="Şifre..." class="w-full px-4 py-2 bg-mc-bg border border-mc-border rounded-xl text-xs text-white mb-4 text-center tracking-widest focus:outline-none focus:border-emerald-500">
         <div class="flex gap-2">
           <button onclick="closeAdminModal()" class="w-1/2 py-2 bg-mc-bg hover:bg-mc-border text-gray-300 font-bold text-xs rounded-xl">İptal</button>
-          <button onclick="verifyAdminPassword()" class="w-1/2 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg">Giriş Yap</button>
+          <button onclick="verifyAdminPassword()" class="w-1/2 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl">Giriş</button>
         </div>
       </div>
 
-      <!-- Admin Panel Actions -->
-      <div id="adminDashboardView" class="p-5 hidden">
-        <div class="flex items-center justify-between border-b border-mc-border pb-3 mb-4">
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
+      <div id="adminDashboardView" class="hidden">
+        <div class="flex items-center justify-between border-b border-mc-border pb-3 mb-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Yönetici İçerik Paneli
+            İçerik Ekleme Paneli
           </h3>
-          <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+          <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
-
-        <form id="addContentForm" onsubmit="handleAddNewContent(event)" class="space-y-3 text-xs">
+        <form onsubmit="handleAddNewContent(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block text-gray-400 font-bold mb-1">İçerik Türü</label>
-            <select id="newType" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500">
+            <label class="block text-gray-400 font-bold mb-1">Kategori</label>
+            <select id="newType" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
               <option value="mods">Mod</option>
               <option value="shaders">Shader</option>
-              <option value="textures">Kaynak Paketi (Texture Pack)</option>
-              <option value="videos">Yardım Videosu</option>
+              <option value="textures">Kaynak Paketi</option>
+              <option value="videos">YouTube Rehber Videosu</option>
             </select>
           </div>
-
           <div>
             <label class="block text-gray-400 font-bold mb-1">Başlık</label>
-            <input type="text" id="newTitle" required placeholder="Örn: Complementary Shaders" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500">
+            <input type="text" id="newTitle" required placeholder="Başlık" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
           </div>
-
           <div>
-            <label class="block text-emerald-400 font-bold mb-1">Modrinth Slug / ID (Opsiyonel)</label>
-            <input type="text" id="newSlug" placeholder="Örn: sodium veya iris" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500">
+            <label class="block text-gray-400 font-bold mb-1">Açıklama / YouTube ID veya Embed Linki</label>
+            <textarea id="newDesc" required rows="2" placeholder="Detay veya embed linki..." class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white"></textarea>
           </div>
-
-          <div>
-            <label class="block text-gray-400 font-bold mb-1">Açıklama / YouTube Embed Linki</label>
-            <textarea id="newDesc" required rows="2" placeholder="Açıklama veya https://www.youtube.com/embed/..." class="w-full bg-mc-bg border border-mc-border rounded-xl p-2.5 text-white focus:outline-none focus:border-emerald-500"></textarea>
-          </div>
-
-          <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition shadow-lg mt-2">
-            Yayınla
-          </button>
+          <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition">Yayınla</button>
         </form>
       </div>
-
     </div>
   </div>
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-xs font-bold">
     <i data-lucide="check-circle" class="w-4 h-4"></i>
-    <span id="toastMessage">İşlem tamamlandı!</span>
+    <span id="toastMessage">İşlem başarılı!</span>
   </div>
 
   <footer class="border-t border-mc-border bg-mc-bg/40 py-4 text-center text-[11px] text-gray-500">
-    <p>© 2026 CraftMods Hub - Güvenli Minecraft Dağıtım Portalı.</p>
+    <p>© 2026 McPusula Hub. <span id="secretTrigger" onclick="handleSecretClick()" class="cursor-default select-none">©</span> Tüm hakları saklıdır.</p>
   </footer>
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <!-- ================= JAVASCRIPT ================= -->
   <script>
     const ADMIN_PASSWORD = "craftmods2026";
     let isAdminAuthenticated = false;
+    let secretClickCount = 0;
+    let keySequence = [];
 
     let state = {
       activeTab: 'mods',
       filter: { loader: 'all', version: 'all', sort: 'downloads', search: '' }
     };
 
+    // Zenginleştirilmiş İçerik Veritabanı
     let itemsData = {
       mods: [
-        { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', supportedVersions: ['1.16.5', '1.20.1', '1.20.4'], downloads: 1850000, likes: 42000, modrinthSlug: 'sodium', icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', description: 'Gelişmiş render motoru. FPS hızını katlar.' },
-        { id: 'm2', title: 'Bobby Chunk Modu', author: 'Johni0702', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', supportedVersions: ['1.16.5', '1.20.1', '1.20.4'], downloads: 450000, likes: 12300, modrinthSlug: 'bobby', icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png', description: 'Sunucularda yüksek chunk render etmenizi sağlar.' }
+        { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 1850000, likes: 42000, icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', description: 'Gelişmiş render motoru. FPS hızını katlar.' },
+        { id: 'm2', title: 'Bobby Chunk Modu', author: 'Johni0702', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 450000, likes: 12300, icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png', description: 'Sunucularda yüksek chunk render etmenizi sağlar.' },
+        { id: 'm3', title: 'Create Automations', author: 'Simibubi', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 940000, likes: 31500, icon: 'https://cdn.modrinth.com/data/LN9MBDws/icon.png', description: 'Mühendislik çarkları ve otomatik üretim hatları.' },
+        { id: 'm4', title: 'Iris Shaders Engine', author: 'IrisTeam', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 1650000, likes: 39000, icon: 'https://cdn.modrinth.com/data/YL57xq9U/icon.png', description: 'Sodium uyumlu açık kaynaklı shader motoru.' },
+        { id: 'm5', title: 'Lithium Engine', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 1400000, likes: 35000, icon: 'https://cdn.modrinth.com/data/gvQqBUqZ/icon.png', description: 'Oyun içi fizik ve mob optimizasyon motoru.' }
       ],
       shaders: [
-        { id: 's1', title: 'Complementary Reimagined', author: 'EminGT', loader: 'Universal', versionRange: '1.14.4 - 1.20.4', supportedVersions: ['1.20.1', '1.20.4'], downloads: 3200000, likes: 85000, modrinthSlug: 'complementary-reimagined', icon: 'https://cdn.modrinth.com/data/l6IZNBfh/icon.png', description: 'Minecraft için mükemmel aydınlatma ve su efektleri.' }
+        { id: 's1', title: 'Complementary Reimagined', author: 'EminGT', loader: 'Universal', versionRange: '1.14.4 - 1.20.4', downloads: 3200000, likes: 85000, icon: 'https://cdn.modrinth.com/data/l6IZNBfh/icon.png', description: 'Gelişmiş ışıklandırma, atmosfer ve gölge Efektleri.' },
+        { id: 's2', title: 'BSL Shaders', author: 'CaptTatsu', loader: 'Universal', versionRange: '1.12.2 - 1.20.4', downloads: 2900000, likes: 62000, icon: 'https://cdn.modrinth.com/data/Q1WZqslH/icon.png', description: 'Sıcak tonlu gerçekçi ışıklandırma ve yumuşak gölgeler.' },
+        { id: 's3', title: 'SEUS Renewed', author: 'Cody Darr', loader: 'Universal', versionRange: '1.14.4 - 1.20.1', downloads: 2100000, likes: 49000, icon: 'https://cdn.modrinth.com/data/V2n7b10c/icon.png', description: 'Efsanevi gerçekçi su ve güneş ışığı atmosferi.' }
       ],
       textures: [
-        { id: 't1', title: 'Bare Bones', author: 'RobotPanda', loader: 'Vanilla', versionRange: '1.16.5 - 1.20.4', supportedVersions: ['1.20.1', '1.20.4'], downloads: 1400000, likes: 31000, modrinthSlug: 'bare-bones', icon: 'https://placehold.co/100x100/34d399/ffffff?text=BareBones', description: 'Resmi fragmanlardaki canlı ve sade piksel görünümü.' }
+        { id: 't1', title: 'Bare Bones Pack', author: 'RobotPanda', loader: 'Vanilla', versionRange: '1.16.5 - 1.20.4', downloads: 1400000, likes: 31000, icon: 'https://cdn.modrinth.com/data/1K22yd39/icon.png', description: 'Resmi Minecraft fragmanlarındaki canlı ve sade piksel stili.' },
+        { id: 't2', title: 'Faithful 32x', author: 'FaithfulTeam', loader: 'Vanilla', versionRange: '1.8.9 - 1.20.4', downloads: 4100000, likes: 92000, icon: 'https://cdn.modrinth.com/data/n245V6oZ/icon.png', description: 'Orijinal Minecraft dokularının yüksek çözünürlüklü hali.' }
       ],
       videos: [
-        { id: 'v1', title: 'Fabric & Mod Kurulum Rehberi', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: 'Fabric Loader ve Sodium kurulumu.' }
+        { id: 'v1', title: 'Minecraft Exaroton & Aternos Sunucu İpuçları', url: 'https://www.youtube.com/embed/videoseries?list=PLfrealnds', desc: '@frealnds YouTube rehber serisinden öne çıkanlar.' },
+        { id: 'v2', title: 'Bobby Modu İle Sınırsız Chunk Render Etme', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: 'Sunucu görüş mesafesi engelini aşma rehberi.' }
       ]
     };
 
     window.onload = () => {
       renderCurrentView();
       lucide.createIcons();
+      setupSecretKeyListeners();
     };
 
     function switchContentType(type) {
@@ -298,11 +323,9 @@
       ['mods', 'shaders', 'textures', 'help'].forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         if(btn) {
-          if (t === type) {
-            btn.className = "px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0 font-bold";
-          } else {
-            btn.className = "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0";
-          }
+          btn.className = (t === type)
+            ? "px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0 font-bold"
+            : "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0";
         }
       });
       renderCurrentView();
@@ -323,33 +346,6 @@
         mainGridContainer.classList.remove('hidden');
         filterSection.classList.remove('hidden');
         renderGridItems();
-      }
-    }
-
-    async function fetchModrinthVersions(slug, itemId) {
-      showToast('Modrinth API taranıyor...');
-      try {
-        const response = await fetch(`https://api.modrinth.com/v2/project/${slug}/version`);
-        if (!response.ok) throw new Error('API Hatası');
-        const data = await response.json();
-        
-        let allGameVersions = new Set();
-        data.forEach(ver => {
-          if (ver.game_versions) ver.game_versions.forEach(gv => allGameVersions.add(gv));
-        });
-
-        const versionArray = Array.from(allGameVersions).sort();
-        if (versionArray.length > 0) {
-          const rangeStr = `${versionArray[0]} - ${versionArray[versionArray.length - 1]}`;
-          const targetItem = itemsData[state.activeTab].find(i => i.id === itemId);
-          if (targetItem) {
-            targetItem.versionRange = rangeStr;
-            renderCurrentView();
-            showToast(`Sürüm güncellendi: ${rangeStr}`);
-          }
-        }
-      } catch (err) {
-        showToast('Sürüm bilgisi çekilemedi.');
       }
     }
 
@@ -374,7 +370,7 @@
         card.innerHTML = `
           <div>
             <div class="flex items-start gap-2.5 mb-2.5">
-              <img src="${item.icon}" alt="${item.title}" class="w-10 h-10 rounded-lg object-cover border border-mc-border bg-mc-bg">
+              <img src="${item.icon}" alt="${item.title}" onerror="this.src='https://placehold.co/100x100/10b981/ffffff?text=MC'" class="w-10 h-10 rounded-lg object-cover border border-mc-border bg-mc-bg">
               <div class="overflow-hidden">
                 <h3 class="font-bold text-white group-hover:text-emerald-400 transition truncate text-xs">${item.title}</h3>
                 <p class="text-[10px] text-gray-400 truncate">Geliştirici: <span class="text-gray-300">${item.author || 'Topluluk'}</span></p>
@@ -389,14 +385,11 @@
                 <i data-lucide="tag" class="w-2.5 h-2.5"></i> ${item.versionRange}
               </span>
             </div>
-
             <div class="flex items-center justify-between pt-2 border-t border-mc-border text-[11px]">
-              ${item.modrinthSlug ? `
-                <button onclick="fetchModrinthVersions('${item.modrinthSlug}', '${item.id}')" class="text-[9px] text-teal-400 hover:underline flex items-center gap-0.5 font-semibold">
-                  <i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i> Oto-Sürüm
-                </button>
-              ` : '<span></span>'}
-              <button class="bg-mc-bg hover:bg-emerald-600 hover:text-white text-emerald-400 px-2.5 py-1 rounded-lg border border-mc-border transition font-bold text-[11px]">
+              <span class="text-[10px] text-gray-400 flex items-center gap-1">
+                <i data-lucide="download" class="w-3 h-3 text-emerald-400"></i> ${(item.downloads/1000).toFixed(0)}k
+              </span>
+              <button onclick="showToast('${item.title} indiriliyor...')" class="bg-mc-bg hover:bg-emerald-600 hover:text-white text-emerald-400 px-3 py-1 rounded-lg border border-mc-border transition font-bold text-[11px]">
                 İndir
               </button>
             </div>
@@ -424,7 +417,27 @@
       });
     }
 
-    function handleAdminButtonClick() {
+    // Gizli Giriş Yolları (A-D-M-I-N tuş kombinasyonu veya © simgesine 3 tık)
+    function setupSecretKeyListeners() {
+      window.addEventListener('keydown', (e) => {
+        keySequence.push(e.key.toLowerCase());
+        if (keySequence.length > 5) keySequence.shift();
+        if (keySequence.join('') === 'admin') {
+          keySequence = [];
+          openAdminModal();
+        }
+      });
+    }
+
+    function handleSecretClick() {
+      secretClickCount++;
+      if (secretClickCount >= 3) {
+        secretClickCount = 0;
+        openAdminModal();
+      }
+    }
+
+    function openAdminModal() {
       document.getElementById('adminModal').classList.remove('hidden');
       if (isAdminAuthenticated) {
         document.getElementById('adminAuthView').classList.add('hidden');
@@ -441,10 +454,9 @@
         isAdminAuthenticated = true;
         document.getElementById('adminAuthView').classList.add('hidden');
         document.getElementById('adminDashboardView').classList.remove('hidden');
-        document.getElementById('adminBtnText').innerText = "Admin Paneli";
-        showToast("Giriş başarılı!");
+        showToast("Giriş Başarılı!");
       } else {
-        showToast("Hatalı şifre!");
+        showToast("Hatalı Parola!");
       }
     }
 
@@ -452,33 +464,35 @@
       document.getElementById('adminModal').classList.add('hidden');
     }
 
+    function openUploadModal() {
+      document.getElementById('uploadModal').classList.remove('hidden');
+    }
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.add('hidden');
+    }
+
     function handleAddNewContent(e) {
       e.preventDefault();
       if (!isAdminAuthenticated) return;
-
       const type = document.getElementById('newType').value;
       const title = document.getElementById('newTitle').value;
-      const slug = document.getElementById('newSlug').value;
       const desc = document.getElementById('newDesc').value;
 
       if (type === 'videos') {
-        itemsData.videos.push({ id: 'v' + Date.now(), title, url: desc, desc: 'Admin ekledi.' });
+        itemsData.videos.push({ id: 'v' + Date.now(), title, url: desc, desc: 'Eklendi.' });
       } else {
         itemsData[type].push({
           id: 'item_' + Date.now(),
           title,
           author: 'Admin',
           loader: 'Universal',
-          versionRange: 'Tüm Sürümler',
-          supportedVersions: ['1.20.1'],
-          downloads: 1,
-          likes: 1,
-          modrinthSlug: slug || null,
+          versionRange: '1.16.5 - 1.20.4',
+          downloads: 100,
+          likes: 10,
           icon: 'https://placehold.co/100x100/10b981/ffffff?text=' + encodeURIComponent(title.substring(0, 3)),
           description: desc
         });
       }
-
       showToast("Yayınlandı!");
       closeAdminModal();
       renderCurrentView();

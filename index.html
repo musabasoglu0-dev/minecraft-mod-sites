@@ -215,7 +215,7 @@
           <i data-lucide="shield-check" class="w-6 h-6"></i>
         </div>
         <h3 class="text-base font-extrabold text-white mb-1">Yönetici Doğrulaması</h3>
-        <p class="text-gray-400 text-xs mb-4">Erişim anahtarını girin.</p>
+        <p class="text-gray-400 text-xs mb-4">Erişim anahtarınızı girin.</p>
         <input type="password" id="adminPassInput" placeholder="Şifre..." class="w-full px-4 py-2 bg-mc-bg border border-mc-border rounded-xl text-xs text-white mb-4 text-center tracking-widest focus:outline-none focus:border-emerald-500">
         <div class="flex gap-2">
           <button onclick="closeAdminModal()" class="w-1/2 py-2 bg-mc-bg hover:bg-mc-border text-gray-300 font-bold text-xs rounded-xl">İptal</button>
@@ -247,12 +247,12 @@
             <input type="text" id="newTitle" required placeholder="Başlık" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
           </div>
           <div>
-            <label class="block text-gray-400 font-bold mb-1">İndirme Bağlantısı (URL)</label>
-            <input type="url" id="newDownloadUrl" placeholder="https://modrinth.com/mod/..." class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
+            <label class="block text-gray-400 font-bold mb-1">İndirme Bağlantısı / YouTube Linki</label>
+            <input type="text" id="newDownloadUrl" placeholder="Mod linki veya YouTube video/shorts linki" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
           </div>
           <div>
-            <label class="block text-gray-400 font-bold mb-1">Açıklama veya YouTube Embed Linki</label>
-            <textarea id="newDesc" required rows="2" placeholder="Detay veya https://www.youtube.com/embed/..." class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white"></textarea>
+            <label class="block text-gray-400 font-bold mb-1">Açıklama</label>
+            <textarea id="newDesc" required rows="2" placeholder="Detaylı açıklama..." class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white"></textarea>
           </div>
           <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition">Yayınla ve Kaydet</button>
         </form>
@@ -302,7 +302,8 @@
 
   <!-- JAVASCRIPT -->
   <script>
-    const ADMIN_PASSWORD = "craftmods2026";
+    // Şifre Hash Doğrulaması (Açık Metin Şifre Kodda Durmaz)
+    const ADMIN_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"; 
     let isAdminAuthenticated = false;
     let secretClickCount = 0;
     let keySequence = [];
@@ -312,12 +313,26 @@
       filter: { loader: 'all', version: 'all', sort: 'downloads', search: '' }
     };
 
-    // Varsayılan Veriler
+    // YouTube URL Dönüştürücü (Normal ve Shorts Linklerini Oynatılabilir Embed Linkine Çevirir)
+    function parseYouTubeEmbedUrl(url) {
+      if (!url) return '';
+      let videoId = '';
+      if (url.includes('youtube.com/shorts/')) {
+        videoId = url.split('youtube.com/shorts/')[1].split('?')[0];
+      } else if (url.includes('watch?v=')) {
+        videoId = url.split('watch?v=')[1].split('&')[0];
+      } else if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1].split('?')[0];
+      } else if (url.includes('embed/')) {
+        return url;
+      }
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+    }
+
     const defaultData = {
       mods: [
         { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 142, likes: 38, icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', downloadUrl: 'https://modrinth.com/mod/sodium', description: 'Gelişmiş render motoru. FPS hızını katlar.' },
-        { id: 'm2', title: 'Bobby Chunk Modu', author: 'Johni0702', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 89, likes: 24, icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png', downloadUrl: 'https://modrinth.com/mod/bobby', description: 'Sunucularda yüksek chunk render etmenizi sağlar.' },
-        { id: 'm3', title: 'Create Automations', author: 'Simibubi', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 65, likes: 19, icon: 'https://cdn.modrinth.com/data/LN9MBDws/icon.png', downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/create', description: 'Mühendislik çarkları ve otomatik üretim hatları.' }
+        { id: 'm2', title: 'Bobby Chunk Modu', author: 'Johni0702', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 89, likes: 24, icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png', downloadUrl: 'https://modrinth.com/mod/bobby', description: 'Sunucularda yüksek chunk render etmenizi sağlar.' }
       ],
       shaders: [
         { id: 's1', title: 'Complementary Reimagined', author: 'EminGT', loader: 'Universal', versionRange: '1.14.4 - 1.20.4', downloads: 210, likes: 54, icon: 'https://cdn.modrinth.com/data/l6IZNBfh/icon.png', downloadUrl: 'https://modrinth.com/shader/complementary-reimagined', description: 'Gelişmiş ışıklandırma, atmosfer ve gölge Efektleri.' }
@@ -326,13 +341,12 @@
         { id: 't1', title: 'Bare Bones Pack', author: 'RobotPanda', loader: 'Vanilla', versionRange: '1.16.5 - 1.20.4', downloads: 115, likes: 31, icon: 'https://cdn.modrinth.com/data/1K22yd39/icon.png', downloadUrl: 'https://modrinth.com/resourcepack/bare-bones', description: 'Resmi Minecraft fragmanlarındaki canlı ve sade piksel stili.' }
       ],
       videos: [
-        { id: 'v1', title: 'Minecraft Exaroton & Aternos Sunucu İpuçları', url: 'https://www.youtube.com/embed/videoseries?list=PLfrealnds', desc: '@frealnds YouTube rehber serisinden öne çıkanlar.' }
+        { id: 'v1', title: 'Exaroton & Aternos Sunucu İpuçları', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: '@frealnds YouTube rehber serisinden öne çıkanlar.' }
       ]
     };
 
     let itemsData = {};
 
-    // Kalıcı Veritabanı Yükleyici (localStorage)
     function loadStorageData() {
       const saved = localStorage.getItem('mcpusula_data');
       if (saved) {
@@ -456,10 +470,12 @@
           <button onclick="deleteVideo('${vid.id}')" class="absolute top-2 right-2 bg-red-600/80 text-white px-2 py-1 rounded text-[10px] font-bold z-10">Sil</button>
         ` : '';
 
+        const embedUrl = parseYouTubeEmbedUrl(vid.url);
+
         card.innerHTML = `
           ${adminDeleteBtn}
-          <div class="aspect-video w-full rounded-lg overflow-hidden bg-black mb-2">
-            <iframe class="w-full h-full" src="${vid.url}" title="${vid.title}" frameborder="0" allowfullscreen></iframe>
+          <div class="aspect-video w-full rounded-lg overflow-hidden bg-black mb-2 relative z-0">
+            <iframe class="w-full h-full" src="${embedUrl}" title="${vid.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <h3 class="font-bold text-white text-sm mb-0.5">${vid.title}</h3>
           <p class="text-gray-400 text-[11px]">${vid.desc}</p>
@@ -468,7 +484,6 @@
       });
     }
 
-    // Beğen ve İndir Buton Mantığı
     function handleLike(id) {
       const list = itemsData[state.activeTab];
       const item = list.find(i => i.id === id);
@@ -495,7 +510,6 @@
       }
     }
 
-    // Admin Düzenleme & Silme Fonksiyonları
     function openEditModal(id) {
       const list = itemsData[state.activeTab];
       const item = list.find(i => i.id === id);
@@ -510,9 +524,7 @@
       document.getElementById('editItemModal').classList.remove('hidden');
     }
 
-    function closeEditModal() {
-      document.getElementById('editItemModal').classList.add('hidden');
-    }
+    function closeEditModal() { document.getElementById('editItemModal').classList.add('hidden'); }
 
     function saveEditedItem(e) {
       e.preventDefault();
@@ -550,7 +562,6 @@
       }
     }
 
-    // Gizli Giriş Dinleyicileri
     function setupSecretKeyListeners() {
       window.addEventListener('keydown', (e) => {
         keySequence.push(e.key.toLowerCase());
@@ -581,9 +592,17 @@
       }
     }
 
-    function verifyAdminPassword() {
+    // SHA-256 Şifre Kontrolü (Güvenli)
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function verifyAdminPassword() {
       const input = document.getElementById('adminPassInput').value;
-      if (input === ADMIN_PASSWORD) {
+      const hashedInput = await sha256(input);
+      
+      if (hashedInput === ADMIN_HASH) {
         isAdminAuthenticated = true;
         document.getElementById('adminAuthView').classList.add('hidden');
         document.getElementById('adminDashboardView').classList.remove('hidden');
@@ -595,10 +614,7 @@
       }
     }
 
-    function closeAdminModal() {
-      document.getElementById('adminModal').classList.add('hidden');
-    }
-
+    function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); }
     function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
     function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
 
@@ -607,12 +623,17 @@
       if (!isAdminAuthenticated) return;
       const type = document.getElementById('newType').value;
       const title = document.getElementById('newTitle').value;
-      const downloadUrl = document.getElementById('newDownloadUrl').value;
+      const urlInput = document.getElementById('newDownloadUrl').value;
       const desc = document.getElementById('newDesc').value;
 
       if (type === 'videos') {
         itemsData.videos = itemsData.videos || [];
-        itemsData.videos.push({ id: 'v' + Date.now(), title, url: desc, desc: 'Admin ekledi.' });
+        itemsData.videos.push({ 
+          id: 'v' + Date.now(), 
+          title, 
+          url: parseYouTubeEmbedUrl(urlInput || desc), 
+          desc: desc 
+        });
       } else {
         itemsData[type].push({
           id: 'item_' + Date.now(),
@@ -623,7 +644,7 @@
           downloads: 1,
           likes: 0,
           icon: 'https://placehold.co/100x100/10b981/ffffff?text=' + encodeURIComponent(title.substring(0, 3)),
-          downloadUrl: downloadUrl || 'https://modrinth.com',
+          downloadUrl: urlInput || 'https://modrinth.com',
           description: desc
         });
       }

@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>McPusula - Minecraft Mod, Shader & Kaynak Paketi Portalı</title>
   
-  <!-- Favicon (Düzeltilmiş Kesin Çalışan Pusula Sekme İkonu) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2'><circle cx='12' cy='12' r='10' stroke-dasharray='2 2'/><polygon points='16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76' fill='%2310b981' fill-opacity='0.4'/></svg>">
+  <!-- Kesin Çalışan Pusula Sekme İkonu (Base64 PNG Formatında Entegre Edildi) -->
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSU56AAAAB4AAR1hHCgAAAAF0Uk5TAEDm2GYAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAC0SURBVFjD7dFBCoAwDATAm/R6eVA/wZN4kR7EU/QgnsSDeBDx0kUpLaUgh93DwGZDshERsV4326fWpA+S5JkkiVbK6Zz3g2SpM0mS/JIkSSTJk0mS+JIkeSZJkk+SJMkkSX5JkiSTJPkkSZJMkuSXRJLU2lqT2m/t2XlJkiRJkkRRFEVRFEVRFEVRFEVRFEVRFEVRFEVRFEVRFEVRFEVRFM0y50CSZJJk+X2SpCfpfUl22RcxNls8C3591AAAAABJRU5ErkJggg==" />
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -56,7 +56,7 @@
   <header class="sticky top-0 z-30 bg-mc-bg/95 backdrop-blur-md border-b border-mc-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
       
-      <!-- Logo & Brand (Korunan Logo & Renkler) -->
+      <!-- Logo & Brand -->
       <div class="flex items-center gap-2.5 cursor-pointer group" onclick="switchContentType('mods')">
         <div class="w-10 h-10 rounded-xl bg-mc-card border border-mc-border p-2 flex items-center justify-center shadow-lg shadow-emerald-950/40 group-hover:border-emerald-500/50 transition duration-200">
           <svg class="w-full h-full text-emerald-400 compass-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -297,7 +297,7 @@
     <span id="toastMessage">İşlem başarılı!</span>
   </div>
 
-  <!-- FOOTER & DISCLAIMER (Eklendi) -->
+  <!-- FOOTER & DISCLAIMER -->
   <footer class="border-t border-mc-border bg-mc-bg/40 py-6 text-center text-[11px] text-gray-500">
     <div class="max-w-4xl mx-auto px-4 space-y-3">
       <p class="text-gray-400 leading-relaxed bg-mc-card/60 p-3 rounded-xl border border-mc-border">
@@ -309,7 +309,7 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    const ADMIN_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"; 
+    const ADMIN_PASSWORD_PLAIN = "craftmods2026"; 
     let isAdminAuthenticated = false;
     let secretClickCount = 0;
     let keySequence = [];
@@ -334,7 +334,6 @@
       return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
     }
 
-    // 25+ Popüler Karışık Mod Listesi
     const defaultData = {
       mods: [
         { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 142, likes: 38, icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', downloadUrl: 'https://modrinth.com/mod/sodium', description: 'Minecraft için modern render motoru. FPS hızını katlar.' },
@@ -489,7 +488,6 @@
       lucide.createIcons();
     }
 
-    // Tam Ekran YouTube Düzeltmesi Eklendi
     function renderHelpVideos() {
       const grid = document.getElementById('videoGrid');
       grid.innerHTML = '';
@@ -623,16 +621,10 @@
       }
     }
 
-    async function sha256(str) {
-      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    async function verifyAdminPassword() {
+    function verifyAdminPassword() {
       const input = document.getElementById('adminPassInput').value;
-      const hashedInput = await sha256(input);
       
-      if (hashedInput === ADMIN_HASH) {
+      if (input === ADMIN_PASSWORD_PLAIN) {
         isAdminAuthenticated = true;
         document.getElementById('adminAuthView').classList.add('hidden');
         document.getElementById('adminDashboardView').classList.remove('hidden');

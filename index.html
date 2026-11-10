@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>McPusula - Minecraft Mod, Shader & Kaynak Paketi Portalı</title>
   
-  <!-- Favicon (Sekme İkonu - Pusula Simgesi) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2'><circle cx='12' cy='12' r='10'/><polygon points='16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76'/></svg>">
+  <!-- Favicon (Düzeltilmiş Kesin Çalışan Pusula Sekme İkonu) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2'><circle cx='12' cy='12' r='10' stroke-dasharray='2 2'/><polygon points='16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76' fill='%2310b981' fill-opacity='0.4'/></svg>">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -56,7 +56,7 @@
   <header class="sticky top-0 z-30 bg-mc-bg/95 backdrop-blur-md border-b border-mc-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
       
-      <!-- Logo & Brand -->
+      <!-- Logo & Brand (Korunan Logo & Renkler) -->
       <div class="flex items-center gap-2.5 cursor-pointer group" onclick="switchContentType('mods')">
         <div class="w-10 h-10 rounded-xl bg-mc-card border border-mc-border p-2 flex items-center justify-center shadow-lg shadow-emerald-950/40 group-hover:border-emerald-500/50 transition duration-200">
           <svg class="w-full h-full text-emerald-400 compass-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -74,21 +74,21 @@
 
       <!-- Navigation Tabs -->
       <nav class="flex items-center gap-1 bg-mc-card/80 p-1 rounded-xl border border-mc-border text-xs font-bold overflow-x-auto max-w-[50%] sm:max-w-none">
-        <button onclick="switchContentType('mods')" id="tab-mods" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0 font-bold">
+        <button onclick="switchContentType('mods')" id="tab-mods" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0 font-bold">
           <i data-lucide="layers" class="w-3.5 h-3.5"></i> <span>Modlar</span>
         </button>
-        <button onclick="switchContentType('shaders')" id="tab-shaders" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0">
+        <button onclick="switchContentType('shaders')" id="tab-shaders" class="px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0">
           <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> <span>Shaderlar</span>
         </button>
-        <button onclick="switchContentType('textures')" id="tab-textures" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0">
+        <button onclick="switchContentType('textures')" id="tab-textures" class="px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0">
           <i data-lucide="image" class="w-3.5 h-3.5"></i> <span>Kaynak Paketleri</span>
         </button>
-        <button onclick="switchContentType('help')" id="tab-help" class="px-3 py-1.5 rounded-lg text-amber-400 hover:text-amber-300 transition flex items-center gap-1.5 shrink-0">
+        <button onclick="switchContentType('help')" id="tab-help" class="px-3.5 py-1.5 rounded-lg text-amber-400 hover:text-amber-300 transition flex items-center gap-1.5 shrink-0">
           <i data-lucide="youtube" class="w-3.5 h-3.5"></i> <span>Rehber & Videos</span>
         </button>
       </nav>
 
-      <!-- Upload / Admin Actions -->
+      <!-- Action Buttons -->
       <div class="flex items-center gap-2">
         <button id="adminStatusBadge" onclick="openAdminModal()" class="hidden bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1">
           <i data-lucide="shield" class="w-3.5 h-3.5"></i> Admin Modu
@@ -139,6 +139,7 @@
         <button onclick="setFilter('loader', 'all')" id="btn-loader-all" class="filter-loader-btn active px-3 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white transition">Tümü</button>
         <button onclick="setFilter('loader', 'Fabric')" id="btn-loader-Fabric" class="filter-loader-btn px-3 py-1 rounded-lg text-xs font-bold bg-mc-bg hover:bg-mc-border text-gray-300 transition">Fabric</button>
         <button onclick="setFilter('loader', 'Forge')" id="btn-loader-Forge" class="filter-loader-btn px-3 py-1 rounded-lg text-xs font-bold bg-mc-bg hover:bg-mc-border text-gray-300 transition">Forge</button>
+        <button onclick="setFilter('loader', 'NeoForge')" id="btn-loader-NeoForge" class="filter-loader-btn px-3 py-1 rounded-lg text-xs font-bold bg-mc-bg hover:bg-mc-border text-gray-300 transition">NeoForge</button>
       </div>
 
       <div class="flex items-center gap-2 w-full sm:w-auto justify-between">
@@ -178,7 +179,7 @@
         <div>
           <h2 class="text-xl font-black text-white flex items-center gap-2">
             <i data-lucide="youtube" class="w-6 h-6 text-red-500"></i>
-            @frealnds Rehber & Shorts Kütüphanesi
+            @frealnds Rehber & Videos Kütüphanesi
           </h2>
           <p class="text-gray-400 text-xs mt-1">Minecraft sunucu, mod ve chunk optimizasyon videoları.</p>
         </div>
@@ -260,7 +261,7 @@
     </div>
   </div>
 
-  <!-- İÇERİK DÜZENLEME MODAL (ADMİN İÇİN) -->
+  <!-- İÇERİK DÜZENLEME MODAL -->
   <div id="editItemModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-mc-card border border-mc-border rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-5 space-y-3">
       <div class="flex items-center justify-between border-b border-mc-border pb-2">
@@ -296,13 +297,18 @@
     <span id="toastMessage">İşlem başarılı!</span>
   </div>
 
-  <footer class="border-t border-mc-border bg-mc-bg/40 py-4 text-center text-[11px] text-gray-500">
-    <p>© 2026 McPusula Hub. <span id="secretTrigger" onclick="handleSecretClick()" class="cursor-default select-none">©</span> Tüm hakları saklıdır.</p>
+  <!-- FOOTER & DISCLAIMER (Eklendi) -->
+  <footer class="border-t border-mc-border bg-mc-bg/40 py-6 text-center text-[11px] text-gray-500">
+    <div class="max-w-4xl mx-auto px-4 space-y-3">
+      <p class="text-gray-400 leading-relaxed bg-mc-card/60 p-3 rounded-xl border border-mc-border">
+        Bu platform <strong>@frealnds</strong> tarafından Minecraft Türkiye topluluğuna rehberlik etmek amacıyla yapılmış olup tamamen <strong>kazançsız ve gönüllü</strong> bir projedir. Sitede herhangi bir reklam, sponsorluk anlaşması veya ticari kazanç bulunmamaktadır. Minecraft Türkiye’nin pusulası olan bu platformda yalnızca mod, shader, kaynak paketi yönlendirmeleri ve rehber içerikleri sunulmaktadır.
+      </p>
+      <p>© 2026 McPusula Hub. <span id="secretTrigger" onclick="handleSecretClick()" class="cursor-default select-none text-emerald-500/50 hover:text-emerald-400">©</span> Tüm hakları saklıdır.</p>
+    </div>
   </footer>
 
-  <!-- JAVASCRIPT -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Şifre Hash Doğrulaması (Açık Metin Şifre Kodda Durmaz)
     const ADMIN_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"; 
     let isAdminAuthenticated = false;
     let secretClickCount = 0;
@@ -313,7 +319,6 @@
       filter: { loader: 'all', version: 'all', sort: 'downloads', search: '' }
     };
 
-    // YouTube URL Dönüştürücü (Normal ve Shorts Linklerini Oynatılabilir Embed Linkine Çevirir)
     function parseYouTubeEmbedUrl(url) {
       if (!url) return '';
       let videoId = '';
@@ -329,10 +334,34 @@
       return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
     }
 
+    // 25+ Popüler Karışık Mod Listesi
     const defaultData = {
       mods: [
-        { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 142, likes: 38, icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', downloadUrl: 'https://modrinth.com/mod/sodium', description: 'Gelişmiş render motoru. FPS hızını katlar.' },
-        { id: 'm2', title: 'Bobby Chunk Modu', author: 'Johni0702', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 89, likes: 24, icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png', downloadUrl: 'https://modrinth.com/mod/bobby', description: 'Sunucularda yüksek chunk render etmenizi sağlar.' }
+        { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 142, likes: 38, icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', downloadUrl: 'https://modrinth.com/mod/sodium', description: 'Minecraft için modern render motoru. FPS hızını katlar.' },
+        { id: 'm2', title: 'Bobby Chunk Modu', author: 'Johni0702', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 89, likes: 24, icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png', downloadUrl: 'https://modrinth.com/mod/bobby', description: 'Aternos/Exaroton sunucularında görüş mesafesine takılmadan yüksek chunk çizimi sağlar.' },
+        { id: 'm3', title: 'Create Automations', author: 'Simibubi', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 65, likes: 19, icon: 'https://cdn.modrinth.com/data/LN9MBDws/icon.png', downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/create', description: 'Dönme gücü, çarklar ve otomatik fabrika hatları ekler.' },
+        { id: 'm4', title: 'Iris Shaders Engine', author: 'IrisTeam', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 120, likes: 45, icon: 'https://cdn.modrinth.com/data/YL57xq9U/icon.png', downloadUrl: 'https://modrinth.com/mod/iris', description: 'Sodium ile tam uyumlu çalışan yüksek performanslı gölge motoru.' },
+        { id: 'm5', title: 'Lithium Engine', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 95, likes: 31, icon: 'https://cdn.modrinth.com/data/gvQqBUqZ/icon.png', downloadUrl: 'https://modrinth.com/mod/lithium', description: 'Oyun içi fizik ve mob yapay zekasını optimize eden sunucu/istemci modu.' },
+        { id: 'm6', title: 'Just Enough Items (JEI)', author: 'mezz', loader: 'Forge', versionRange: '1.16.5 - 1.20.4', downloads: 210, likes: 88, icon: 'https://cdn.modrinth.com/data/u6dRKJwZ/icon.png', downloadUrl: 'https://modrinth.com/mod/jei', description: 'Eşya tariflerini ve kullanım alanlarını envanterde gösteren rehber mod.' },
+        { id: 'm7', title: 'Xaero\'s World Map', author: 'Xaero96', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 78, likes: 29, icon: 'https://cdn.modrinth.com/data/1eAoo2hA/icon.png', downloadUrl: 'https://modrinth.com/mod/xaeros-world-map', description: 'Tam ekran harita ve işaretleme (waypoint) modülü.' },
+        { id: 'm8', title: 'Sophisticated Backpacks', author: 'P3pp3rFly', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 54, likes: 18, icon: 'https://cdn.modrinth.com/data/alTEZ3wZ/icon.png', downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks', description: 'Geliştirilebilir ve taşınabilir sırt çantası modu.' },
+        { id: 'm9', title: 'AppleSkin', author: 'squeek502', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 160, likes: 62, icon: 'https://cdn.modrinth.com/data/12vOa769/icon.png', downloadUrl: 'https://modrinth.com/mod/appleskin', description: 'Yiyeceklerin ne kadar açlık ve doymuşluk verdiğini gösterir.' },
+        { id: 'm10', title: 'Waystones', author: 'BlayTheNinth', loader: 'Fabric', versionRange: '1.16.5 - 1.20.1', downloads: 41, likes: 15, icon: 'https://cdn.modrinth.com/data/wbzg2yuh/icon.png', downloadUrl: 'https://modrinth.com/mod/waystones', description: 'Dünyanın farklı yerlerine ışınlanma taşları ekler.' },
+        { id: 'm11', title: 'Clumps', author: 'Jaredbbb', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 83, likes: 33, icon: 'https://cdn.modrinth.com/data/4E06P8FP/icon.png', downloadUrl: 'https://modrinth.com/mod/clumps', description: 'XP kürelerini birleştirerek kasılmaları önler.' },
+        { id: 'm12', title: 'FerriteCore', author: 'malte0811', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 67, likes: 22, icon: 'https://cdn.modrinth.com/data/uXXizFIs/icon.png', downloadUrl: 'https://modrinth.com/mod/ferritecore', description: 'RAM kullanımını düşüren bellek optimizasyon modu.' },
+        { id: 'm13', title: 'Farmer\'s Delight', author: 'vectorwing', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 92, likes: 40, icon: 'https://cdn.modrinth.com/data/qjgWdG8C/icon.png', downloadUrl: 'https://modrinth.com/mod/farmers-delight', description: 'Yeni bitkiler, yemek pişirme ve tarım mekanikleri.' },
+        { id: 'm14', title: 'Biomes O\' Plenty', author: 'For 大陸', loader: 'NeoForge', versionRange: '1.16.5 - 1.20.1', downloads: 58, likes: 21, icon: 'https://placehold.co/100x100/fcc419/ffffff?text=Biomes', downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/biomes-o-plenty', description: 'Onlarca yeni özel biyom ve yapı taşları.' },
+        { id: 'm15', title: 'Journeymap', author: 'techbrew', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 135, likes: 50, icon: 'https://cdn.modrinth.com/data/wo5L4d50/icon.png', downloadUrl: 'https://modrinth.com/mod/journeymap', description: 'Oyun içi ve tarayıcı tabanlı haritalandırma.' },
+        { id: 'm16', title: 'Mouse Tweaks', author: 'YaLTeR', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 110, likes: 44, icon: 'https://cdn.modrinth.com/data/nS031wU0/icon.png', downloadUrl: 'https://modrinth.com/mod/mouse-tweaks', description: 'Fare tekerleği ile envanter yönetimini kolaylaştırır.' },
+        { id: 'm17', title: 'Skin Layers 3D', author: 'tr7zw', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 49, likes: 17, icon: 'https://cdn.modrinth.com/data/1b24l26b/icon.png', downloadUrl: 'https://modrinth.com/mod/3dskinlayers', description: 'Skin katmanlarına 3 boyutlu hacim kazandırır.' },
+        { id: 'm18', title: 'Better Animations', author: 'Fuzss', loader: 'Fabric', versionRange: '1.16.5 - 1.20.1', downloads: 37, likes: 12, icon: 'https://placehold.co/100x100/10b981/ffffff?text=Anim', downloadUrl: 'https://modrinth.com/mod/better-animations-collection', description: 'Mob ve hayvanlara gerçekçi eklem animasyonları ekler.' },
+        { id: 'm19', title: 'Krypton Network', author: 'Tux', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 44, likes: 16, icon: 'https://cdn.modrinth.com/data/fAL18fwA/icon.png', downloadUrl: 'https://modrinth.com/mod/krypton', description: 'Ağ trafiğini optimize ederek pingi azaltır.' },
+        { id: 'm20', title: 'Iron Chests', author: 'ProgWML6', loader: 'Forge', versionRange: '1.16.5 - 1.19.4', downloads: 30, likes: 9, icon: 'https://placehold.co/100x100/e8590c/ffffff?text=Chests', downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/iron-chests', description: 'Madenlerle geliştirilebilir geniş sandıklar.' },
+        { id: 'm21', title: 'Entity Culling', author: 'tr7zw', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 72, likes: 28, icon: 'https://cdn.modrinth.com/data/NNAgCjsB/icon.png', downloadUrl: 'https://modrinth.com/mod/entityculling', description: 'Görünmeyen mob kaplamalarını çizmeyerek FPS kazandırır.' },
+        { id: 'm22', title: 'Architectury API', author: 'shedaniel', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 180, likes: 70, icon: 'https://cdn.modrinth.com/data/lhDYURrr/icon.png', downloadUrl: 'https://modrinth.com/mod/architectury-api', description: 'Çoklu mod desteği sunan kütüphane modu.' },
+        { id: 'm23', title: 'ModernFix Engine', author: 'embeddedt', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 51, likes: 19, icon: 'https://cdn.modrinth.com/data/rIav7E48/icon.png', downloadUrl: 'https://modrinth.com/mod/modernfix', description: 'Bellek sızıntılarını ve açılış yavaşlıklarını giderir.' },
+        { id: 'm24', title: 'Controlling Keys', author: 'Jaredbbb', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 99, likes: 36, icon: 'https://cdn.modrinth.com/data/D41qwbfa/icon.png', downloadUrl: 'https://modrinth.com/mod/controlling', description: 'Tuş atamalarını aramanızı ve çakışmaları düzeltmenizi sağlar.' },
+        { id: 'm25', title: 'Dynamic Lights', author: 'AtomicStryker', loader: 'Fabric', versionRange: '1.16.5 - 1.20.1', downloads: 63, likes: 25, icon: 'https://placehold.co/100x100/10b981/ffffff?text=Light', downloadUrl: 'https://modrinth.com/mod/dynamic-lights', description: 'Eldeki meşalenin etrafı dinamik aydınlatmasını sağlar.' }
       ],
       shaders: [
         { id: 's1', title: 'Complementary Reimagined', author: 'EminGT', loader: 'Universal', versionRange: '1.14.4 - 1.20.4', downloads: 210, likes: 54, icon: 'https://cdn.modrinth.com/data/l6IZNBfh/icon.png', downloadUrl: 'https://modrinth.com/shader/complementary-reimagined', description: 'Gelişmiş ışıklandırma, atmosfer ve gölge Efektleri.' }
@@ -341,7 +370,7 @@
         { id: 't1', title: 'Bare Bones Pack', author: 'RobotPanda', loader: 'Vanilla', versionRange: '1.16.5 - 1.20.4', downloads: 115, likes: 31, icon: 'https://cdn.modrinth.com/data/1K22yd39/icon.png', downloadUrl: 'https://modrinth.com/resourcepack/bare-bones', description: 'Resmi Minecraft fragmanlarındaki canlı ve sade piksel stili.' }
       ],
       videos: [
-        { id: 'v1', title: 'Exaroton & Aternos Sunucu İpuçları', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: '@frealnds YouTube rehber serisinden öne çıkanlar.' }
+        { id: 'v1', title: 'Minecraft Bobby Modu Rehberi', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: '@frealnds YouTube kanalından chunk render artırma rehberi.' }
       ]
     };
 
@@ -374,8 +403,8 @@
         const btn = document.getElementById(`tab-${t}`);
         if(btn) {
           btn.className = (t === type)
-            ? "px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0 font-bold"
-            : "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0";
+            ? "px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0 font-bold"
+            : "px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition flex items-center gap-1.5 shrink-0";
         }
       });
       renderCurrentView();
@@ -442,6 +471,7 @@
               <span class="text-[9px] font-bold px-2 py-0.5 rounded border bg-mc-bg text-emerald-400 border-mc-border flex items-center gap-1">
                 <i data-lucide="tag" class="w-2.5 h-2.5"></i> ${item.versionRange}
               </span>
+              <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border bg-gray-800 text-gray-300 border-gray-700">${item.loader}</span>
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-mc-border text-[11px]">
               <div class="flex items-center gap-2 text-gray-400 text-[10px]">
@@ -459,6 +489,7 @@
       lucide.createIcons();
     }
 
+    // Tam Ekran YouTube Düzeltmesi Eklendi
     function renderHelpVideos() {
       const grid = document.getElementById('videoGrid');
       grid.innerHTML = '';
@@ -475,7 +506,7 @@
         card.innerHTML = `
           ${adminDeleteBtn}
           <div class="aspect-video w-full rounded-lg overflow-hidden bg-black mb-2 relative z-0">
-            <iframe class="w-full h-full" src="${embedUrl}" title="${vid.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe class="w-full h-full" src="${embedUrl}" title="${vid.title}" frameborder="0" allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
           <h3 class="font-bold text-white text-sm mb-0.5">${vid.title}</h3>
           <p class="text-gray-400 text-[11px]">${vid.desc}</p>
@@ -506,7 +537,7 @@
       if (url && url !== 'undefined') {
         window.open(url, '_blank');
       } else {
-        showToast('İndirme bağlantısı hazırlanıyor...');
+        showToast('İndirme bağlantısı bulunamadı.');
       }
     }
 
@@ -592,7 +623,6 @@
       }
     }
 
-    // SHA-256 Şifre Kontrolü (Güvenli)
     async function sha256(str) {
       const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
       return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');

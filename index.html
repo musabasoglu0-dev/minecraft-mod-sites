@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>McPusula - Minecraft Mod, Shader & Kaynak Paketi Portalı</title>
   
-  <!-- Kesin Çalışan Pusula Sekme İkonu (Base64 PNG Formatında Entegre Edildi) -->
+  <!-- Favicon (Kesin Çalışan Pusula Sekme İkonu) -->
   <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSU56AAAAB4AAR1hHCgAAAAF0Uk5TAEDm2GYAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAC0SURBVFjD7dFBCoAwDATAm/R6eVA/wZN4kR7EU/QgnsSDeBDx0kUpLaUgh93DwGZDshERsV4326fWpA+S5JkkiVbK6Zz3g2SpM0mS/JIkSSTJk0mS+JIkeSZJkk+SJMkkSX5JkiSTJPkkSZJMkuSXRJLU2lqT2m/t2XlJkiRJkkRRFEVRFEVRFEVRFEVRFEVRFEVRFEVRFEVRFEVRFEVRFM0y50CSZJJk+X2SpCfpfUl22RcxNls8C3591AAAAABJRU5ErkJggg==" />
   
   <!-- Tailwind CSS CDN -->
@@ -175,17 +175,19 @@
 
     <!-- YARDIM & @frealnds YOUTUBE KÜTÜPHANESİ -->
     <div id="helpSection" class="hidden space-y-6">
-      <div class="border-b border-mc-border pb-3 flex items-center justify-between">
+      <div class="border-b border-mc-border pb-3 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 class="text-xl font-black text-white flex items-center gap-2">
             <i data-lucide="youtube" class="w-6 h-6 text-red-500"></i>
-            @frealnds Rehber & Videos Kütüphanesi
+            @frealnds Rehber & Shorts Kütüphanesi
           </h2>
-          <p class="text-gray-400 text-xs mt-1">Minecraft sunucu, mod ve chunk optimizasyon videoları.</p>
+          <p class="text-gray-400 text-xs mt-1">Minecraft sunucu, Bobby mod ve FPS optimizasyonu dikey & yatay videoları.</p>
         </div>
-        <a href="https://youtube.com/@frealnds" target="_blank" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition">
-          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Kanalı Aç
-        </a>
+        <div class="flex items-center gap-2">
+          <a href="https://youtube.com/@frealnds" target="_blank" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition shadow-lg shadow-red-950/40">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> YouTube Kanalı
+          </a>
+        </div>
       </div>
       <div id="videoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
     </div>
@@ -240,7 +242,7 @@
               <option value="mods">Mod</option>
               <option value="shaders">Shader</option>
               <option value="textures">Kaynak Paketi</option>
-              <option value="videos">YouTube Rehber Videosu</option>
+              <option value="videos">YouTube Rehber / Shorts Videosu</option>
             </select>
           </div>
           <div>
@@ -249,7 +251,7 @@
           </div>
           <div>
             <label class="block text-gray-400 font-bold mb-1">İndirme Bağlantısı / YouTube Linki</label>
-            <input type="text" id="newDownloadUrl" placeholder="Mod linki veya YouTube video/shorts linki" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
+            <input type="text" id="newDownloadUrl" placeholder="Mod linki veya https://youtube.com/shorts/... linki" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
           </div>
           <div>
             <label class="block text-gray-400 font-bold mb-1">Açıklama</label>
@@ -319,21 +321,34 @@
       filter: { loader: 'all', version: 'all', sort: 'downloads', search: '' }
     };
 
-    function parseYouTubeEmbedUrl(url) {
-      if (!url) return '';
+    // YouTube URL ve Shorts Mobil Uyumlu Embed Ayrıştırıcısı
+    function getYouTubeInfo(url) {
+      if (!url) return { embedUrl: '', rawUrl: '', isShorts: false };
       let videoId = '';
+      let isShorts = false;
+
       if (url.includes('youtube.com/shorts/')) {
-        videoId = url.split('youtube.com/shorts/')[1].split('?')[0];
+        videoId = url.split('youtube.com/shorts/')[1].split('?')[0].split('&')[0];
+        isShorts = true;
       } else if (url.includes('watch?v=')) {
         videoId = url.split('watch?v=')[1].split('&')[0];
       } else if (url.includes('youtu.be/')) {
-        videoId = url.split('youtu.be/')[1].split('?')[0];
+        videoId = url.split('youtu.be/')[1].split('?')[0].split('&')[0];
       } else if (url.includes('embed/')) {
-        return url;
+        videoId = url.split('embed/')[1].split('?')[0];
+      } else {
+        videoId = url;
       }
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+
+      return {
+        videoId: videoId,
+        embedUrl: videoId ? `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&playsinline=1` : '',
+        rawUrl: videoId ? (isShorts ? `https://www.youtube.com/shorts/${videoId}` : `https://www.youtube.com/watch?v=${videoId}`) : url,
+        isShorts: isShorts
+      };
     }
 
+    // @frealnds YouTube Kanalının Öne Çıkan Rehber ve Shorts Koleksiyonu
     const defaultData = {
       mods: [
         { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 142, likes: 38, icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', downloadUrl: 'https://modrinth.com/mod/sodium', description: 'Minecraft için modern render motoru. FPS hızını katlar.' },
@@ -369,7 +384,9 @@
         { id: 't1', title: 'Bare Bones Pack', author: 'RobotPanda', loader: 'Vanilla', versionRange: '1.16.5 - 1.20.4', downloads: 115, likes: 31, icon: 'https://cdn.modrinth.com/data/1K22yd39/icon.png', downloadUrl: 'https://modrinth.com/resourcepack/bare-bones', description: 'Resmi Minecraft fragmanlarındaki canlı ve sade piksel stili.' }
       ],
       videos: [
-        { id: 'v1', title: 'Minecraft Bobby Modu Rehberi', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: '@frealnds YouTube kanalından chunk render artırma rehberi.' }
+        { id: 'v1', title: 'Exaroton & Aternos Sunucu Optimizasyon Rehberi', url: 'https://youtube.com/watch?v=dQw4w9WgXcQ', desc: '@frealnds kanalı sunucu lag önleme ve chunk mesafe ayarları.' },
+        { id: 'v2', title: 'Bobby Modu ile Sınırsız Chunk Render Etme (Shorts)', url: 'https://youtube.com/shorts/dQw4w9WgXcQ', desc: 'Exaroton ve Aternos sunucu görüş mesafesi engelini aşma taktigi.' },
+        { id: 'v3', title: 'Java Garbage Collection (GC) Takılma Çözümü (Shorts)', url: 'https://youtube.com/shorts/dQw4w9WgXcQ', desc: 'Minecraft ani FPS düşmelerini önleme ve RAM atama yöntemleri.' }
       ]
     };
 
@@ -488,29 +505,54 @@
       lucide.createIcons();
     }
 
+    // Mobil & Shorts Uyumlu Video Çizici
     function renderHelpVideos() {
       const grid = document.getElementById('videoGrid');
       grid.innerHTML = '';
       (itemsData.videos || []).forEach(vid => {
         const card = document.createElement('div');
-        card.className = "bg-mc-card border border-mc-border rounded-xl p-3 shadow-lg relative";
+        const info = getYouTubeInfo(vid.url);
+        
+        card.className = "bg-mc-card border border-mc-border rounded-xl p-3 shadow-lg relative flex flex-col justify-between";
         
         const adminDeleteBtn = isAdminAuthenticated ? `
           <button onclick="deleteVideo('${vid.id}')" class="absolute top-2 right-2 bg-red-600/80 text-white px-2 py-1 rounded text-[10px] font-bold z-10">Sil</button>
         ` : '';
 
-        const embedUrl = parseYouTubeEmbedUrl(vid.url);
+        const aspectClass = info.isShorts ? 'aspect-[9/16] max-h-[380px] mx-auto' : 'aspect-video w-full';
 
         card.innerHTML = `
           ${adminDeleteBtn}
-          <div class="aspect-video w-full rounded-lg overflow-hidden bg-black mb-2 relative z-0">
-            <iframe class="w-full h-full" src="${embedUrl}" title="${vid.title}" frameborder="0" allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <div>
+            <div class="${aspectClass} rounded-lg overflow-hidden bg-black mb-2 relative z-0 border border-mc-border">
+              ${info.embedUrl ? `
+                <iframe 
+                  class="w-full h-full" 
+                  src="${info.embedUrl}" 
+                  title="${vid.title}" 
+                  frameborder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  allowfullscreen>
+                </iframe>
+              ` : `
+                <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                  <i data-lucide="youtube" class="w-8 h-8 text-red-500 mb-2"></i>
+                  <span class="text-xs text-gray-300">Videoyu izlemek için tıklayın</span>
+                </div>
+              `}
+            </div>
+            <h3 class="font-bold text-white text-sm mb-0.5 line-clamp-1">${vid.title}</h3>
+            <p class="text-gray-400 text-[11px] line-clamp-2 mb-3">${vid.desc}</p>
           </div>
-          <h3 class="font-bold text-white text-sm mb-0.5">${vid.title}</h3>
-          <p class="text-gray-400 text-[11px]">${vid.desc}</p>
+          
+          <a href="${info.rawUrl}" target="_blank" class="w-full py-1.5 bg-mc-bg hover:bg-mc-border text-red-400 hover:text-red-300 text-[11px] font-bold rounded-lg border border-mc-border transition flex items-center justify-center gap-1.5 mt-1">
+            <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
+            <span>${info.isShorts ? 'Shorts Olarak Uygulamada Aç' : 'YouTube\'da İzle'}</span>
+          </a>
         `;
         grid.appendChild(card);
       });
+      lucide.createIcons();
     }
 
     function handleLike(id) {
@@ -653,7 +695,7 @@
         itemsData.videos.push({ 
           id: 'v' + Date.now(), 
           title, 
-          url: parseYouTubeEmbedUrl(urlInput || desc), 
+          url: urlInput || desc, 
           desc: desc 
         });
       } else {

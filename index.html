@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>McPusula - Minecraft Mod, Shader & Kaynak Paketi Portalı</title>
   
-  <!-- Favicon (Pusula Simgesi) -->
+  <!-- Favicon (Sekme İkonu - Pusula Simgesi) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2'><circle cx='12' cy='12' r='10'/><polygon points='16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76'/></svg>">
   
   <!-- Tailwind CSS CDN -->
@@ -44,32 +44,19 @@
     ::-webkit-scrollbar-track { background: #0b0d10; }
     ::-webkit-scrollbar-thumb { background: #222734; border-radius: 4px; }
     
-    /* Hareketli Minecraft Pusula Animasyonu */
-    .compass-spin {
-      animation: compassRotate 12s infinite linear;
-    }
-    .compass-needle {
-      transform-origin: center;
-      animation: needleSway 2.5s infinite ease-in-out alternate;
-    }
-    @keyframes compassRotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes needleSway {
-      0% { transform: rotate(-25deg); }
-      50% { transform: rotate(35deg); }
-      100% { transform: rotate(-15deg); }
-    }
+    .compass-spin { animation: compassRotate 12s infinite linear; }
+    .compass-needle { transform-origin: center; animation: needleSway 2.5s infinite ease-in-out alternate; }
+    @keyframes compassRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes needleSway { 0% { transform: rotate(-25deg); } 50% { transform: rotate(35deg); } 100% { transform: rotate(-15deg); } }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
-  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <!-- TOP NAVIGATION BAR -->
   <header class="sticky top-0 z-30 bg-mc-bg/95 backdrop-blur-md border-b border-mc-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
       
-      <!-- Logo & Brand (McPusula & Hareketli Pusula) -->
+      <!-- Logo & Brand -->
       <div class="flex items-center gap-2.5 cursor-pointer group" onclick="switchContentType('mods')">
         <div class="w-10 h-10 rounded-xl bg-mc-card border border-mc-border p-2 flex items-center justify-center shadow-lg shadow-emerald-950/40 group-hover:border-emerald-500/50 transition duration-200">
           <svg class="w-full h-full text-emerald-400 compass-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -85,7 +72,7 @@
         </div>
       </div>
 
-      <!-- Main Navigation Tabs -->
+      <!-- Navigation Tabs -->
       <nav class="flex items-center gap-1 bg-mc-card/80 p-1 rounded-xl border border-mc-border text-xs font-bold overflow-x-auto max-w-[50%] sm:max-w-none">
         <button onclick="switchContentType('mods')" id="tab-mods" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white transition flex items-center gap-1.5 shrink-0 font-bold">
           <i data-lucide="layers" class="w-3.5 h-3.5"></i> <span>Modlar</span>
@@ -101,18 +88,20 @@
         </button>
       </nav>
 
-      <!-- Mod Yükle Button -->
-      <button 
-        onclick="openUploadModal()"
-        class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-950/40 active:scale-95 shrink-0"
-      >
-        <i data-lucide="plus-circle" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">Mod Yükle</span>
-      </button>
+      <!-- Upload / Admin Actions -->
+      <div class="flex items-center gap-2">
+        <button id="adminStatusBadge" onclick="openAdminModal()" class="hidden bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1">
+          <i data-lucide="shield" class="w-3.5 h-3.5"></i> Admin Modu
+        </button>
+        <button onclick="openUploadModal()" class="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-lg shadow-emerald-950/40 active:scale-95 shrink-0">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Mod Yükle</span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- ================= MAIN CONTENT AREA ================= -->
+  <!-- MAIN CONTENT AREA -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow">
     
     <!-- Hero Banner -->
@@ -130,7 +119,7 @@
       </div>
     </section>
 
-    <!-- Mobile Search Bar -->
+    <!-- Search Bar -->
     <div class="mb-4">
       <div class="relative">
         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
@@ -202,7 +191,7 @@
 
   </main>
 
-  <!-- MOD YÜKLE / ÇOK YAKINDA MODAL -->
+  <!-- MOD YÜKLE MODAL -->
   <div id="uploadModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-mc-card border border-mc-border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl p-6 text-center">
       <div class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3 text-emerald-400">
@@ -234,17 +223,18 @@
         </div>
       </div>
 
-      <div id="adminDashboardView" class="hidden">
-        <div class="flex items-center justify-between border-b border-mc-border pb-3 mb-3">
+      <div id="adminDashboardView" class="hidden space-y-4">
+        <div class="flex items-center justify-between border-b border-mc-border pb-3">
           <h3 class="text-sm font-bold text-white flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            İçerik Ekleme Paneli
+            İçerik & Video Yönetim Paneli
           </h3>
           <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
+
         <form onsubmit="handleAddNewContent(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block text-gray-400 font-bold mb-1">Kategori</label>
+            <label class="block text-gray-400 font-bold mb-1">Eklenecek Kategori</label>
             <select id="newType" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
               <option value="mods">Mod</option>
               <option value="shaders">Shader</option>
@@ -257,12 +247,46 @@
             <input type="text" id="newTitle" required placeholder="Başlık" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
           </div>
           <div>
-            <label class="block text-gray-400 font-bold mb-1">Açıklama / YouTube ID veya Embed Linki</label>
-            <textarea id="newDesc" required rows="2" placeholder="Detay veya embed linki..." class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white"></textarea>
+            <label class="block text-gray-400 font-bold mb-1">İndirme Bağlantısı (URL)</label>
+            <input type="url" id="newDownloadUrl" placeholder="https://modrinth.com/mod/..." class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
           </div>
-          <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition">Yayınla</button>
+          <div>
+            <label class="block text-gray-400 font-bold mb-1">Açıklama veya YouTube Embed Linki</label>
+            <textarea id="newDesc" required rows="2" placeholder="Detay veya https://www.youtube.com/embed/..." class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white"></textarea>
+          </div>
+          <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition">Yayınla ve Kaydet</button>
         </form>
       </div>
+    </div>
+  </div>
+
+  <!-- İÇERİK DÜZENLEME MODAL (ADMİN İÇİN) -->
+  <div id="editItemModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-mc-card border border-mc-border rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-5 space-y-3">
+      <div class="flex items-center justify-between border-b border-mc-border pb-2">
+        <h3 class="text-sm font-bold text-white">İçeriği Düzenle</h3>
+        <button onclick="closeEditModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <form onsubmit="saveEditedItem(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="editItemId">
+        <div>
+          <label class="block text-gray-400 font-bold mb-1">Başlık</label>
+          <input type="text" id="editTitle" required class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
+        </div>
+        <div>
+          <label class="block text-gray-400 font-bold mb-1">İndirme Bağlantısı (URL)</label>
+          <input type="url" id="editDownloadUrl" required class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
+        </div>
+        <div>
+          <label class="block text-gray-400 font-bold mb-1">Sürüm Aralığı</label>
+          <input type="text" id="editVersionRange" required class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white">
+        </div>
+        <div>
+          <label class="block text-gray-400 font-bold mb-1">Açıklama</label>
+          <textarea id="editDesc" required rows="2" class="w-full bg-mc-bg border border-mc-border rounded-xl p-2 text-white"></textarea>
+        </div>
+        <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition">Değişiklikleri Kaydet</button>
+      </form>
     </div>
   </div>
 
@@ -276,7 +300,7 @@
     <p>© 2026 McPusula Hub. <span id="secretTrigger" onclick="handleSecretClick()" class="cursor-default select-none">©</span> Tüm hakları saklıdır.</p>
   </footer>
 
-  <!-- ================= JAVASCRIPT ================= -->
+  <!-- JAVASCRIPT -->
   <script>
     const ADMIN_PASSWORD = "craftmods2026";
     let isAdminAuthenticated = false;
@@ -288,31 +312,43 @@
       filter: { loader: 'all', version: 'all', sort: 'downloads', search: '' }
     };
 
-    // Zenginleştirilmiş İçerik Veritabanı
-    let itemsData = {
+    // Varsayılan Veriler
+    const defaultData = {
       mods: [
-        { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 1850000, likes: 42000, icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', description: 'Gelişmiş render motoru. FPS hızını katlar.' },
-        { id: 'm2', title: 'Bobby Chunk Modu', author: 'Johni0702', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 450000, likes: 12300, icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png', description: 'Sunucularda yüksek chunk render etmenizi sağlar.' },
-        { id: 'm3', title: 'Create Automations', author: 'Simibubi', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 940000, likes: 31500, icon: 'https://cdn.modrinth.com/data/LN9MBDws/icon.png', description: 'Mühendislik çarkları ve otomatik üretim hatları.' },
-        { id: 'm4', title: 'Iris Shaders Engine', author: 'IrisTeam', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 1650000, likes: 39000, icon: 'https://cdn.modrinth.com/data/YL57xq9U/icon.png', description: 'Sodium uyumlu açık kaynaklı shader motoru.' },
-        { id: 'm5', title: 'Lithium Engine', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 1400000, likes: 35000, icon: 'https://cdn.modrinth.com/data/gvQqBUqZ/icon.png', description: 'Oyun içi fizik ve mob optimizasyon motoru.' }
+        { id: 'm1', title: 'Sodium Performance', author: 'JellySquid', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 142, likes: 38, icon: 'https://cdn.modrinth.com/data/AANobbAy/icon.png', downloadUrl: 'https://modrinth.com/mod/sodium', description: 'Gelişmiş render motoru. FPS hızını katlar.' },
+        { id: 'm2', title: 'Bobby Chunk Modu', author: 'Johni0702', loader: 'Fabric', versionRange: '1.16.5 - 1.20.4', downloads: 89, likes: 24, icon: 'https://cdn.modrinth.com/data/51EZ1WAK/icon.png', downloadUrl: 'https://modrinth.com/mod/bobby', description: 'Sunucularda yüksek chunk render etmenizi sağlar.' },
+        { id: 'm3', title: 'Create Automations', author: 'Simibubi', loader: 'Forge', versionRange: '1.16.5 - 1.20.1', downloads: 65, likes: 19, icon: 'https://cdn.modrinth.com/data/LN9MBDws/icon.png', downloadUrl: 'https://www.curseforge.com/minecraft/mc-mods/create', description: 'Mühendislik çarkları ve otomatik üretim hatları.' }
       ],
       shaders: [
-        { id: 's1', title: 'Complementary Reimagined', author: 'EminGT', loader: 'Universal', versionRange: '1.14.4 - 1.20.4', downloads: 3200000, likes: 85000, icon: 'https://cdn.modrinth.com/data/l6IZNBfh/icon.png', description: 'Gelişmiş ışıklandırma, atmosfer ve gölge Efektleri.' },
-        { id: 's2', title: 'BSL Shaders', author: 'CaptTatsu', loader: 'Universal', versionRange: '1.12.2 - 1.20.4', downloads: 2900000, likes: 62000, icon: 'https://cdn.modrinth.com/data/Q1WZqslH/icon.png', description: 'Sıcak tonlu gerçekçi ışıklandırma ve yumuşak gölgeler.' },
-        { id: 's3', title: 'SEUS Renewed', author: 'Cody Darr', loader: 'Universal', versionRange: '1.14.4 - 1.20.1', downloads: 2100000, likes: 49000, icon: 'https://cdn.modrinth.com/data/V2n7b10c/icon.png', description: 'Efsanevi gerçekçi su ve güneş ışığı atmosferi.' }
+        { id: 's1', title: 'Complementary Reimagined', author: 'EminGT', loader: 'Universal', versionRange: '1.14.4 - 1.20.4', downloads: 210, likes: 54, icon: 'https://cdn.modrinth.com/data/l6IZNBfh/icon.png', downloadUrl: 'https://modrinth.com/shader/complementary-reimagined', description: 'Gelişmiş ışıklandırma, atmosfer ve gölge Efektleri.' }
       ],
       textures: [
-        { id: 't1', title: 'Bare Bones Pack', author: 'RobotPanda', loader: 'Vanilla', versionRange: '1.16.5 - 1.20.4', downloads: 1400000, likes: 31000, icon: 'https://cdn.modrinth.com/data/1K22yd39/icon.png', description: 'Resmi Minecraft fragmanlarındaki canlı ve sade piksel stili.' },
-        { id: 't2', title: 'Faithful 32x', author: 'FaithfulTeam', loader: 'Vanilla', versionRange: '1.8.9 - 1.20.4', downloads: 4100000, likes: 92000, icon: 'https://cdn.modrinth.com/data/n245V6oZ/icon.png', description: 'Orijinal Minecraft dokularının yüksek çözünürlüklü hali.' }
+        { id: 't1', title: 'Bare Bones Pack', author: 'RobotPanda', loader: 'Vanilla', versionRange: '1.16.5 - 1.20.4', downloads: 115, likes: 31, icon: 'https://cdn.modrinth.com/data/1K22yd39/icon.png', downloadUrl: 'https://modrinth.com/resourcepack/bare-bones', description: 'Resmi Minecraft fragmanlarındaki canlı ve sade piksel stili.' }
       ],
       videos: [
-        { id: 'v1', title: 'Minecraft Exaroton & Aternos Sunucu İpuçları', url: 'https://www.youtube.com/embed/videoseries?list=PLfrealnds', desc: '@frealnds YouTube rehber serisinden öne çıkanlar.' },
-        { id: 'v2', title: 'Bobby Modu İle Sınırsız Chunk Render Etme', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', desc: 'Sunucu görüş mesafesi engelini aşma rehberi.' }
+        { id: 'v1', title: 'Minecraft Exaroton & Aternos Sunucu İpuçları', url: 'https://www.youtube.com/embed/videoseries?list=PLfrealnds', desc: '@frealnds YouTube rehber serisinden öne çıkanlar.' }
       ]
     };
 
+    let itemsData = {};
+
+    // Kalıcı Veritabanı Yükleyici (localStorage)
+    function loadStorageData() {
+      const saved = localStorage.getItem('mcpusula_data');
+      if (saved) {
+        try { itemsData = JSON.parse(saved); } catch(e) { itemsData = defaultData; }
+      } else {
+        itemsData = defaultData;
+        saveStorageData();
+      }
+    }
+
+    function saveStorageData() {
+      localStorage.setItem('mcpusula_data', JSON.stringify(itemsData));
+    }
+
     window.onload = () => {
+      loadStorageData();
       renderCurrentView();
       lucide.createIcons();
       setupSecretKeyListeners();
@@ -365,10 +401,18 @@
 
       filtered.forEach(item => {
         const card = document.createElement('div');
-        card.className = "bg-mc-card border border-mc-border rounded-xl p-3.5 hover:border-emerald-500/40 transition flex flex-col justify-between group shadow-md";
+        card.className = "bg-mc-card border border-mc-border rounded-xl p-3.5 hover:border-emerald-500/40 transition flex flex-col justify-between group shadow-md relative";
         
+        const adminControls = isAdminAuthenticated ? `
+          <div class="flex items-center gap-1.5 mb-2 pb-2 border-b border-mc-border">
+            <button onclick="openEditModal('${item.id}')" class="px-2 py-0.5 bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 rounded text-[10px] font-bold">Düzenle</button>
+            <button onclick="deleteItem('${item.id}')" class="px-2 py-0.5 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded text-[10px] font-bold">Sil</button>
+          </div>
+        ` : '';
+
         card.innerHTML = `
           <div>
+            ${adminControls}
             <div class="flex items-start gap-2.5 mb-2.5">
               <img src="${item.icon}" alt="${item.title}" onerror="this.src='https://placehold.co/100x100/10b981/ffffff?text=MC'" class="w-10 h-10 rounded-lg object-cover border border-mc-border bg-mc-bg">
               <div class="overflow-hidden">
@@ -386,10 +430,11 @@
               </span>
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-mc-border text-[11px]">
-              <span class="text-[10px] text-gray-400 flex items-center gap-1">
-                <i data-lucide="download" class="w-3 h-3 text-emerald-400"></i> ${(item.downloads/1000).toFixed(0)}k
-              </span>
-              <button onclick="showToast('${item.title} indiriliyor...')" class="bg-mc-bg hover:bg-emerald-600 hover:text-white text-emerald-400 px-3 py-1 rounded-lg border border-mc-border transition font-bold text-[11px]">
+              <div class="flex items-center gap-2 text-gray-400 text-[10px]">
+                <span class="flex items-center gap-0.5"><i data-lucide="download" class="w-3 h-3 text-emerald-400"></i> ${item.downloads}</span>
+                <button onclick="handleLike('${item.id}')" class="flex items-center gap-0.5 hover:text-amber-400 transition"><i data-lucide="star" class="w-3 h-3 text-amber-400"></i> ${item.likes}</button>
+              </div>
+              <button onclick="handleDownload('${item.id}', '${item.downloadUrl}')" class="bg-mc-bg hover:bg-emerald-600 hover:text-white text-emerald-400 px-3 py-1 rounded-lg border border-mc-border transition font-bold text-[11px]">
                 İndir
               </button>
             </div>
@@ -403,10 +448,16 @@
     function renderHelpVideos() {
       const grid = document.getElementById('videoGrid');
       grid.innerHTML = '';
-      itemsData.videos.forEach(vid => {
+      (itemsData.videos || []).forEach(vid => {
         const card = document.createElement('div');
-        card.className = "bg-mc-card border border-mc-border rounded-xl p-3 shadow-lg";
+        card.className = "bg-mc-card border border-mc-border rounded-xl p-3 shadow-lg relative";
+        
+        const adminDeleteBtn = isAdminAuthenticated ? `
+          <button onclick="deleteVideo('${vid.id}')" class="absolute top-2 right-2 bg-red-600/80 text-white px-2 py-1 rounded text-[10px] font-bold z-10">Sil</button>
+        ` : '';
+
         card.innerHTML = `
+          ${adminDeleteBtn}
           <div class="aspect-video w-full rounded-lg overflow-hidden bg-black mb-2">
             <iframe class="w-full h-full" src="${vid.url}" title="${vid.title}" frameborder="0" allowfullscreen></iframe>
           </div>
@@ -417,7 +468,89 @@
       });
     }
 
-    // Gizli Giriş Yolları (A-D-M-I-N tuş kombinasyonu veya © simgesine 3 tık)
+    // Beğen ve İndir Buton Mantığı
+    function handleLike(id) {
+      const list = itemsData[state.activeTab];
+      const item = list.find(i => i.id === id);
+      if (item) {
+        item.likes += 1;
+        saveStorageData();
+        renderCurrentView();
+        showToast('Beğenildi!');
+      }
+    }
+
+    function handleDownload(id, url) {
+      const list = itemsData[state.activeTab];
+      const item = list.find(i => i.id === id);
+      if (item) {
+        item.downloads += 1;
+        saveStorageData();
+        renderCurrentView();
+      }
+      if (url && url !== 'undefined') {
+        window.open(url, '_blank');
+      } else {
+        showToast('İndirme bağlantısı hazırlanıyor...');
+      }
+    }
+
+    // Admin Düzenleme & Silme Fonksiyonları
+    function openEditModal(id) {
+      const list = itemsData[state.activeTab];
+      const item = list.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('editItemId').value = item.id;
+      document.getElementById('editTitle').value = item.title;
+      document.getElementById('editDownloadUrl').value = item.downloadUrl || '';
+      document.getElementById('editVersionRange').value = item.versionRange || '1.16.5 - 1.20.4';
+      document.getElementById('editDesc').value = item.description;
+
+      document.getElementById('editItemModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editItemModal').classList.add('hidden');
+    }
+
+    function saveEditedItem(e) {
+      e.preventDefault();
+      const id = document.getElementById('editItemId').value;
+      const list = itemsData[state.activeTab];
+      const item = list.find(i => i.id === id);
+      if (item) {
+        item.title = document.getElementById('editTitle').value;
+        item.downloadUrl = document.getElementById('editDownloadUrl').value;
+        item.versionRange = document.getElementById('editVersionRange').value;
+        item.description = document.getElementById('editDesc').value;
+
+        saveStorageData();
+        renderCurrentView();
+        closeEditModal();
+        showToast('Değişiklikler kaydedildi!');
+      }
+    }
+
+    function deleteItem(id) {
+      if (confirm('Bu içeriği silmek istediğinizden emin misiniz?')) {
+        itemsData[state.activeTab] = itemsData[state.activeTab].filter(i => i.id !== id);
+        saveStorageData();
+        renderCurrentView();
+        showToast('İçerik silindi.');
+      }
+    }
+
+    function deleteVideo(id) {
+      if (confirm('Bu videoyu silmek istediğinizden emin misiniz?')) {
+        itemsData.videos = itemsData.videos.filter(v => v.id !== id);
+        saveStorageData();
+        renderHelpVideos();
+        showToast('Video silindi.');
+      }
+    }
+
+    // Gizli Giriş Dinleyicileri
     function setupSecretKeyListeners() {
       window.addEventListener('keydown', (e) => {
         keySequence.push(e.key.toLowerCase());
@@ -454,9 +587,11 @@
         isAdminAuthenticated = true;
         document.getElementById('adminAuthView').classList.add('hidden');
         document.getElementById('adminDashboardView').classList.remove('hidden');
-        showToast("Giriş Başarılı!");
+        document.getElementById('adminStatusBadge').classList.remove('hidden');
+        renderCurrentView();
+        showToast("Admin Girişi Başarılı!");
       } else {
-        showToast("Hatalı Parola!");
+        showToast("Hatalı Şifre!");
       }
     }
 
@@ -464,22 +599,20 @@
       document.getElementById('adminModal').classList.add('hidden');
     }
 
-    function openUploadModal() {
-      document.getElementById('uploadModal').classList.remove('hidden');
-    }
-    function closeUploadModal() {
-      document.getElementById('uploadModal').classList.add('hidden');
-    }
+    function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
+    function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
 
     function handleAddNewContent(e) {
       e.preventDefault();
       if (!isAdminAuthenticated) return;
       const type = document.getElementById('newType').value;
       const title = document.getElementById('newTitle').value;
+      const downloadUrl = document.getElementById('newDownloadUrl').value;
       const desc = document.getElementById('newDesc').value;
 
       if (type === 'videos') {
-        itemsData.videos.push({ id: 'v' + Date.now(), title, url: desc, desc: 'Eklendi.' });
+        itemsData.videos = itemsData.videos || [];
+        itemsData.videos.push({ id: 'v' + Date.now(), title, url: desc, desc: 'Admin ekledi.' });
       } else {
         itemsData[type].push({
           id: 'item_' + Date.now(),
@@ -487,13 +620,15 @@
           author: 'Admin',
           loader: 'Universal',
           versionRange: '1.16.5 - 1.20.4',
-          downloads: 100,
-          likes: 10,
+          downloads: 1,
+          likes: 0,
           icon: 'https://placehold.co/100x100/10b981/ffffff?text=' + encodeURIComponent(title.substring(0, 3)),
+          downloadUrl: downloadUrl || 'https://modrinth.com',
           description: desc
         });
       }
-      showToast("Yayınlandı!");
+      saveStorageData();
+      showToast("Yeni İçerik Yayınlandı!");
       closeAdminModal();
       renderCurrentView();
     }

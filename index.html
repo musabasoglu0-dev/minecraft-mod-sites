@@ -26,7 +26,8 @@
               fabric: '#38bdf8',
               forge: '#f97316',
               neoforge: '#eab308',
-              quilt: '#ec4899'
+              quilt: '#ec4899',
+              bedrock: '#10b981'
             }
           },
           fontFamily: {
@@ -100,7 +101,7 @@
         </div>
       </a>
 
-      <!-- NAVIGATION & FIXED LANGUAGE SELECTOR -->
+      <!-- NAVIGATION & LANGUAGE SELECTOR -->
       <div class="flex items-center gap-3">
         <nav class="hidden md:flex items-center gap-1 bg-modrinth-card p-1 rounded-xl border border-modrinth-border text-sm font-medium">
           <button onclick="filterCategory('all', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-white bg-modrinth/20 border border-modrinth/40 font-semibold" id="navAll">Tümü</button>
@@ -135,14 +136,24 @@
     </div>
   </header>
 
-  <!-- HERO SECTION WITH DIRECT CONTENT SEARCH BAR -->
-  <section class="relative py-12 px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center">
+  <!-- HERO SECTION WITH SADE JAVA / BEDROCK SELECTOR -->
+  <section class="relative py-10 px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center">
     <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-3">
       <span id="heroTitle1">Minecraft Türkiye</span> <span class="text-modrinth" id="heroTitle2">Mod & Rehber Portalı</span>
     </h1>
-    <p class="text-gray-400 max-w-2xl text-sm sm:text-base mb-8 leading-relaxed" id="heroDesc">
-      En güncel Minecraft modları, kasma azaltan performans paketleri, gerçekçi shaderlar ve adım adım Türkçe video rehberleri tek adreste.
+    <p class="text-gray-400 max-w-2xl text-sm sm:text-base mb-6 leading-relaxed" id="heroDesc">
+      En güncel Java & Bedrock (MCPE) modları, kasma azaltan performans paketleri ve dikey video rehberleri.
     </p>
+
+    <!-- EDITION TOGGLE CONTROL (SADE VE ŞIK SEGMENT) -->
+    <div class="inline-flex p-1 bg-modrinth-card border border-modrinth-border rounded-xl mb-6 text-xs font-bold">
+      <button onclick="filterEdition('java', this)" class="edition-btn px-5 py-2 rounded-lg bg-modrinth text-black font-extrabold transition" id="btnEdJava">
+        ☕ Java Edition
+      </button>
+      <button onclick="filterEdition('bedrock', this)" class="edition-btn px-5 py-2 rounded-lg text-gray-400 hover:text-white transition" id="btnEdBedrock">
+        📱 Bedrock (MCPE / Win10)
+      </button>
+    </div>
 
     <!-- PRIMARY SEARCH BAR -->
     <div class="w-full max-w-2xl bg-modrinth-card border border-modrinth-border p-2 rounded-2xl shadow-2xl focus-within:border-modrinth transition">
@@ -154,7 +165,7 @@
   </section>
 
   <!-- MAIN CATALOGUE SECTION -->
-  <main id="catalogSection" class="max-w-7xl mx-auto px-4 lg:px-8 py-6 w-full flex-1">
+  <main id="catalogSection" class="max-w-7xl mx-auto px-4 lg:px-8 py-4 w-full flex-1">
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-modrinth-border">
       <div>
         <h2 class="text-xl font-bold text-white flex items-center gap-2" id="secTitle">
@@ -172,21 +183,19 @@
       </div>
     </div>
 
-    <!-- CARDS GRID -->
+    <!-- CARDS GRID (SADE & TEMİZ MOD KARTLARI) -->
     <div id="cardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
   </main>
 
   <!-- BOTTOM SECTION: YOUTUBE SHORTS GUIDE -->
-  <section class="max-w-7xl mx-auto px-4 lg:px-8 py-12 w-full border-t border-modrinth-border mt-12">
-    <div class="bg-modrinth-card border border-modrinth-border rounded-3xl p-6 sm:p-10 relative overflow-hidden text-center flex flex-col items-center">
-      <div class="absolute -top-24 -right-24 w-64 h-64 bg-modrinth/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="w-12 h-12 rounded-2xl bg-red-600/10 border border-red-600/30 text-red-500 flex items-center justify-center text-2xl mb-4">
+  <section class="max-w-7xl mx-auto px-4 lg:px-8 py-10 w-full border-t border-modrinth-border mt-10">
+    <div class="bg-modrinth-card border border-modrinth-border rounded-3xl p-6 sm:p-8 relative overflow-hidden text-center flex flex-col items-center">
+      <div class="w-12 h-12 rounded-2xl bg-red-600/10 border border-red-600/30 text-red-500 flex items-center justify-center text-2xl mb-3">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
       </div>
 
-      <h3 class="text-2xl font-bold text-white mb-2" id="guideSecTitle">@frealnds Rehber & Yarı Destek Videosu Ara</h3>
-      <p class="text-gray-400 text-sm max-w-xl mb-6" id="guideSecSub">Minecraft sunucu hataları, mod kurulum problemleri veya Bobby/Sodium performans ayarları için hazırlanmış YouTube Shorts videolarımızı aratın.</p>
+      <h3 class="text-xl font-bold text-white mb-2" id="guideSecTitle">@frealnds Rehber & Yarı Destek Videosu Ara</h3>
+      <p class="text-gray-400 text-xs max-w-xl mb-5" id="guideSecSub">Minecraft sunucu hataları, mod kurulum problemleri veya Bobby/Sodium ayarları için dikey YouTube Shorts videolarımızı aratın.</p>
 
       <div class="w-full max-w-xl bg-modrinth-dark border border-modrinth-border p-2 rounded-2xl flex flex-col sm:flex-row gap-2">
         <input type="text" id="guideSearchInput" placeholder="Sorun veya konu yazın (Örn: bobby, aternos, fps)..." class="w-full bg-transparent px-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
@@ -205,10 +214,10 @@
       </button>
 
       <div class="flex items-start gap-4 mb-4">
-        <div id="modalIcon" class="w-14 h-14 rounded-2xl bg-modrinth/10 border border-modrinth/30 flex items-center justify-center text-2xl shrink-0">📦</div>
+        <div id="modalIcon" class="w-12 h-12 rounded-xl bg-modrinth/10 border border-modrinth/30 flex items-center justify-center text-xl shrink-0">📦</div>
         <div>
           <div class="flex items-center gap-2 flex-wrap mb-1" id="modalBadges"></div>
-          <h3 id="modalTitle" class="text-2xl font-bold text-white">Mod Başlığı</h3>
+          <h3 id="modalTitle" class="text-xl font-bold text-white">Mod Başlığı</h3>
           <p id="modalVersions" class="text-xs text-modrinth font-medium">1.20 - 1.21.4</p>
         </div>
       </div>
@@ -216,7 +225,7 @@
       <div class="space-y-4 mb-6 text-sm">
         <div>
           <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1" id="lblDesc">Ne İşe Yarar?</h4>
-          <p id="modalDesc" class="text-gray-300 leading-relaxed bg-modrinth-dark/50 p-3 rounded-xl border border-modrinth-border/50"></p>
+          <p id="modalDesc" class="text-gray-300 leading-relaxed bg-modrinth-dark/50 p-3 rounded-xl border border-modrinth-border/50 text-xs sm:text-sm"></p>
         </div>
         <div>
           <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1" id="lblSteps">Kurulum Talimatı</h4>
@@ -237,7 +246,7 @@
     </div>
   </div>
 
-  <!-- MODAL: VIDEO PLAYER & REQUEST -->
+  <!-- MODAL: VIDEO PLAYER -->
   <div id="videoModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-modrinth-card border border-modrinth-border rounded-2xl max-w-sm sm:max-w-md w-full p-6 relative shadow-2xl text-center">
       <button onclick="closeVideoModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-modrinth-border p-1.5 rounded-xl transition">
@@ -247,7 +256,7 @@
     </div>
   </div>
 
-  <!-- FOOTER -->
+  <!-- FOOTER WITH MOJANG, MICROSOFT, MODRINTH, CURSEFORGE & MCPDL DISCLAIMERS -->
   <footer class="border-t border-modrinth-border bg-modrinth-card py-8 px-4 lg:px-8 text-xs text-gray-400">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
       <div>
@@ -255,10 +264,13 @@
         <p class="max-w-xl text-gray-400" id="footerNonProfit">Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.</p>
       </div>
       <div class="text-center md:text-right border-t md:border-t-0 pt-4 md:pt-0 border-modrinth-border w-full md:w-auto">
+        <!-- COMPLETE DISCLAIMERS -->
         <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
-          NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
+          NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG, MICROSOFT, MODRINTH, CURSEFORGE OR MCPDL.
         </p>
-        <p class="text-[10px] text-gray-500">Minecraft is a registered trademark of Mojang Synergies AB.</p>
+        <p class="text-[10px] text-gray-500">
+          Minecraft is a registered trademark of Mojang Synergies AB. MCPDL, Modrinth, and CurseForge are trademarks of their respective owners.
+        </p>
       </div>
     </div>
   </footer>
@@ -270,157 +282,171 @@
         subLogo: "Mod & Rehber Portalı",
         all: "Tümü", mods: "Modlar", shaders: "Shaderlar", packs: "Kaynak Paketleri", upload: "Mod Yükle", soon: "Yakında",
         hero1: "Minecraft Türkiye", hero2: "Mod & Rehber Portalı",
-        heroDesc: "En güncel Minecraft modları, kasma azaltan performans paketleri, gerçekçi shaderlar ve adım adım Türkçe video rehberleri tek adreste.",
+        heroDesc: "En güncel Java & Bedrock (MCPE) modları, kasma azaltan performans paketleri ve dikey video rehberleri.",
         searchPlaceholder: "Mod, shader veya kaynak paketi adı ara (Örn: sodium, iris, create)...",
         secTitle: "Keşfet & İndir", secSub: "Minecraft 1.20 - 1.21.4 Uyumlu Sürümler",
         loaderAll: "Tüm Loaderlar", descLbl: "Ne İşe Yarar?", stepsLbl: "Kurulum Talimatı",
-        dlModrinth: "Modrinth'ten İndir", dlCurse: "CurseForge'dan İndir",
+        dlModrinth: "Modrinth / MCPDL'den İndir", dlCurse: "CurseForge'dan İndir",
         guideTitle: "@frealnds Rehber & Yarı Destek Videosu Ara",
-        guideSub: "Minecraft sunucu hataları, mod kurulum problemleri veya Bobby/Sodium performans ayarları için hazırlanmış YouTube Shorts videolarımızı aratın.",
+        guideSub: "Minecraft sunucu hataları, mod kurulum problemleri veya Bobby/Sodium ayarları için dikey YouTube Shorts videolarımızı aratın.",
         guidePlaceholder: "Sorun veya konu yazın (Örn: bobby, aternos, fps)...",
         btnGuideSearch: "Rehber Videosu Ara",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
         requestBtn: "YouTube'da Video İstek Gönder",
         footerNonProfit: "Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.",
-        step1: "Minecraft Launcher'ı kapatın ve uyumlu Mod Loader'ı (Fabric/Forge) kurun.",
-        step2: "İndirdiğiniz .jar dosyasını %appdata%/.minecraft/mods klasörüne atın.",
-        step3: "Oyunu ilgili loader profiliyle başlatın."
+        stepJava1: "Minecraft Launcher'ı kapatın ve uyumlu Mod Loader'ı (Fabric/Forge) kurun.",
+        stepJava2: "İndirdiğiniz .jar dosyasını %appdata%/.minecraft/mods klasörüne atın.",
+        stepJava3: "Oyunu ilgili loader profiliyle başlatın.",
+        stepBedrock1: "İndirdiğiniz .mcaddon veya .mcpack dosyasına çift tıklayın.",
+        stepBedrock2: "Minecraft Bedrock oyunu otomatik açılacak ve paketi içeri aktaracaktır.",
+        stepBedrock3: "Dünya ayarlarından Kaynak / Davranış paketini aktif edin."
       },
       az: {
         banner: "Bu sayt Minecraft Azərbaycan və Türkiyə icması üçün hazırlanmış pulsuz rəhbər layihəsidir.",
         subLogo: "Mod və Rəhbər Portalı",
         all: "Hamısı", mods: "Modlar", shaders: "Şeyderlər", packs: "Resurs Paketləri", upload: "Mod Yüklə", soon: "Tezliklə",
         hero1: "Minecraft Türk", hero2: "Mod və Rəhbər Portalı",
-        heroDesc: "Ən yenilənmiş Minecraft modları və addım-addım video rəhbərlər tək ünvanda.",
+        heroDesc: "Ən yenilənmiş Java və Bedrock modları tək ünvanda.",
         searchPlaceholder: "Mod, şeyder və ya resurs paketi axtar...",
         secTitle: "Kəşf Et və Yüklə", secSub: "Minecraft 1.20 - 1.21.4 Uyğun Versiyalar",
         loaderAll: "Bütün Yükləyicilər", descLbl: "Nə İşi Görür?", stepsLbl: "Quraşdırma Təlimatı",
-        dlModrinth: "Modrinth-dən Yüklə", dlCurse: "CurseForge-dan Yüklə",
+        dlModrinth: "Modrinth / MCPDL-dən Yüklə", dlCurse: "CurseForge-dan Yüklə",
         guideTitle: "@frealnds Rəhbər Videosu Axtar",
-        guideSub: "Problem və ya mod adını yazaraq YouTube Shorts videolarımızı tapın.",
-        guidePlaceholder: "Problem yazın (Örn: bobby, fps)...",
-        btnGuideSearch: "Rəhbər Videosu Axtar",
+        guideSub: "Problem və ya mod adını yazaraq Shorts videolarımızı tapın.",
+        guidePlaceholder: "Problem yazın (Örn: bobby, fps)...", btnGuideSearch: "Rəhbər Videosu Axtar",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
         requestBtn: "YouTube-da Video İstəyi Göndər",
         footerNonProfit: "Bu sayt Minecraft icması üçün hazırlanmış pulsuz rəhbər layihəsidir.",
-        step1: "Minecraft Launcher-i bağlayın və Fabric/Forge quraşdırın.",
-        step2: ".jar faylını mods qovluğuna atın.",
-        step3: "Oyunu müvafiq profil ilə başladın."
+        stepJava1: "Minecraft-i bağlayın və Fabric/Forge quraşdırın.",
+        stepJava2: ".jar faylını mods qovluğuna atın.",
+        stepJava3: "Oyunu müvafiq profil ilə başladın.",
+        stepBedrock1: ".mcaddon faylına cüt klikləyin.",
+        stepBedrock2: "Minecraft Bedrock avtomatik açılacaqdır.",
+        stepBedrock3: "Dünya parametrlərindən paketi aktiv edin."
       },
       kz: {
         banner: "Бұл сайт Minecraft қауымдастығы үшін дайындалған тегін нұсқаулық жобасы.",
         subLogo: "Мод және Нұсқаулық Порталы",
         all: "Барлығы", mods: "Модтар", shaders: "Шейдерлер", packs: "Ресурс Пакеттері", upload: "Мод Жүктеу", soon: "Жуырда",
         hero1: "Minecraft Түркі", hero2: "Мод Порталы",
-        heroDesc: "Ең соңғы Minecraft модтары мен бейненұсқаулықтар бір жерде.",
+        heroDesc: "Java және Bedrock модтары бір жерде.",
         searchPlaceholder: "Мод немесе шейдер іздеңіз...",
         secTitle: "Зерттеу және Жүктеу", secSub: "Minecraft 1.20 - 1.21.4 Нұсқалары",
         loaderAll: "Барлық Жүктеушілер", descLbl: "Сипаттамасы", stepsLbl: "Орнату Нұсқаулығы",
-        dlModrinth: "Modrinth-тен Жүктеу", dlCurse: "CurseForge-тан Жүктеу",
-        guideTitle: "Бейненұсқаулық Іздеу", guideSub: "Мәселені жазып, видео нұсқаулықты табыңыз.",
+        dlModrinth: "Modrinth / MCPDL-ден Жүктеу", dlCurse: "CurseForge-тан Жүктеу",
+        guideTitle: "Бейненұсқаулық Іздеу", guideSub: "Мәселені жазып бейненұсқаулықты табыңыз.",
         guidePlaceholder: "Мәселені жазыңыз...", btnGuideSearch: "Видео Іздеу",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
         requestBtn: "YouTube-та Сұраныс Жіберу",
         footerNonProfit: "Бұл сайт тегін коммерциялық емес нұсқаулық жобасы.",
-        step1: "Minecraft іске қосу құралын жауып, Fabric/Forge орнатыңыз.",
-        step2: ".jar файлын mods қалтасына салыңыз.",
-        step3: "Ойынды сәйкес профильмен бастаңыз."
+        stepJava1: "Minecraft іске қосу құралын жауып, Fabric/Forge орнатыңыз.",
+        stepJava2: ".jar файлын mods қалтасына салыңыз.",
+        stepJava3: "Ойынды сәйкес профильмен бастаңыз.",
+        stepBedrock1: ".mcaddon файлын басыңыз.",
+        stepBedrock2: "Minecraft Bedrock автоматты түрде ашылады.",
+        stepBedrock3: "Әлем баптауларынан пакетті белсендіріңіз."
       },
       uz: {
         banner: "Ushbu sayt Minecraft hamjamiyati uchun tayyorlangan bepul qo'llanma loyihasidir.",
         subLogo: "Mod va Qo'llanma Portali",
         all: "Barchasi", mods: "Modlar", shaders: "Sheyderlar", packs: "Resurs Paketlari", upload: "Mod Yuklash", soon: "Tez orada",
         hero1: "Minecraft Turkiy", hero2: "Mod Portali",
-        heroDesc: "Eng so'nggi Minecraft modlari va video qo'llanmalar bir joyda.",
+        heroDesc: "Java va Bedrock modlari bir joyda.",
         searchPlaceholder: "Mod yoki sheyder qidiring...",
         secTitle: "Kashf qiling va Yuklang", secSub: "Minecraft 1.20 - 1.21.4 Versiyalari",
         loaderAll: "Barcha Yuklovchilar", descLbl: "Tavsifi", stepsLbl: "O'rnatish Qo'llanmasi",
-        dlModrinth: "Modrinth-dan Yuklash", dlCurse: "CurseForge-dan Yuklash",
+        dlModrinth: "Modrinth / MCPDL-dan Yuklash", dlCurse: "CurseForge-dan Yuklash",
         guideTitle: "Video Qo'llanma Qidirish", guideSub: "Muammoni yozib video qo'llanmani toping.",
         guidePlaceholder: "Muammoni yozing...", btnGuideSearch: "Video Qidirish",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
         requestBtn: "YouTube'da So'rov Yuborish",
         footerNonProfit: "Ushbu sayt tijorat maqsadiga ega bo'lmagan bepul qo'llanma loyihasidir.",
-        step1: "Minecraft-ni yoping va Fabric/Forge-ni o'rnating.",
-        step2: ".jar faylini mods papkasiga tashlang.",
-        step3: "O'yinni mos profil bilan ishga tushiring."
+        stepJava1: "Minecraft-ni yoping va Fabric/Forge-ni o'rnating.",
+        stepJava2: ".jar faylini mods papkasiga tashlang.",
+        stepJava3: "O'yinni mos profil bilan ishga tushiring.",
+        stepBedrock1: ".mcaddon faylini bosing.",
+        stepBedrock2: "Minecraft Bedrock avtomatik ochiladi.",
+        stepBedrock3: "Dunyo sozlamalaridan paketni faollashtiring."
       },
       kg: {
         banner: "Бул сайт Minecraft коомчулугу үчүн даярдалган акысыз көрсөтмө долбоору.",
         subLogo: "Мод жана Көрсөтмө Порталы",
         all: "Баары", mods: "Моддор", shaders: "Шейдерлер", packs: "Ресурс Пакеттери", upload: "Мод Жүктөө", soon: "Жакында",
         hero1: "Minecraft Түрк", hero2: "Мод Порталы",
-        heroDesc: "Эң акыркы Minecraft моддору жана видео көрсөтмөлөр.",
+        heroDesc: "Java жана Bedrock моддору.",
         searchPlaceholder: "Мод же шейдер издөө...",
         secTitle: "Изилдөө жана Жүктөө", secSub: "Minecraft 1.20 - 1.21.4 Версиялары",
         loaderAll: "Бардык Жүктөөчүлөр", descLbl: "Сүрөттөмөсү", stepsLbl: "Орнотуу Көрсөтмөсү",
-        dlModrinth: "Modrinth'тен Жүктөө", dlCurse: "CurseForge'дон Жүктөө",
+        dlModrinth: "Modrinth / MCPDL'ден Жүктөө", dlCurse: "CurseForge'дон Жүктөө",
         guideTitle: "Видео Көрсөтмө Издөө", guideSub: "Көйгөйдү жазып көрсөтмөнү табыңыз.",
         guidePlaceholder: "Көйгөйдү жазыңыз...", btnGuideSearch: "Видео İздөө",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
         requestBtn: "YouTube'да Сурам Жөнөтүү",
         footerNonProfit: "Бул сайт коммерциялык эмес акысыз көрсөтмө долбоору.",
-        step1: "Minecraft Launcher'ди жаап, Fabric/Forge орнотуңуз.",
-        step2: ".jar файлын mods папкасына салыңыз.",
-        step3: "Оюнду тиешелүү профиль менен баштаңыз."
+        stepJava1: "Minecraft Launcher'ди жаап, Fabric/Forge орнотуңуз.",
+        stepJava2: ".jar файлын mods папкасына салыңыз.",
+        stepJava3: "Оюнду тиешелүү профиль менен баштаңыз.",
+        stepBedrock1: ".mcaddon файлын басыңыз.",
+        stepBedrock2: "Minecraft Bedrock автоматтык түрдө ачылат.",
+        stepBedrock3: "Дүйнө жөндөөлөрүнөн пакетти активдештириңиз."
       },
       tm: {
         banner: "Bu saýt Minecraft jemgyýeti üçin taýýarlanan mugt gollanma taslamasydyr.",
         subLogo: "Mod we Gollanma Portaly",
         all: "Hemmesi", mods: "Modlar", shaders: "Şeýderler", packs: "Resurs Paketleri", upload: "Mod Ýüklemek", soon: "Tiz arada",
         hero1: "Minecraft Türk", hero2: "Mod Portaly",
-        heroDesc: "Iň täze Minecraft modlary we wideolar bir ýerde.",
+        heroDesc: "Java we Bedrock modlary bir ýerde.",
         searchPlaceholder: "Mod ýa-da şeýder gözleň...",
         secTitle: "Gözle we Ýükle", secSub: "Minecraft 1.20 - 1.21.4 Wersiýalary",
         loaderAll: "Ähli Ýükleyjiler", descLbl: "Düşündirişi", stepsLbl: "Gurnaşdyrmak Gollanmasy",
-        dlModrinth: "Modrinth-den Ýükle", dlCurse: "CurseForge-dan Ýükle",
+        dlModrinth: "Modrinth / MCPDL-den Ýükle", dlCurse: "CurseForge-dan Ýükle",
         guideTitle: "Wideo Gollanma Gözle", guideSub: "Meseleňizi ýazyp wideony tapyň.",
         guidePlaceholder: "Meseleňizi ýazyň...", btnGuideSearch: "Wideo Gözle",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
         requestBtn: "YouTube-da Haýyş Ugrat",
         footerNonProfit: "Bu saýt täjirçilik maksady bolmadyk mugt gollanma taslamasydyr.",
-        step1: "Minecraft Launcher-i ýapyp, Fabric/Forge gurnaň.",
-        step2: ".jar faýlyny mods bukjasy içine atyň.",
-        step3: "Oýuny degişli profil bilen başlaň."
+        stepJava1: "Minecraft Launcher-i ýapyp, Fabric/Forge gurnaň.",
+        stepJava2: ".jar faýlyny mods bukjasy içine atyň.",
+        stepJava3: "Oýuny degişli profil bilen başlaň.",
+        stepBedrock1: ".mcaddon faýlyna basyň.",
+        stepBedrock2: "Minecraft Bedrock awtomatiki açylar.",
+        stepBedrock3: "Dünýä sazlamalaryndan paketi işjeňleşdiriň."
       }
     };
 
     let currentLang = 'tr';
-
-    const rawModsList = [
-      { name: "Sodium", cat: "mod", loader: "fabric", desc: "FPS katlayan ve işlemci yükünü düşüren en güçlü modern Minecraft grafik motoru.", modrinth: "https://modrinth.com/mod/sodium", curse: "https://www.curseforge.com/minecraft/mc-mods/sodium" },
-      { name: "Iris Shaders", cat: "mod", loader: "fabric", desc: "Sodium ile tam uyumlu çalışan modern shader destek modu.", modrinth: "https://modrinth.com/mod/iris", curse: "https://www.curseforge.com/minecraft/mc-mods/irisshaders" },
-      { name: "Lithium", cat: "mod", loader: "fabric", desc: "Sunucu ve tek oyunculu dünyalarda fizik ve mob yapay zekasını optimize eder.", modrinth: "https://modrinth.com/mod/lithium", curse: "https://www.curseforge.com/minecraft/mc-mods/lithium" },
-      { name: "FerriteCore", cat: "mod", loader: "fabric", desc: "RAM (bellek) kullanımını %30-50 oranında düşürür.", modrinth: "https://modrinth.com/mod/ferritecore", curse: "https://www.curseforge.com/minecraft/mc-mods/ferritecore" },
-      { name: "Bobby", cat: "mod", loader: "fabric", desc: "Sunucularda bile önceden yüklenmiş chunkları görüş mesafesinde tutar (64+ chunk view distance).", modrinth: "https://modrinth.com/mod/bobby", curse: "https://www.curseforge.com/minecraft/mc-mods/bobby" },
-      { name: "Create", cat: "mod", loader: "forge", desc: "Çarklar, dönen miller ve otomasyon araçlarıyla sanayi devrimi yaşatan efsanevi mod.", modrinth: "https://modrinth.com/mod/create", curse: "https://www.curseforge.com/minecraft/mc-mods/create" },
-      { name: "Complementary Reimagined", cat: "shader", loader: "all", desc: "Oyunun piksel dokusunu bozmadan muazzam ışıklandırma ve bulutlar sunan shader.", modrinth: "https://modrinth.com/shader/complementary-reimagined", curse: "https://www.curseforge.com/minecraft/shaders/complementary-reimagined" },
-      { name: "BSL Shaders", cat: "shader", loader: "all", desc: "Sıcak ve canlı renk tonlarıyla bilinen yüksek performanslı shader.", modrinth: "https://modrinth.com/shader/bsl-shaders", curse: "https://www.curseforge.com/minecraft/shaders/bsl-shaders" },
-      { name: "Bare Bones", cat: "resourcepack", loader: "all", desc: "Minecraft fragmanlarındaki sade ve pürüzsüz görünümü oyuna kazandıran paket.", modrinth: "https://modrinth.com/resourcepack/bare-bones", curse: "https://www.curseforge.com/minecraft/texture-packs/bare-bones-pack" },
-      { name: "Fresh Animations", cat: "resourcepack", loader: "all", desc: "Tüm köylü ve mob hareketlerini aksiyon filmi kalitesinde akıcı animasyonlara dönüştürür.", modrinth: "https://modrinth.com/resourcepack/fresh-animations", curse: "https://www.curseforge.com/minecraft/texture-packs/fresh-animations" }
-    ];
-
-    const catalogueData = [];
-    const loaders = ["fabric", "forge", "neoforge", "quilt"];
-    const icons = ["⚡", "🌿", "🛡️", "🔮", "⚙️", "⛵", "🎨", "🚀", "💎", "🏹"];
-
-    for (let i = 1; i <= 150; i++) {
-      let base = rawModsList[(i - 1) % rawModsList.length];
-      catalogueData.push({
-        id: "item-" + i,
-        title: i > 10 ? `${base.name} #${i}` : base.name,
-        category: i % 5 === 0 ? "shader" : (i % 4 === 0 ? "resourcepack" : "mod"),
-        loader: base.loader === "all" ? loaders[i % 4] : base.loader,
-        versions: "1.20 - 1.21.4",
-        icon: icons[i % icons.length],
-        desc: base.desc,
-        modrinth: base.modrinth,
-        curse: base.curse
-      });
-    }
-
+    let activeEdition = 'java';
     let activeCategory = 'all';
     let activeLoader = 'all';
+
+    const catalogueData = [
+      { id: "j1", title: "Sodium", edition: "java", category: "mod", loader: "fabric", versions: "1.20 - 1.21.4", icon: "⚡", desc: "FPS katlayan ve işlemci yükünü düşüren en güçlü modern Minecraft grafik motoru.", modrinth: "https://modrinth.com/mod/sodium", curse: "https://www.curseforge.com/minecraft/mc-mods/sodium" },
+      { id: "j2", title: "Iris Shaders", edition: "java", category: "mod", loader: "fabric", versions: "1.20 - 1.21.4", icon: "🌈", desc: "Sodium ile tam uyumlu çalışan modern shader destek modu.", modrinth: "https://modrinth.com/mod/iris", curse: "https://www.curseforge.com/minecraft/mc-mods/irisshaders" },
+      { id: "j3", title: "Lithium", edition: "java", category: "mod", loader: "fabric", versions: "1.20 - 1.21.4", icon: "🛡️", desc: "Fizik ve mob yapay zekasını optimize eden sunucu/tek oyunculu performans modu.", modrinth: "https://modrinth.com/mod/lithium", curse: "https://www.curseforge.com/minecraft/mc-mods/lithium" },
+      { id: "j4", title: "Bobby", edition: "java", category: "mod", loader: "fabric", versions: "1.20 - 1.21.4", icon: "🔭", desc: "Sunucularda bile önceden yüklenmiş chunkları görüş mesafesinde tutar (64+ chunk).", modrinth: "https://modrinth.com/mod/bobby", curse: "https://www.curseforge.com/minecraft/mc-mods/bobby" },
+      { id: "j5", title: "Create", edition: "java", category: "mod", loader: "forge", versions: "1.20.1 - 1.21", icon: "⚙️", desc: "Çarklar ve otomasyon araçlarıyla sanayi devrimi yaşatan efsanevi mod.", modrinth: "https://modrinth.com/mod/create", curse: "https://www.curseforge.com/minecraft/mc-mods/create" },
+      { id: "b1", title: "Furniture Addon", edition: "bedrock", category: "mod", loader: "bedrock", versions: "1.20 - 1.21", icon: "🪑", desc: "Bedrock Edition için 100+ işlevsel ev eşyası ve dekorasyon bloğu ekleyen eklenti.", modrinth: "https://mcpdl.com", curse: "https://mcpdl.com" },
+      { id: "b2", title: "Mutant Creatures PE", edition: "bedrock", category: "mod", loader: "bedrock", versions: "1.20 - 1.21", icon: "🧟", desc: "Bedrock dünyasına devasa mutant zombi, creeper ve golem bossları ekler.", modrinth: "https://mcpdl.com", curse: "https://mcpdl.com" },
+      { id: "b3", title: "Bare Bones PE", edition: "bedrock", category: "resourcepack", loader: "bedrock", versions: "1.20 - 1.21", icon: "🎨", desc: "Bedrock MCPE için Minecraft fragman tarzı pürüzsüz sade doku paketi.", modrinth: "https://mcpdl.com", curse: "https://mcpdl.com" }
+    ];
+
+    // GENERATE CATALOGUE UP TO 150 ITEMS
+    const icons = ["⚡", "🌿", "🛡️", "🔮", "⚙️", "⛵", "🎨", "🚀", "💎", "🏹"];
+    for (let i = 9; i <= 150; i++) {
+      let isBedrock = i % 4 === 0;
+      catalogueData.push({
+        id: "item-" + i,
+        title: isBedrock ? `Bedrock Addon #${i}` : `Java Mod #${i}`,
+        edition: isBedrock ? "bedrock" : "java",
+        category: i % 5 === 0 ? "shader" : (i % 3 === 0 ? "resourcepack" : "mod"),
+        loader: isBedrock ? "bedrock" : (i % 2 === 0 ? "fabric" : "forge"),
+        versions: "1.20 - 1.21.4",
+        icon: icons[i % icons.length],
+        desc: isBedrock ? "Bedrock MCPE ve Windows 10/11 için optimize edilmiş topluluk içeriği." : "Java Edition için yüksek performanslı ve güncel Minecraft eklentisi.",
+        modrinth: isBedrock ? "https://mcpdl.com" : "https://modrinth.com",
+        curse: "https://www.curseforge.com"
+      });
+    }
 
     function renderCards() {
       const grid = document.getElementById('cardsGrid');
@@ -428,10 +454,11 @@
       grid.innerHTML = '';
 
       let filtered = catalogueData.filter(item => {
+        let matchEd = item.edition === activeEdition;
         let matchCat = activeCategory === 'all' || item.category === activeCategory;
-        let matchLoader = activeLoader === 'all' || item.loader === activeLoader || item.loader === 'all';
+        let matchLoader = activeLoader === 'all' || item.loader === activeLoader;
         let matchSearch = item.title.toLowerCase().includes(searchVal) || item.desc.toLowerCase().includes(searchVal);
-        return matchCat && matchLoader && matchSearch;
+        return matchEd && matchCat && matchLoader && matchSearch;
       });
 
       document.getElementById('itemCount').innerText = filtered.length + " İçerik";
@@ -439,8 +466,8 @@
       filtered.forEach(item => {
         let loaderColor = item.loader === 'fabric' ? 'border-loader-fabric/40 text-loader-fabric bg-loader-fabric/10' :
                          item.loader === 'forge' ? 'border-loader-forge/40 text-loader-forge bg-loader-forge/10' :
-                         item.loader === 'neoforge' ? 'border-loader-neoforge/40 text-loader-neoforge bg-loader-neoforge/10' :
-                         'border-loader-quilt/40 text-loader-quilt bg-loader-quilt/10';
+                         item.loader === 'bedrock' ? 'border-loader-bedrock/40 text-loader-bedrock bg-loader-bedrock/10' :
+                         'border-loader-neoforge/40 text-loader-neoforge bg-loader-neoforge/10';
 
         let card = document.createElement('div');
         card.className = "bg-modrinth-card border border-modrinth-border hover:border-modrinth/60 rounded-2xl p-4 transition duration-200 cursor-pointer flex flex-col justify-between group hover:shadow-xl hover:-translate-y-1";
@@ -448,10 +475,10 @@
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between mb-3">
-              <span class="w-10 h-10 rounded-xl bg-modrinth-dark border border-modrinth-border flex items-center justify-center text-xl group-hover:scale-110 transition">${item.icon}</span>
+              <span class="w-9 h-9 rounded-xl bg-modrinth-dark border border-modrinth-border flex items-center justify-center text-lg">${item.icon}</span>
               <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${loaderColor}">${item.loader}</span>
             </div>
-            <h3 class="font-bold text-white text-base group-hover:text-modrinth transition mb-1">${item.title}</h3>
+            <h3 class="font-bold text-white text-sm group-hover:text-modrinth transition mb-1">${item.title}</h3>
             <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-3">${item.desc}</p>
           </div>
           <div class="pt-3 border-t border-modrinth-border/50 flex items-center justify-between text-[11px] font-medium text-gray-400">
@@ -463,19 +490,29 @@
       });
     }
 
-    // CATEGORY SELECTION WITH GREEN HIGHLIGHT FIX & SMOOTH SCROLL
+    function filterEdition(ed, el) {
+      activeEdition = ed;
+      document.querySelectorAll('.edition-btn').forEach(btn => {
+        btn.classList.remove('bg-modrinth', 'text-black', 'font-extrabold');
+        btn.classList.add('text-gray-400');
+      });
+      if (el) {
+        el.classList.add('bg-modrinth', 'text-black', 'font-extrabold');
+        el.classList.remove('text-gray-400');
+      }
+      renderCards();
+    }
+
     function filterCategory(cat, el) {
       activeCategory = cat;
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('bg-modrinth/20', 'text-white', 'font-semibold', 'border', 'border-modrinth/40');
         btn.classList.add('text-gray-400');
       });
-
       if (el) {
         el.classList.add('bg-modrinth/20', 'text-white', 'font-semibold', 'border', 'border-modrinth/40');
         el.classList.remove('text-gray-400');
       }
-
       renderCards();
       document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth' });
     }
@@ -489,7 +526,6 @@
 
     function handleSearch() { renderCards(); }
 
-    // VIDEO ENGINE WITH SHORTS ASPECT RATIO & EMBED CLEANUP
     function searchVideoGuide() {
       const q = document.getElementById('guideSearchInput').value.trim().toLowerCase();
       const content = document.getElementById('videoModalContent');
@@ -525,14 +561,22 @@
       document.getElementById('btnCurseforge').href = item.curse;
 
       const steps = document.getElementById('modalSteps');
-      steps.innerHTML = `
-        <li>${i18n[currentLang].step1}</li>
-        <li>${i18n[currentLang].step2}</li>
-        <li>${i18n[currentLang].step3}</li>
-      `;
+      if (item.edition === 'bedrock') {
+        steps.innerHTML = `
+          <li>${i18n[currentLang].stepBedrock1}</li>
+          <li>${i18n[currentLang].stepBedrock2}</li>
+          <li>${i18n[currentLang].stepBedrock3}</li>
+        `;
+      } else {
+        steps.innerHTML = `
+          <li>${i18n[currentLang].stepJava1}</li>
+          <li>${i18n[currentLang].stepJava2}</li>
+          <li>${i18n[currentLang].stepJava3}</li>
+        `;
+      }
 
       document.getElementById('modalBadges').innerHTML = `
-        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-modrinth/40 text-modrinth bg-modrinth/10">${item.category}</span>
+        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-modrinth/40 text-modrinth bg-modrinth/10">${item.edition}</span>
         <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-loader-${item.loader}/40 text-loader-${item.loader} bg-loader-${item.loader}/10">${item.loader}</span>
       `;
 
@@ -545,14 +589,8 @@
       document.getElementById('videoModalContent').innerHTML = '';
     }
 
-    function openUploadModal() {
-      alert("Mod Yükleme paneli topluluk moderasyonu için çok yakında aktif edilecektir!");
-    }
-
-    function toggleLangDropdown(event) {
-      event.stopPropagation();
-      document.getElementById('langDropdownMenu').classList.toggle('hidden');
-    }
+    function openUploadModal() { alert("Mod Yükleme paneli topluluk moderasyonu için çok yakında aktif edilecektir!"); }
+    function toggleLangDropdown(event) { event.stopPropagation(); document.getElementById('langDropdownMenu').classList.toggle('hidden'); }
 
     function selectLang(lang) {
       currentLang = lang;
@@ -595,9 +633,7 @@
       renderCards();
     }
 
-    window.addEventListener('click', () => {
-      document.getElementById('langDropdownMenu').classList.add('hidden');
-    });
+    window.addEventListener('click', () => { document.getElementById('langDropdownMenu').classList.add('hidden'); });
 
     // MOUSE & TOUCH TRACKING FOR COMPASS
     const compassContainer = document.getElementById('compassContainer');

@@ -17,7 +17,7 @@
             modrinth: {
               DEFAULT: '#1bd96a',
               hover: '#15b858',
-              dark: '#111214',
+              dark: '#0c0d0f',
               card: '#181a1d',
               cardHover: '#22252a',
               border: '#2a2e35'
@@ -38,13 +38,13 @@
   </script>
   <style>
     body {
-      background-color: #111214;
+      background-color: #0c0d0f;
       color: #e5e7eb;
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
     }
     ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #111214; }
+    ::-webkit-scrollbar-track { background: #0c0d0f; }
     ::-webkit-scrollbar-thumb { background: #2a2e35; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #1bd96a; }
     .pixelated { image-rendering: pixelated; }
@@ -63,23 +63,46 @@
   <header class="sticky top-0 z-40 glass border-b border-modrinth-border px-4 lg:px-8 py-3">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       
-      <!-- LOGO -->
+      <!-- LOGO WITH INTEGRATED INTERACTIVE COMPASS -->
       <a href="#" class="flex items-center gap-3 group">
-        <div class="relative w-10 h-10 flex items-center justify-center bg-modrinth/10 rounded-xl border border-modrinth/30 group-hover:border-modrinth transition">
-          <svg class="w-6 h-6 text-modrinth" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        <div class="relative w-11 h-11 flex items-center justify-center bg-modrinth-card border border-modrinth-border rounded-xl group-hover:border-modrinth transition drop-shadow-[0_0_12px_rgba(27,217,106,0.15)] overflow-hidden" id="compassContainer">
+          
+          <!-- WOODEN LOG COMPASS SVG -->
+          <svg class="w-9 h-9 pixelated" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="4" width="16" height="24" fill="#3E2723"/>
+            <rect x="4" y="8" width="24" height="16" fill="#3E2723"/>
+            <rect x="6" y="6" width="20" height="20" fill="#4E342E"/>
+            <rect x="8" y="8" width="16" height="16" fill="#8D6E63"/>
+            <rect x="10" y="10" width="12" height="12" fill="#A1887F"/>
+            <rect x="12" y="12" width="8" height="8" fill="#D7CCC8"/>
+            <rect x="22" y="2" width="4" height="4" fill="#1BD96A"/>
+            <rect x="24" y="4" width="4" height="4" fill="#15B858"/>
+            <rect x="2" y="22" width="4" height="4" fill="#1BD96A"/>
+            <rect x="4" y="24" width="4" height="4" fill="#15B858"/>
+            <rect x="26" y="14" width="4" height="4" fill="#1BD96A"/>
           </svg>
+
+          <!-- MOUSE TRACKING NEEDLE -->
+          <div id="compassNeedle" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-transform duration-75 ease-out">
+            <svg class="w-7 h-7 pixelated" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="12,2 15,12 12,10 9,12" fill="#EF4444"/>
+              <polygon points="12,22 15,12 12,14 9,12" fill="#E5E7EB"/>
+              <circle cx="12" cy="12" r="1.5" fill="#111214"/>
+            </svg>
+          </div>
+
         </div>
+
         <div>
           <span class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
-            McPusula <span class="text-xs bg-modrinth text-black font-bold px-1.5 py-0.5 rounded">TR</span>
+            McPusula <span class="text-[10px] bg-modrinth text-black font-extrabold px-1.5 py-0.5 rounded">TR</span>
           </span>
           <p class="text-[10px] text-gray-400 font-medium leading-none" id="subLogoText">Mod & Rehber Portalı</p>
         </div>
       </a>
 
-      <!-- NAVIGATION & LANGUAGE -->
-      <div class="flex items-center gap-4">
+      <!-- NAVIGATION & FIXED LANGUAGE SELECTOR -->
+      <div class="flex items-center gap-3">
         <nav class="hidden md:flex items-center gap-1 bg-modrinth-card p-1 rounded-xl border border-modrinth-border text-sm font-medium">
           <button onclick="filterCategory('all')" class="nav-btn active px-3 py-1.5 rounded-lg transition text-white bg-modrinth/20 font-semibold" id="navAll">Tümü</button>
           <button onclick="filterCategory('mod')" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navMods">Modlar</button>
@@ -91,20 +114,21 @@
           </button>
         </nav>
 
-        <!-- LANGUAGE SELECTOR -->
-        <div class="relative group">
-          <button id="langDropdownBtn" class="flex items-center gap-2 bg-modrinth-card border border-modrinth-border hover:border-modrinth px-3 py-1.5 rounded-xl text-xs font-semibold text-white transition">
+        <!-- LANGUAGE SELECTOR (FIXED TOGGLE DROPDOWN) -->
+        <div class="relative">
+          <button onclick="toggleLangDropdown(event)" id="langDropdownBtn" class="flex items-center gap-2 bg-modrinth-card border border-modrinth-border hover:border-modrinth px-3 py-2 rounded-xl text-xs font-semibold text-white transition">
             <span id="currentLangFlag">🇹🇷</span>
             <span id="currentLangCode">TR</span>
             <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
-          <div class="absolute right-0 mt-2 w-40 bg-modrinth-card border border-modrinth-border rounded-xl shadow-2xl py-1 hidden group-hover:block z-50">
-            <button onclick="changeLang('tr')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇹🇷</span> Türkiye (TR)</button>
-            <button onclick="changeLang('az')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇦🇿</span> Azərbaycan (AZ)</button>
-            <button onclick="changeLang('kz')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇰🇿</span> Қазақша (KZ)</button>
-            <button onclick="changeLang('uz')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇺🇿</span> Oʻzbekcha (UZ)</button>
-            <button onclick="changeLang('kg')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇰🇬</span> Кыргызча (KG)</button>
-            <button onclick="changeLang('tm')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇹🇲</span> Türkmençe (TM)</button>
+          
+          <div id="langDropdownMenu" class="absolute right-0 mt-2 w-44 bg-modrinth-card border border-modrinth-border rounded-xl shadow-2xl py-1 hidden z-50">
+            <button onclick="selectLang('tr')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇹🇷</span> Türkiye (TR)</button>
+            <button onclick="selectLang('az')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇦🇿</span> Azərbaycan (AZ)</button>
+            <button onclick="selectLang('kz')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇰🇿</span> Қазақша (KZ)</button>
+            <button onclick="selectLang('uz')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇺🇿</span> Oʻzbekcha (UZ)</button>
+            <button onclick="selectLang('kg')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇰🇬</span> Кыргызча (KG)</button>
+            <button onclick="selectLang('tm')" class="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-modrinth/10 hover:text-modrinth flex items-center gap-2"><span>🇹🇲</span> Türkmençe (TM)</button>
           </div>
         </div>
       </div>
@@ -112,45 +136,9 @@
     </div>
   </header>
 
-  <!-- HERO SECTION WITH COMPASS -->
+  <!-- HERO SECTION WITH DIRECT CONTENT SEARCH BAR -->
   <section class="relative py-12 px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center">
     
-    <!-- INTERACTIVE LOG COMPASS (SVG PIXEL ART) -->
-    <div class="relative mb-6 cursor-pointer group" id="compassContainer" title="Fare ile hareket ettir!">
-      <div class="w-36 h-36 relative flex items-center justify-center drop-shadow-[0_0_25px_rgba(27,217,106,0.3)] transition transform duration-300 group-hover:scale-105">
-        
-        <!-- LOG COMPASS BODY WITH GREEN LEAF SPROUTS -->
-        <svg class="w-full h-full pixelated" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Outer Bark -->
-          <rect x="8" y="4" width="16" height="24" fill="#3E2723"/>
-          <rect x="4" y="8" width="24" height="16" fill="#3E2723"/>
-          <rect x="6" y="6" width="20" height="20" fill="#4E342E"/>
-          <!-- Inner Wood Rings -->
-          <rect x="8" y="8" width="16" height="16" fill="#8D6E63"/>
-          <rect x="10" y="10" width="12" height="12" fill="#A1887F"/>
-          <rect x="12" y="12" width="8" height="8" fill="#D7CCC8"/>
-          <!-- Green Sprouts/Leaves -->
-          <rect x="22" y="2" width="4" height="4" fill="#1BD96A"/>
-          <rect x="24" y="4" width="4" height="4" fill="#15B858"/>
-          <rect x="2" y="22" width="4" height="4" fill="#1BD96A"/>
-          <rect x="4" y="24" width="4" height="4" fill="#15B858"/>
-          <rect x="26" y="14" width="4" height="4" fill="#1BD96A"/>
-          <rect x="14" y="26" width="4" height="4" fill="#1BD96A"/>
-        </svg>
-
-        <!-- ROTATING NEEDLE -->
-        <div id="compassNeedle" class="absolute inset-0 flex items-center justify-center transition-transform duration-75 ease-out pointer-events-none">
-          <svg class="w-16 h-16 pixelated drop-shadow-md" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="12,2 15,12 12,10 9,12" fill="#EF4444"/>
-            <polygon points="12,22 15,12 12,14 9,12" fill="#E5E7EB"/>
-            <circle cx="12" cy="12" r="2" fill="#1F2937"/>
-          </svg>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- HERO TEXT -->
     <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-3">
       <span id="heroTitle1">Minecraft Türkiye</span> <span class="text-modrinth" id="heroTitle2">Mod & Rehber Portalı</span>
     </h1>
@@ -158,33 +146,28 @@
       En güncel Minecraft modları, kasma azaltan performans paketleri, gerçekçi shaderlar ve adım adım Türkçe video rehberleri tek adreste.
     </p>
 
-    <!-- SEARCH & YOUTUBE SHORTS GUIDE FINDER -->
-    <div class="w-full max-w-2xl bg-modrinth-card border border-modrinth-border p-2 rounded-2xl shadow-2xl flex flex-col sm:flex-row gap-2">
-      <div class="relative flex-1">
-        <svg class="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Mod, shader veya sorun ara (Örn: bobby, fps, fabric)..." class="w-full bg-transparent pl-11 pr-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
+    <!-- PRIMARY MOD / SHADER SEARCH BAR -->
+    <div class="w-full max-w-2xl bg-modrinth-card border border-modrinth-border p-2 rounded-2xl shadow-2xl focus-within:border-modrinth transition">
+      <div class="relative flex items-center">
+        <svg class="w-5 h-5 text-gray-400 absolute left-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Mod, shader veya kaynak paketi adı ara (Örn: sodium, iris, create)..." class="w-full bg-transparent pl-12 pr-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
       </div>
-      <button onclick="searchVideoGuide()" class="bg-modrinth hover:bg-modrinth-hover text-black font-bold px-6 py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-modrinth/20">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        <span id="btnSearchGuide">Rehber Videosu Ara</span>
-      </button>
     </div>
 
   </section>
 
-  <!-- CONTENT SECTION (MODS, SHADERS, PACKS GRID) -->
-  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 w-full flex-1">
+  <!-- MAIN CATALOGUE SECTION (MODS, SHADERS, PACKS GRID) -->
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-6 w-full flex-1">
     
-    <!-- SECTION TITLE & FILTERS -->
+    <!-- TITLE & LOADER FILTERS -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-modrinth-border">
       <div>
         <h2 class="text-xl font-bold text-white flex items-center gap-2" id="secTitle">
-          Keşfet & İndir <span class="text-xs bg-modrinth-border text-gray-300 font-semibold px-2 py-0.5 rounded-full" id="itemCount">150 İçerik</span>
+          Keşfet & İndir <span class="text-xs bg-modrinth/20 text-modrinth font-bold px-2 py-0.5 rounded-full border border-modrinth/30" id="itemCount">150 İçerik</span>
         </h2>
         <p class="text-xs text-gray-400" id="secSub">Minecraft 1.20 - 1.21.4 Uyumlu Sürümler</p>
       </div>
 
-      <!-- LOADER FILTERS -->
       <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0">
         <button onclick="filterLoader('all')" class="loader-btn active text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-white hover:border-modrinth transition" id="loaderAll">Tüm Loaderlar</button>
         <button onclick="filterLoader('fabric')" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-fabric/40 text-loader-fabric hover:bg-loader-fabric/10 transition">Fabric</button>
@@ -196,10 +179,31 @@
 
     <!-- CARDS GRID -->
     <div id="cardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      <!-- Cards rendered via JS -->
+      <!-- Generated via JS -->
     </div>
 
   </main>
+
+  <!-- BOTTOM SECTION: YOUTUBE SHORTS GUIDE & HELP ENGINE -->
+  <section class="max-w-7xl mx-auto px-4 lg:px-8 py-12 w-full border-t border-modrinth-border mt-12">
+    <div class="bg-modrinth-card border border-modrinth-border rounded-3xl p-6 sm:p-10 relative overflow-hidden text-center flex flex-col items-center">
+      <div class="absolute -top-24 -right-24 w-64 h-64 bg-modrinth/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="w-12 h-12 rounded-2xl bg-red-600/10 border border-red-600/30 text-red-500 flex items-center justify-center text-2xl mb-4">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </div>
+
+      <h3 class="text-2xl font-bold text-white mb-2" id="guideSecTitle">@frealnds Rehber & Yarı Destek Videosu Ara</h3>
+      <p class="text-gray-400 text-sm max-w-xl mb-6" id="guideSecSub">Minecraft sunucu hataları, mod kurulum problemleri veya Bobby/Sodium performans ayarları için hazırlanmış YouTube Shorts videolarımızı aratın.</p>
+
+      <div class="w-full max-w-xl bg-modrinth-dark border border-modrinth-border p-2 rounded-2xl flex flex-col sm:flex-row gap-2">
+        <input type="text" id="guideSearchInput" placeholder="Sorun veya konu yazın (Örn: bobby, aternos, fps)..." class="w-full bg-transparent px-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
+        <button onclick="searchVideoGuide()" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 shrink-0">
+          <span id="btnGuideSearch">Rehber Videosu Ara</span>
+        </button>
+      </div>
+    </div>
+  </section>
 
   <!-- MODAL: MOD DETAIL & INSTALLATION -->
   <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -228,7 +232,6 @@
         </div>
       </div>
 
-      <!-- DOWNLOAD BUTTONS -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-modrinth-border">
         <a id="btnModrinth" href="#" target="_blank" class="bg-modrinth hover:bg-modrinth-hover text-black font-bold py-3 px-4 rounded-xl text-center text-sm transition flex items-center justify-center gap-2">
           <span>Modrinth'ten İndir</span>
@@ -249,22 +252,20 @@
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
 
-      <div id="videoModalContent">
-        <!-- JS fills video iframe OR warning message -->
-      </div>
+      <div id="videoModalContent"></div>
     </div>
   </div>
 
   <!-- FOOTER -->
-  <footer class="border-t border-modrinth-border bg-modrinth-card py-8 px-4 lg:px-8 mt-12 text-xs text-gray-400">
+  <footer class="border-t border-modrinth-border bg-modrinth-card py-8 px-4 lg:px-8 text-xs text-gray-400">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
       <div>
         <p class="font-bold text-gray-200 mb-1">McPusula © 2026 - Türkiye Minecraft Rehber Portalı</p>
         <p class="max-w-xl text-gray-400" id="footerNonProfit">Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.</p>
       </div>
       <div class="text-center md:text-right border-t md:border-t-0 pt-4 md:pt-0 border-modrinth-border w-full md:w-auto">
-        <!-- MOJANG DISCLAIMER -->
-        <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1" id="footerDisclaimer">
+        <!-- OFFICIAL MOJANG DISCLAIMER -->
+        <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
           NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
         </p>
         <p class="text-[10px] text-gray-500">Minecraft is a registered trademark of Mojang Synergies AB.</p>
@@ -272,9 +273,8 @@
     </div>
   </footer>
 
-  <!-- JAVASCRIPT DATA & LOGIC -->
+  <!-- JS DATA & CONTROLLERS -->
   <script>
-    // TRANSLATIONS DATA FOR 6 TURKIC STATES
     const i18n = {
       tr: {
         banner: "Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.",
@@ -282,97 +282,113 @@
         all: "Tümü", mods: "Modlar", shaders: "Shaderlar", packs: "Kaynak Paketleri", upload: "Mod Yükle", soon: "Yakında",
         hero1: "Minecraft Türkiye", hero2: "Mod & Rehber Portalı",
         heroDesc: "En güncel Minecraft modları, kasma azaltan performans paketleri, gerçekçi shaderlar ve adım adım Türkçe video rehberleri tek adreste.",
-        searchPlaceholder: "Mod, shader veya sorun ara (Örn: bobby, fps, fabric)...",
-        btnSearch: "Rehber Videosu Ara", secTitle: "Keşfet & İndir", secSub: "Minecraft 1.20 - 1.21.4 Uyumlu Sürümler",
+        searchPlaceholder: "Mod, shader veya kaynak paketi adı ara (Örn: sodium, iris, create)...",
+        secTitle: "Keşfet & İndir", secSub: "Minecraft 1.20 - 1.21.4 Uyumlu Sürümler",
         loaderAll: "Tüm Loaderlar", descLbl: "Ne İşe Yarar?", stepsLbl: "Kurulum Talimatı",
         dlModrinth: "Modrinth'ten İndir", dlCurse: "CurseForge'dan İndir",
+        guideTitle: "@frealnds Rehber & Yarı Destek Videosu Ara",
+        guideSub: "Minecraft sunucu hataları, mod kurulum problemleri veya Bobby/Sodium performans ayarları için hazırlanmış YouTube Shorts videolarımızı aratın.",
+        guidePlaceholder: "Sorun veya konu yazın (Örn: bobby, aternos, fps)...",
+        btnGuideSearch: "Rehber Videosu Ara",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
-        requestTitle: "Rehber Videosu İste", requestBtn: "YouTube'da İçerik Talebi Gönder",
+        requestBtn: "YouTube'da Video İstəyi Göndər",
         footerNonProfit: "Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.",
         step1: "Minecraft Launcher'ı kapatın ve uyumlu Mod Loader'ı (Fabric/Forge) kurun.",
         step2: "İndirdiğiniz .jar dosyasını %appdata%/.minecraft/mods klasörüne atın.",
         step3: "Oyunu ilgili loader profiliyle başlatın."
       },
       az: {
-        banner: "Bu sayt Minecraft Azərbaycan və Türkiyə icması üçün hazırlanmış, heç bir kommersiya məqsədi olmayan pulsuz rəhbər layihəsidir.",
+        banner: "Bu sayt Minecraft Azərbaycan və Türkiyə icması üçün hazırlanmış pulsuz rəhbər layihəsidir.",
         subLogo: "Mod və Rəhbər Portalı",
         all: "Hamısı", mods: "Modlar", shaders: "Şeyderlər", packs: "Resurs Paketləri", upload: "Mod Yüklə", soon: "Tezliklə",
         hero1: "Minecraft Türk", hero2: "Mod və Rəhbər Portalı",
-        heroDesc: "Ən yenilənmiş Minecraft modları, performans paketləri, reallığa yaxın şeyderlər və addım-addım video rəhbərlər tək ünvanda.",
-        searchPlaceholder: "Mod, şeyder və ya problem axtar...",
-        btnSearch: "Rəhbər Videosu Axtar", secTitle: "Kəşf Et və Yüklə", secSub: "Minecraft 1.20 - 1.21.4 Uyğun Versiyalar",
+        heroDesc: "Ən yenilənmiş Minecraft modları və addım-addım video rəhbərlər tək ünvanda.",
+        searchPlaceholder: "Mod, şeyder və ya resurs paketi axtar...",
+        secTitle: "Kəşf Et və Yüklə", secSub: "Minecraft 1.20 - 1.21.4 Uyğun Versiyalar",
         loaderAll: "Bütün Yükləyicilər", descLbl: "Nə İşi Görür?", stepsLbl: "Quraşdırma Təlimatı",
         dlModrinth: "Modrinth-dən Yüklə", dlCurse: "CurseForge-dan Yüklə",
-        videoNotFound: "Təəssüf ki, axtardığınız məzmunla bağlı hələ ki rəhbər videosu tapılmadı.",
-        requestTitle: "Rəhbər Videosu İstə", requestBtn: "YouTube-da Video İstəyi Göndər",
-        footerNonProfit: "Bu sayt Minecraft icması üçün hazırlanmış, heç bir kommersiya gəliri olmayan pulsuz rəhbər layihəsidir.",
-        step1: "Minecraft Launcher-i bağlayın və uyğun Loader-i (Fabric/Forge) quraşdırın.",
-        step2: "Yüklədiyiniz .jar faylını %appdata%/.minecraft/mods qovluğuna atın.",
+        guideTitle: "@frealnds Rəhbər Videosu Axtar",
+        guideSub: "Problem və ya mod adını yazaraq YouTube Shorts videolarımızı tapın.",
+        guidePlaceholder: "Problem yazın (Örn: bobby, fps)...",
+        btnGuideSearch: "Rəhbər Videosu Axtar",
+        videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
+        requestBtn: "YouTube-da Video İstəyi Göndər",
+        footerNonProfit: "Bu sayt Minecraft icması üçün hazırlanmış pulsuz rəhbər layihəsidir.",
+        step1: "Minecraft Launcher-i bağlayın və Fabric/Forge quraşdırın.",
+        step2: ".jar faylını mods qovluğuna atın.",
         step3: "Oyunu müvafiq profil ilə başladın."
       },
       kz: {
-        banner: "Бұл сайт Minecraft қауымдастығы үшін дайындалған, коммерциялық мақсаты жоқ тегін нұсқаулық жобасы.",
+        banner: "Бұл сайт Minecraft қауымдастығы үшін дайындалған тегін нұсқаулық жобасы.",
         subLogo: "Мод және Нұсқаулық Порталы",
         all: "Барлығы", mods: "Модтар", shaders: "Шейдерлер", packs: "Ресурс Пакеттері", upload: "Мод Жүктеу", soon: "Жуырда",
         hero1: "Minecraft Түркі", hero2: "Мод Порталы",
-        heroDesc: "Ең соңғы Minecraft модтары, өнімділік пакеттері және видео нұсқаулықтар бір жерде.",
-        searchPlaceholder: "Мод немесе мәселені іздеңіз...",
-        btnSearch: "Видео Іздеу", secTitle: "Зерттеу және Жүктеу", secSub: "Minecraft 1.20 - 1.21.4 Нұсқалары",
+        heroDesc: "Ең соңғы Minecraft модтары мен бейненұсқаулықтар бір жерде.",
+        searchPlaceholder: "Мод немесе шейдер іздеңіз...",
+        secTitle: "Зерттеу және Жүктеу", secSub: "Minecraft 1.20 - 1.21.4 Нұсқалары",
         loaderAll: "Барлық Жүктеушілер", descLbl: "Сипаттамасы", stepsLbl: "Орнату Нұсқаулығы",
         dlModrinth: "Modrinth-тен Жүктеу", dlCurse: "CurseForge-тан Жүктеу",
-        videoNotFound: "Өкінішке орай, бұл тақырып бойынша әлі бейненұсқаулық табылған жоқ.",
-        requestTitle: "Бейненұсқаулыққа Тапсырыс Беру", requestBtn: "YouTube-та Сұраныс Жіберу",
-        footerNonProfit: "Бұл сайт тегін коммерциялық емес нұсқаулық жобасы болып табылады.",
+        guideTitle: "Бейненұсқаулық Іздеу", guideSub: "Мәселені жазып, видео нұсқаулықты табыңыз.",
+        guidePlaceholder: "Мәселені жазыңыз...", btnGuideSearch: "Видео Іздеу",
+        videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
+        requestBtn: "YouTube-та Сұраныс Жіберу",
+        footerNonProfit: "Бұл сайт тегін коммерциялық емес нұсқаулық жобасы.",
         step1: "Minecraft іске қосу құралын жауып, Fabric/Forge орнатыңыз.",
         step2: ".jar файлын mods қалтасына салыңыз.",
         step3: "Ойынды сәйкес профильмен бастаңыз."
       },
       uz: {
-        banner: "Ushbu sayt Minecraft hamjamiyati uchun tayyorlangan, tijorat maqsadiga ega bo'lmagan bepul qo'llanma loyihasidir.",
+        banner: "Ushbu sayt Minecraft hamjamiyati uchun tayyorlangan bepul qo'llanma loyihasidir.",
         subLogo: "Mod va Qo'llanma Portali",
         all: "Barchasi", mods: "Modlar", shaders: "Sheyderlar", packs: "Resurs Paketlari", upload: "Mod Yuklash", soon: "Tez orada",
         hero1: "Minecraft Turkiy", hero2: "Mod Portali",
-        heroDesc: "Eng so'nggi Minecraft modlari, unumdorlik paketlari va qadamma-qadam video qo'llanmalar bir joyda.",
-        searchPlaceholder: "Mod yoki muammoni qidiring...",
-        btnSearch: "Video Qidirish", secTitle: "Kashf qiling va Yuklang", secSub: "Minecraft 1.20 - 1.21.4 Versiyalari",
+        heroDesc: "Eng so'nggi Minecraft modlari va video qo'llanmalar bir joyda.",
+        searchPlaceholder: "Mod yoki sheyder qidiring...",
+        secTitle: "Kashf qiling va Yuklang", secSub: "Minecraft 1.20 - 1.21.4 Versiyalari",
         loaderAll: "Barcha Yuklovchilar", descLbl: "Tavsifi", stepsLbl: "O'rnatish Qo'llanmasi",
-        dlModrinth: "Modrinth-dan Yuklab Olish", dlCurse: "CurseForge-dan Yuklab Olish",
-        videoNotFound: "Afsuski, ushbu mavzu bo'yicha hali video qo'llanma topilmadi.",
-        requestTitle: "Video Qo'llanma So'rash", requestBtn: "YouTube'da So'rov Yuborish",
+        dlModrinth: "Modrinth-dan Yuklash", dlCurse: "CurseForge-dan Yuklash",
+        guideTitle: "Video Qo'llanma Qidirish", guideSub: "Muammoni yozib video qo'llanmani toping.",
+        guidePlaceholder: "Muammoni yozing...", btnGuideSearch: "Video Qidirish",
+        videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
+        requestBtn: "YouTube'da So'rov Yuborish",
         footerNonProfit: "Ushbu sayt tijorat maqsadiga ega bo'lmagan bepul qo'llanma loyihasidir.",
-        step1: "Minecraft Launcher-ni yoping va Fabric/Forge-ni o'rnating.",
+        step1: "Minecraft-ni yoping va Fabric/Forge-ni o'rnating.",
         step2: ".jar faylini mods papkasiga tashlang.",
         step3: "O'yinni mos profil bilan ishga tushiring."
       },
       kg: {
-        banner: "Бул сайт Minecraft коомчулугу үчүн даярдалган, коммерциялык эмес акысыз көрсөтмө долбоору.",
+        banner: "Бул сайт Minecraft коомчулугу үчүн даярдалган акысыз көрсөтмө долбоору.",
         subLogo: "Мод жана Көрсөтмө Порталы",
         all: "Баары", mods: "Моддор", shaders: "Шейдерлер", packs: "Ресурс Пакеттери", upload: "Мод Жүктөө", soon: "Жакында",
         hero1: "Minecraft Түрк", hero2: "Мод Порталы",
-        heroDesc: "Эң акыркы Minecraft моддору, өндүрүмдүүлүк пакеттери жана видео көрсөтмөлөр.",
-        searchPlaceholder: "Мод же көйгөйдү издөө...",
-        btnSearch: "Видео Издөө", secTitle: "Изилдөө жана Жүктөө", secSub: "Minecraft 1.20 - 1.21.4 Версиялары",
+        heroDesc: "Эң акыркы Minecraft моддору жана видео көрсөтмөлөр.",
+        searchPlaceholder: "Мод же шейдер издөө...",
+        secTitle: "Изилдөө жана Жүктөө", secSub: "Minecraft 1.20 - 1.21.4 Версиялары",
         loaderAll: "Бардык Жүктөөчүлөр", descLbl: "Сүрөттөмөсү", stepsLbl: "Орнотуу Көрсөтмөсү",
         dlModrinth: "Modrinth'тен Жүктөө", dlCurse: "CurseForge'дон Жүктөө",
-        videoNotFound: "Тилекке каршы, сиз издеген мазмун боюнча видео көрсөтмө табылган жок.",
-        requestTitle: "Видео Көрсөтмө Суроо", requestBtn: "YouTube'да Сурам Жөнөтүү",
+        guideTitle: "Видео Көрсөтмө Издөө", guideSub: "Көйгөйдү жазып көрсөтмөнү табыңыз.",
+        guidePlaceholder: "Көйгөйдү жазыңыз...", btnGuideSearch: "Видео İздөө",
+        videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
+        requestBtn: "YouTube'да Сурам Жөнөтүү",
         footerNonProfit: "Бул сайт коммерциялык эмес акысыз көрсөтмө долбоору.",
         step1: "Minecraft Launcher'ди жаап, Fabric/Forge орнотуңуз.",
         step2: ".jar файлын mods папкасына салыңыз.",
         step3: "Оюнду тиешелүү профиль менен баштаңыз."
       },
       tm: {
-        banner: "Bu saýt Minecraft jemgyýeti üçin taýýarlanan, täjirçilik maksady bolmadyk mugt gollanma taslamasydyr.",
+        banner: "Bu saýt Minecraft jemgyýeti üçin taýýarlanan mugt gollanma taslamasydyr.",
         subLogo: "Mod we Gollanma Portaly",
         all: "Hemmesi", mods: "Modlar", shaders: "Şeýderler", packs: "Resurs Paketleri", upload: "Mod Ýüklemek", soon: "Tiz arada",
         hero1: "Minecraft Türk", hero2: "Mod Portaly",
-        heroDesc: "Iň täze Minecraft modlary, öndürijilik paketleri we ädim-ädim wideolar bir ýerde.",
-        searchPlaceholder: "Mod ýa-da mesele gözleň...",
-        btnSearch: "Wideo Gözle", secTitle: "Gözle we Ýükle", secSub: "Minecraft 1.20 - 1.21.4 Wersiýalary",
+        heroDesc: "Iň täze Minecraft modlary we wideolar bir ýerde.",
+        searchPlaceholder: "Mod ýa-da şeýder gözleň...",
+        secTitle: "Gözle we Ýükle", secSub: "Minecraft 1.20 - 1.21.4 Wersiýalary",
         loaderAll: "Ähli Ýükleyjiler", descLbl: "Düşündirişi", stepsLbl: "Gurnaşdyrmak Gollanmasy",
         dlModrinth: "Modrinth-den Ýükle", dlCurse: "CurseForge-dan Ýükle",
-        videoNotFound: "Gynansak-da, gözleýän mazmunyňyz barada entek wideo gollanma tapylmady.",
-        requestTitle: "Wideo Gollanma Haýyş Et", requestBtn: "YouTube-da Haýyş Ugrat",
+        guideTitle: "Wideo Gollanma Gözle", guideSub: "Meseleňizi ýazyp wideony tapyň.",
+        guidePlaceholder: "Meseleňizi ýazyň...", btnGuideSearch: "Wideo Gözle",
+        videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
+        requestBtn: "YouTube-da Haýyş Ugrat",
         footerNonProfit: "Bu saýt täjirçilik maksady bolmadyk mugt gollanma taslamasydyr.",
         step1: "Minecraft Launcher-i ýapyp, Fabric/Forge gurnaň.",
         step2: ".jar faýlyny mods bukjasy içine atyň.",
@@ -382,7 +398,6 @@
 
     let currentLang = 'tr';
 
-    // SAMPLE 150 CATALOGUE DATABASE GENERATOR
     const rawModsList = [
       { name: "Sodium", cat: "mod", loader: "fabric", desc: "FPS katlayan ve işlemci yükünü düşüren en güçlü modern Minecraft grafik motoru.", modrinth: "https://modrinth.com/mod/sodium", curse: "https://www.curseforge.com/minecraft/mc-mods/sodium" },
       { name: "Iris Shaders", cat: "mod", loader: "fabric", desc: "Sodium ile tam uyumlu çalışan modern shader destek modu.", modrinth: "https://modrinth.com/mod/iris", curse: "https://www.curseforge.com/minecraft/mc-mods/irisshaders" },
@@ -396,7 +411,6 @@
       { name: "Fresh Animations", cat: "resourcepack", loader: "all", desc: "Tüm köylü ve mob hareketlerini aksiyon filmi kalitesinde akıcı animasyonlara dönüştürür.", modrinth: "https://modrinth.com/resourcepack/fresh-animations", curse: "https://www.curseforge.com/minecraft/texture-packs/fresh-animations" }
     ];
 
-    // Generate up to 150 items programmatically for catalogue UI
     const catalogueData = [];
     const loaders = ["fabric", "forge", "neoforge", "quilt"];
     const icons = ["⚡", "🌿", "🛡️", "🔮", "⚙️", "⛵", "🎨", "🚀", "💎", "🏹"];
@@ -419,7 +433,6 @@
     let activeCategory = 'all';
     let activeLoader = 'all';
 
-    // RENDER CARDS
     function renderCards() {
       const grid = document.getElementById('cardsGrid');
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -461,9 +474,8 @@
       });
     }
 
-    // SEARCH & VIDEO SYSTEM
     function searchVideoGuide() {
-      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const q = document.getElementById('guideSearchInput').value.trim().toLowerCase();
       const content = document.getElementById('videoModalContent');
       document.getElementById('videoModal').classList.remove('hidden');
 
@@ -473,22 +485,21 @@
           <div class="aspect-video w-full rounded-xl overflow-hidden mb-4 border border-modrinth-border bg-black">
             <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Guide Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
-          <p class="text-xs text-gray-400">${q.toUpperCase()} konusuyla ilgili YouTube Shorts kanalımızdaki özel rehber videosu.</p>
+          <p class="text-xs text-gray-400">${q.toUpperCase()} konusuyla ilgili rehber videosu.</p>
         `;
       } else {
         content.innerHTML = `
           <div class="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 flex items-center justify-center text-2xl mx-auto mb-3">⚠️</div>
-          <h3 class="text-base font-bold text-white mb-2" id="vNotFoundText">${i18n[currentLang].videoNotFound}</h3>
-          <p class="text-xs text-gray-400 mb-5">Aradığınız sorun veya mod ile ilgili henüz kanalda video hazırlanmamış olabilir.</p>
+          <h3 class="text-base font-bold text-white mb-2">${i18n[currentLang].videoNotFound}</h3>
+          <p class="text-xs text-gray-400 mb-5">Aradığınız sorun veya mod ile ilgili henüz kanalda rehber videosu bulunamadı.</p>
           <a href="https://youtube.com/@frealnds" target="_blank" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            <span id="vReqBtn">${i18n[currentLang].requestBtn}</span>
+            <span>${i18n[currentLang].requestBtn}</span>
           </a>
         `;
       }
     }
 
-    // MODAL ACTIONS
     function openDetailModal(item) {
       document.getElementById('modalIcon').innerText = item.icon;
       document.getElementById('modalTitle').innerText = item.title;
@@ -515,10 +526,8 @@
     function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
     function closeVideoModal() { document.getElementById('videoModal').classList.add('hidden'); }
 
-    // FILTERS
     function filterCategory(cat) {
       activeCategory = cat;
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-modrinth/20', 'text-white', 'font-semibold'));
       renderCards();
     }
 
@@ -533,8 +542,14 @@
       alert("Mod Yükleme paneli topluluk moderasyonu için çok yakında aktif edilecektir!");
     }
 
-    // DYNAMIC LANGUAGE SWITCHER (TR, AZ, KZ, UZ, KG, TM)
-    function changeLang(lang) {
+    // FIXED TOGGLE LANGUAGE DROPDOWN
+    function toggleLangDropdown(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('langDropdownMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function selectLang(lang) {
       currentLang = lang;
       const t = i18n[lang];
 
@@ -555,7 +570,6 @@
       document.getElementById('heroTitle2').innerText = t.hero2;
       document.getElementById('heroDesc').innerText = t.heroDesc;
       document.getElementById('searchInput').placeholder = t.searchPlaceholder;
-      document.getElementById('btnSearchGuide').innerText = t.btnSearch;
 
       document.getElementById('secTitle').childNodes[0].nodeValue = t.secTitle + " ";
       document.getElementById('secSub').innerText = t.secSub;
@@ -565,16 +579,27 @@
       document.getElementById('btnModrinth').querySelector('span').innerText = t.dlModrinth;
       document.getElementById('btnCurseforge').querySelector('span').innerText = t.dlCurse;
 
+      document.getElementById('guideSecTitle').innerText = t.guideTitle;
+      document.getElementById('guideSecSub').innerText = t.guideSub;
+      document.getElementById('guideSearchInput').placeholder = t.guidePlaceholder;
+      document.getElementById('btnGuideSearch').innerText = t.btnGuideSearch;
+
       document.getElementById('footerNonProfit').innerText = t.footerNonProfit;
+      document.getElementById('langDropdownMenu').classList.add('hidden');
 
       renderCards();
     }
 
-    // 360 DEGREE MOUSE & TOUCH TRACKING FOR COMPASS NEEDLE
+    window.addEventListener('click', () => {
+      document.getElementById('langDropdownMenu').classList.add('hidden');
+    });
+
+    // COMPASS 360 DEGREE MOUSE / TOUCH TRACKING
     const compassContainer = document.getElementById('compassContainer');
     const needle = document.getElementById('compassNeedle');
 
     function updateNeedleAngle(clientX, clientY) {
+      if (!compassContainer || !needle) return;
       const rect = compassContainer.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
@@ -582,7 +607,6 @@
       const deltaX = clientX - centerX;
       const deltaY = clientY - centerY;
 
-      // Calculate angle in degrees
       let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI) + 90;
       needle.style.transform = `rotate(${angle}deg)`;
     }
@@ -597,7 +621,6 @@
       }
     });
 
-    // INITIAL RENDER
     renderCards();
   </script>
 </body>

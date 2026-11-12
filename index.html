@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>McPusula - Minecraft Türkiye Mod, Kombo & Rehber Portalı</title>
   <meta property="og:title" content="McPusula - Minecraft Türkiye Mod & Rehber Portalı">
   <meta property="og:description" content="278+ Java & Bedrock (1.12.2 - 26.3) modu, shader, kaynak paketi, hazır kombolar ve akıllı çakışma kontrolü.">
@@ -172,6 +173,154 @@
     .mc-bat-2 { position: absolute; top: 48px; left: 0; animation: batFlyPath2 28s linear infinite 4s; will-change: transform; pointer-events: none; opacity: 0.19; }
     .mc-bat-3 { position: absolute; bottom: 18px; left: 0; animation: batFlyPath3 25s linear infinite 9s; will-change: transform; pointer-events: none; opacity: 0.17; }
     .mc-bat-wings { animation: batWingFlap 0.35s ease-in-out infinite; transform-origin: center; }
+
+    /* MOD LİSTEM ÇAKIŞMA YILDIRIM ANİMASYONU (SADECE ÇAKIŞMA OLUNCA ÇALIŞIR) */
+    @keyframes mcBoltFlash1 {
+      0%, 84%, 100% { opacity: 0; transform: translateY(-8px) scaleY(0.95); }
+      86% { opacity: 0.95; transform: translateY(0) scaleY(1); filter: drop-shadow(0 0 12px #ef4444) drop-shadow(0 0 24px #ffffff); }
+      88% { opacity: 0.25; }
+      90% { opacity: 0.85; filter: drop-shadow(0 0 18px #f87171); }
+      94% { opacity: 0; }
+    }
+    @keyframes mcBoltFlash2 {
+      0%, 42%, 100% { opacity: 0; transform: translateY(-6px) scaleX(-1); }
+      44% { opacity: 0.9; transform: translateY(0) scaleX(-1); filter: drop-shadow(0 0 14px #ef4444) drop-shadow(0 0 22px #fde047); }
+      47% { opacity: 0.15; }
+      49% { opacity: 0.75; }
+      53% { opacity: 0; }
+    }
+    @keyframes mcThunderAmbient {
+      0%, 40%, 82%, 100% { background: radial-gradient(circle at 50% 15%, rgba(239, 68, 68, 0.06), transparent 70%); }
+      44%, 86% { background: radial-gradient(circle at 50% 15%, rgba(239, 68, 68, 0.26), rgba(239, 68, 68, 0.08) 60%, transparent 90%); }
+    }
+    .mc-conflict-lightning-bg {
+      animation: mcThunderAmbient 4.5s infinite ease-in-out;
+      will-change: opacity;
+    }
+    .mc-bolt-1 { animation: mcBoltFlash1 4.5s infinite; will-change: transform, opacity; }
+    .mc-bolt-2 { animation: mcBoltFlash2 5.2s infinite 1.1s; will-change: transform, opacity; }
+    .mc-bolt-3 { animation: mcBoltFlash1 6.0s infinite 2.4s; will-change: transform, opacity; }
+
+    /* ÜST MENÜ "UYUM SİMÜLASYONU" ÖZEL BUTON ANİMASYONU */
+    @keyframes simBtnPulse {
+      0%, 100% {
+        box-shadow: 0 0 14px rgba(56, 189, 248, 0.35), inset 0 0 10px rgba(168, 85, 247, 0.20);
+        border-color: rgba(56, 189, 248, 0.65);
+      }
+      50% {
+        box-shadow: 0 0 24px rgba(168, 85, 247, 0.60), 0 0 12px rgba(27, 217, 106, 0.35), inset 0 0 14px rgba(56, 189, 248, 0.30);
+        border-color: rgba(192, 132, 252, 0.95);
+      }
+    }
+    @keyframes simRadarSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .sim-nav-special {
+      animation: simBtnPulse 2.6s ease-in-out infinite;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(168, 85, 247, 0.18));
+      color: #e0f2fe;
+    }
+    .sim-nav-special:hover {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.32), rgba(168, 85, 247, 0.32));
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    .sim-radar-icon {
+      animation: simRadarSpin 8s linear infinite;
+    }
+
+    /* UYUM SİMÜLASYONU 3 FARKLI EFEKTLİ DURUM (YEŞİL / TURUNCU / KIRMIZI) */
+    /* 1. EFEKTLİ YEŞİL (KUSURSUZ UYUM - AURORA DALGASI + XP PARTİKÜLLERİ + HARMONİK HALKA) */
+    @keyframes simEmeraldAurora {
+      0%, 100% {
+        box-shadow: 0 0 25px rgba(27, 217, 106, 0.30), inset 0 0 30px rgba(27, 217, 106, 0.12);
+        border-color: rgba(27, 217, 106, 0.75);
+      }
+      50% {
+        box-shadow: 0 0 45px rgba(27, 217, 106, 0.55), 0 0 80px rgba(16, 185, 129, 0.20), inset 0 0 45px rgba(27, 217, 106, 0.22);
+        border-color: #4ade80;
+      }
+    }
+    @keyframes simXpOrbRise {
+      0% { transform: translate3d(0, 20px, 0) scale(0.6); opacity: 0; }
+      40% { opacity: 0.9; }
+      100% { transform: translate3d(0, -65px, 0) scale(1.2); opacity: 0; }
+    }
+    .sim-effect-green {
+      animation: simEmeraldAurora 2.8s ease-in-out infinite;
+      background: radial-gradient(circle at 50% 0%, rgba(27, 217, 106, 0.20), rgba(20, 23, 28, 0.96) 70%);
+    }
+    .sim-xp-orb {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 9999px;
+      background: #4ade80;
+      box-shadow: 0 0 10px #1bd96a, 0 0 18px #bef264;
+      pointer-events: none;
+      animation: simXpOrbRise 2.6s infinite ease-out;
+    }
+
+    /* 2. EFEKTLİ TURUNCU (YARDIMCI MOD EKSİK - SONAR RADAR DALGALARI + DİYAGONAL İKAZ ŞERİDİ) */
+    @keyframes simAmberSonarWave {
+      0% { transform: scale(0.85); opacity: 0.85; }
+      100% { transform: scale(1.65); opacity: 0; }
+    }
+    @keyframes simAmberGlow {
+      0%, 100% {
+        box-shadow: 0 0 22px rgba(249, 115, 22, 0.35), inset 0 0 25px rgba(245, 158, 11, 0.14);
+        border-color: rgba(249, 115, 22, 0.80);
+      }
+      50% {
+        box-shadow: 0 0 42px rgba(249, 115, 22, 0.65), inset 0 0 38px rgba(245, 158, 11, 0.26);
+        border-color: #fbbf24;
+      }
+    }
+    @keyframes hazardStripeMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 0; }
+    }
+    .sim-effect-orange {
+      animation: simAmberGlow 2.2s ease-in-out infinite;
+      background: radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.22), rgba(20, 23, 28, 0.96) 70%);
+    }
+    .sim-hazard-bar {
+      background: repeating-linear-gradient(45deg, rgba(249,115,22,0.35), rgba(249,115,22,0.35) 10px, rgba(0,0,0,0.4) 10px, rgba(0,0,0,0.4) 20px);
+      background-size: 40px 40px;
+      animation: hazardStripeMove 1.4s linear infinite;
+    }
+    .sim-sonar-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 9999px;
+      border: 2px solid #fb923c;
+      animation: simAmberSonarWave 1.8s ease-out infinite;
+      pointer-events: none;
+    }
+
+    /* 3. EFEKTLİ KIRMIZI (ÇAKIŞMA VAR - KIZIL REAKTÖR AŞIRI YÜKLENME + ŞİDDETLİ YILDIRIM + SARSINTI) */
+    @keyframes simCrimsonOverload {
+      0%, 100% {
+        box-shadow: 0 0 28px rgba(239, 68, 68, 0.50), inset 0 0 35px rgba(220, 38, 38, 0.22);
+        border-color: #ef4444;
+      }
+      50% {
+        box-shadow: 0 0 58px rgba(239, 68, 68, 0.90), 0 0 95px rgba(220, 38, 38, 0.35), inset 0 0 55px rgba(239, 68, 68, 0.38);
+        border-color: #fca5a5;
+      }
+    }
+    @keyframes simCoreJitter {
+      0%, 92%, 100% { transform: translate3d(0, 0, 0); }
+      94% { transform: translate3d(-2px, 1px, 0); }
+      96% { transform: translate3d(2px, -1px, 0); }
+      98% { transform: translate3d(-1px, -1px, 0); }
+    }
+    .sim-effect-red {
+      animation: simCrimsonOverload 1.4s ease-in-out infinite, simCoreJitter 2.5s infinite;
+      background: radial-gradient(circle at 50% 0%, rgba(239, 68, 68, 0.28), rgba(20, 23, 28, 0.96) 72%);
+    }
+
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-modrinth selection:text-black">
@@ -235,6 +384,13 @@
         </button>
       </nav>
 
+      <!-- HATA ÇÖZÜCÜNÜN YANINDA AMA ONLARDAN AYRI ÖZEL ANİMASYONLU "UYUM SİMÜLASYONU" BUTONU -->
+      <button type="button" onclick="openSimulationView()" id="btnNavSim" class="hidden xl:flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-extrabold transition sim-nav-special shrink-0">
+        <svg class="w-4 h-4 text-sky-300 sim-radar-icon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        <span id="navSimText">Uyum Simülasyonu</span>
+        <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+      </button>
+
       <!-- RIGHT ACTIONS -->
       <div class="flex items-center gap-2.5 shrink-0">
         <button type="button" onclick="openCartDrawer()" id="btnMyListToggle" class="relative flex items-center gap-2 bg-modrinth-card border border-modrinth-border hover:border-modrinth px-3.5 py-2 rounded-xl text-xs font-bold text-white transition">
@@ -276,9 +432,14 @@
         <span id="mobNavCombosText">Özel Kombolar</span>
       </button>
       <button type="button" onclick="openErrorModal()" id="mobNavErrors" class="shrink-0 px-3 py-1.5 rounded-lg transition text-gray-300 bg-white/5">Hata Çözücü</button>
+      <button type="button" onclick="openSimulationView()" id="mobNavSim" class="shrink-0 px-3.5 py-1.5 rounded-lg border transition flex items-center gap-1.5 font-extrabold sim-nav-special ml-1">
+        <svg class="w-3.5 h-3.5 text-sky-300 sim-radar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        <span id="mobNavSimText">Uyum Simülasyonu</span>
+      </button>
     </div>
   </header>
 
+  <div id="mainPortalView" class="flex-1 flex flex-col">
   <!-- HERO SECTION -->
   <section class="relative py-8 px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center z-30">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-modrinth-card border border-modrinth-border text-[11px] font-semibold text-gray-300 mb-3">
@@ -372,9 +533,9 @@
           <div class="flex items-center gap-2.5 flex-wrap">
             <span class="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-400/40 rounded-lg shadow-[0_0_12px_rgba(251,191,36,0.25)] flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              <span id="comboSpecialBadge">Özel Kombo Seçkisi</span>
+              <span id="comboSpecialBadge">Özel Kombolar</span>
             </span>
-            <h2 class="text-lg sm:text-xl font-extrabold text-white" id="comboSecTitle">Hazır Mod Komboları (Uyumluluk Garantili Paketler)</h2>
+            <h2 class="text-lg sm:text-xl font-extrabold text-white" id="comboSecTitle">Hazır Mod Komboları (Uyumlu Paketler)</h2>
           </div>
           <p class="text-xs text-gray-400 mt-1" id="comboSecSub">Özet avantajlara göz atın; paketin içindeki tüm modları ve detayları görmek için İçeriği İncele butonuna tıklayın.</p>
         </div>
@@ -457,12 +618,253 @@
       <h3 class="text-xl font-bold text-white mb-2" id="guideSecTitle">@frealnds Video Rehber & Teknik Destek</h3>
       <p class="text-gray-400 text-xs max-w-xl mb-5" id="guideSecSub">Minecraft sunucu hataları, mod kurulum adımları, çakışma çözümleri veya Bobby/Sodium/Create ayarları için video rehber arayın.</p>
 
-      <div class="w-full max-w-xl bg-modrinth-dark border border-modrinth-border p-2 rounded-2xl flex flex-col sm:flex-row gap-2">
-        <input type="text" id="guideSearchInput" placeholder="Konu veya mod adı yazın (Örn: bobby, aternos, fps, create, shader)..." class="w-full bg-transparent px-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
+      <div class="w-full max-w-2xl bg-modrinth-dark border border-modrinth-border focus-within:border-red-500/60 p-2 rounded-2xl flex flex-col sm:flex-row gap-2 transition">
+        <input type="text" id="guideSearchInput" oninput="filterGuideVideosInline()" onkeydown="if(event.key==='Enter')searchVideoGuide()" placeholder="Sorununuzu yazın (Örn: aternos modlu sunucu, bozuk skin, mod kurulumu, uyuma, essential, replay mod)..." class="w-full bg-transparent px-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
         <button type="button" onclick="searchVideoGuide()" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <span id="btnGuideSearch">Rehber Videosu Ara</span>
         </button>
+      </div>
+
+      <!-- HIZLI SORUN ETİKETLERİ -->
+      <div class="flex flex-wrap items-center justify-center gap-1.5 mt-4 max-w-4xl">
+        <button type="button" onclick="showAllGuideVideos()" class="text-[11px] font-bold px-3 py-1 rounded-lg bg-red-600/20 border border-red-500/40 text-red-300 hover:bg-red-600 hover:text-white transition">Tüm Rehber Videolarını Göster (36)</button>
+        <button type="button" onclick="showAllGuideVideos()" class="hidden">Tüm @frealnds Videoları (26)</button>
+        <button type="button" onclick="setGuideQuery('yapışkan tuşlar')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Yapışkan Tuşlar Kapatma</button>
+        <button type="button" onclick="setGuideQuery('skyblock')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos SkyBlock Kurma</button>
+        <button type="button" onclick="setGuideQuery('sunucu lag azaltma')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucu Lag Azaltma</button>
+        <button type="button" onclick="setGuideQuery('1 den fazla dünya')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucuda Çoklu Dünya</button>
+        <button type="button" onclick="setGuideQuery('bedrock java combat')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Bedrock Java Combat</button>
+        <button type="button" onclick="setGuideQuery('müzik diski')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Müzik Diski Özelleştirme</button>
+        <button type="button" onclick="setGuideQuery('chunk arttırma')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos Chunk Arttırma</button>
+        <button type="button" onclick="setGuideQuery('anti hile')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Anti Hile & Anti Xray</button>
+        <button type="button" onclick="setGuideQuery('fabric ile forge bir arada')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Fabric + Forge Bir Arada</button>
+        <button type="button" onclick="setGuideQuery('java bedrock eski sürüm beraber')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Java + Bedrock Beraber Oynama</button>
+        <button type="button" onclick="setGuideQuery('nether portalı fix')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Nether Portalı Fix</button>
+        <button type="button" onclick="setGuideQuery('oyun içi konuşma')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Gerçekçi Oyun İçi Konuşma</button>
+        <button type="button" onclick="setGuideQuery('kendi modunu yap')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Kendi Modunu Yap</button>
+        <button type="button" onclick="setGuideQuery('bozuk skin')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucuda Bozuk Skin Çözümü</button>
+        <button type="button" onclick="setGuideQuery('mod kurma')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Orijinal & Crack Mod Kurulumu</button>
+        <button type="button" onclick="setGuideQuery('1 kişinin uyumasıyla')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Tek Kişi Uyuyunca Sabah Olması</button>
+        <button type="button" onclick="setGuideQuery('aternos modlu sunucu')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos Modlu Sunucu</button>
+        <button type="button" onclick="setGuideQuery('essential sunucusuz')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucu Kurmadan Arkadaşla Oynama</button>
+        <button type="button" onclick="setGuideQuery('bedrock')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Bedrock / MCPE Modları</button>
+        <button type="button" onclick="setGuideQuery('sinematik')" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Replay & Sinematik Modu</button>
+      </div>
+
+      <!-- @FREALNDS AÇIKLAMALI VİDEO SONUÇLARI (SİTE İÇİNDE İZLENEBİLİR) -->
+      <div id="guideResultsContainer" class="w-full max-w-5xl mt-6 text-left"></div>
+    </div>
+  </section>
+  </div>
+
+  <!-- SİTE İÇİ ÖZEL SAYFA: UYUM SİMÜLASYONU LABORATUVARI (ADIM ADIM KURULUM + 2 BÖLMELİ TEST EKRANI) -->
+  <section id="simViewSection" class="hidden max-w-7xl mx-auto px-4 lg:px-8 py-6 w-full flex-1">
+    <!-- ÜST BAR VE GERİ DÖNÜŞ BUTONU -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-modrinth-border">
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="closeSimulationView()" id="btnSimBack" class="bg-modrinth-card hover:bg-white/10 border border-modrinth-border hover:border-modrinth text-white font-bold px-4 py-2.5 rounded-xl text-xs transition flex items-center gap-2 shadow-lg">
+          <svg class="w-4 h-4 text-modrinth" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          <span id="simBackBtnText">Ana Portala Geri Dön</span>
+        </button>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/40">İnteraktif Simülatör</span>
+            <h2 class="text-lg sm:text-2xl font-black text-white" id="simTitleText">Minecraft Mod & Paket Uyum Simülasyonu</h2>
+          </div>
+          <p class="text-xs text-gray-400 mt-0.5" id="simSubText">Sırasıyla platformunuzu, mod yükleyici yapınızı ve sürümünüzü seçin; ardından kendi modlarınızı manuel ekleyerek test edin.</p>
+        </div>
+      </div>
+
+      <!-- İLERLEME ADIM GÖSTERGESİ -->
+      <div class="flex items-center gap-2 text-xs font-extrabold">
+        <span id="simStepBadge1" class="px-3 py-1.5 rounded-xl bg-modrinth text-black transition">1. Platform</span>
+        <span class="text-gray-600">&rarr;</span>
+        <span id="simStepBadge2" class="px-3 py-1.5 rounded-xl bg-modrinth-card border border-modrinth-border text-gray-400 transition">2. Yapı</span>
+        <span class="text-gray-600">&rarr;</span>
+        <span id="simStepBadge3" class="px-3 py-1.5 rounded-xl bg-modrinth-card border border-modrinth-border text-gray-400 transition">3. Sürüm</span>
+        <span class="text-gray-600">&rarr;</span>
+        <span id="simStepBadge4" class="px-3 py-1.5 rounded-xl bg-modrinth-card border border-modrinth-border text-gray-400 transition">4. Simülasyon</span>
+      </div>
+    </div>
+
+    <!-- ADIM 1: PLATFORM SEÇİM EKRANI (JAVA MI BEDROCK MI?) -->
+    <div id="simWizardStep1" class="max-w-2xl mx-auto my-8 bg-modrinth-card border border-modrinth-border rounded-3xl p-6 sm:p-8 text-center shadow-2xl">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-400/40 text-sky-300 font-black text-lg mb-3">1</div>
+      <h3 class="text-xl sm:text-2xl font-black text-white mb-2">Hangi Minecraft Platformunu Oynuyorsunuz?</h3>
+      <p class="text-xs sm:text-sm text-gray-400 mb-6">Simülasyonu başlatmak için önce oynadığınız temel oyun sürümünü seçin.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <button type="button" id="simEdJavaBtn" onclick="selectWizardEdition('java')" class="group p-6 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-modrinth text-left transition flex flex-col justify-between hover:-translate-y-0.5 shadow-lg">
+          <div class="w-11 h-11 rounded-xl bg-modrinth/15 border border-modrinth/40 text-modrinth flex items-center justify-center mb-4 group-hover:scale-110 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <div>
+            <div class="text-base font-extrabold text-white group-hover:text-modrinth transition mb-1">Java Edition</div>
+            <p class="text-xs text-gray-400">PC, Mac ve Linux için Fabric, Forge ve NeoForge modları, Iris shaderları ve kaynak paketleri.</p>
+          </div>
+        </button>
+
+        <button type="button" id="simEdBedrockBtn" onclick="selectWizardEdition('bedrock')" class="group p-6 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-emerald-400 text-left transition flex flex-col justify-between hover:-translate-y-0.5 shadow-lg">
+          <div class="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <div>
+            <div class="text-base font-extrabold text-white group-hover:text-emerald-400 transition mb-1">Bedrock (MCPE)</div>
+            <p class="text-xs text-gray-400">Telefon, Tablet, Konsol ve Windows 10/11 Bedrock sürümü için Add-On, RenderDragon shader ve paketler.</p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- ADIM 2: YAPI / MOD YÜKLEYİCİ SEÇİM EKRANI (FABRIC / FORGE / NEOFORGE) -->
+    <div id="simWizardStep2" class="hidden max-w-2xl mx-auto my-8 bg-modrinth-card border border-modrinth-border rounded-3xl p-6 sm:p-8 text-center shadow-2xl">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-purple-500/15 border border-purple-400/40 text-purple-300 font-black text-lg mb-3">2</div>
+      <h3 class="text-xl sm:text-2xl font-black text-white mb-2">Mod Yükleyici Yapısını (Loader) Seçin</h3>
+      <p class="text-xs sm:text-sm text-gray-400 mb-6">Oyununuzu hangi mod yükleyici altyapısıyla başlatacaksınız?</p>
+
+      <div id="simLoaderJavaGroup" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <button type="button" id="simLoadFabric" onclick="selectWizardLoader('fabric')" class="group p-5 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-sky-400 text-left transition hover:-translate-y-0.5">
+          <span class="inline-block text-[10px] font-black uppercase px-2.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/40 mb-3">En Popüler & Hızlı</span>
+          <div class="text-base font-extrabold text-white group-hover:text-sky-300 mb-1">Fabric</div>
+          <p class="text-xs text-gray-400">Sodium, Iris, Lithium ve modern optimizasyon/yaşam kalitesi modları için.</p>
+        </button>
+
+        <button type="button" id="simLoadForge" onclick="selectWizardLoader('forge')" class="group p-5 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-orange-500 text-left transition hover:-translate-y-0.5">
+          <span class="inline-block text-[10px] font-black uppercase px-2.5 py-0.5 rounded bg-orange-500/20 text-orange-300 border border-orange-400/40 mb-3">Klasik & Ağır Modlar</span>
+          <div class="text-base font-extrabold text-white group-hover:text-orange-400 mb-1">Forge</div>
+          <p class="text-xs text-gray-400">Create Mod, Alex's Mobs, Quark ve kapsamlı macera/otomasyon paketleri için.</p>
+        </button>
+
+        <button type="button" id="simLoadNeoforge" onclick="selectWizardLoader('neoforge')" class="group p-5 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-amber-400 text-left transition hover:-translate-y-0.5">
+          <span class="inline-block text-[10px] font-black uppercase px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/40 mb-3">Yeni Nesil Endüstri</span>
+          <div class="text-base font-extrabold text-white group-hover:text-amber-300 mb-1">NeoForge</div>
+          <p class="text-xs text-gray-400">Mekanism, AE2, Embeddium ve 1.20.1 - 26.3 modern teknik modlar için.</p>
+        </button>
+      </div>
+
+      <div id="simLoaderBedrockGroup" class="hidden mb-6">
+        <button type="button" onclick="selectWizardLoader('bedrock')" class="w-full p-6 rounded-2xl bg-modrinth-dark border-2 border-emerald-500/60 hover:border-emerald-400 text-center transition">
+          <div class="text-base font-extrabold text-emerald-300 mb-1">Bedrock Add-On & RenderDragon Yapısı (.mcaddon / .mcpack)</div>
+          <p class="text-xs text-gray-400">Bedrock sürümünde harici loader gerekmez; Kaynak ve Davranış Paketleri doğrudan çalışır. Devam etmek için tıklayın.</p>
+        </button>
+      </div>
+
+      <button type="button" onclick="goToSimStep(1)" class="text-xs font-bold text-gray-400 hover:text-white transition">&larr; 1. Adıma (Platform Seçimine) Geri Dön</button>
+    </div>
+
+    <!-- ADIM 3: OYUN SÜRÜMÜ SEÇİM EKRANI -->
+    <div id="simWizardStep3" class="hidden max-w-2xl mx-auto my-8 bg-modrinth-card border border-modrinth-border rounded-3xl p-6 sm:p-8 text-center shadow-2xl">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-amber-300 font-black text-lg mb-3">3</div>
+      <h3 class="text-xl sm:text-2xl font-black text-white mb-2">Oynayacağınız Minecraft Sürümünü Seçin</h3>
+      <p class="text-xs sm:text-sm text-gray-400 mb-6">Seçtiğiniz sürüme göre simülasyon ekranınız boş olarak hazırlanacaktır.</p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6" id="simVerButtonsWrap">
+        <button type="button" onclick="selectWizardVersion('26.3', this)" class="sim-ver-btn p-4 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-amber-400 text-center transition group">
+          <div class="text-base font-black text-white group-hover:text-amber-300">26.3</div>
+          <div class="text-[11px] text-modrinth font-semibold mt-0.5">En Güncel Sürüm</div>
+        </button>
+        <button type="button" onclick="selectWizardVersion('1.21', this)" class="sim-ver-btn p-4 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-amber-400 text-center transition group">
+          <div class="text-base font-black text-white group-hover:text-amber-300">1.21.x</div>
+          <div class="text-[11px] text-gray-400 mt-0.5">1.21 - 1.21.4</div>
+        </button>
+        <button type="button" onclick="selectWizardVersion('1.20', this)" class="sim-ver-btn p-4 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-amber-400 text-center transition group">
+          <div class="text-base font-black text-white group-hover:text-amber-300">1.20.x</div>
+          <div class="text-[11px] text-gray-400 mt-0.5">1.20.1 - 1.20.6</div>
+        </button>
+        <button type="button" onclick="selectWizardVersion('1.19', this)" class="sim-ver-btn p-4 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-amber-400 text-center transition group">
+          <div class="text-base font-black text-white group-hover:text-amber-300">1.19.x</div>
+          <div class="text-[11px] text-gray-400 mt-0.5">1.19.2 - 1.19.4</div>
+        </button>
+        <button type="button" onclick="selectWizardVersion('1.18', this)" class="sim-ver-btn p-4 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-amber-400 text-center transition group">
+          <div class="text-base font-black text-white group-hover:text-amber-300">1.18.x</div>
+          <div class="text-[11px] text-gray-400 mt-0.5">1.18.2</div>
+        </button>
+        <button type="button" onclick="selectWizardVersion('1.16.5', this)" class="sim-ver-btn p-4 rounded-2xl bg-modrinth-dark border-2 border-modrinth-border hover:border-amber-400 text-center transition group">
+          <div class="text-base font-black text-white group-hover:text-amber-300">1.16.5</div>
+          <div class="text-[11px] text-gray-400 mt-0.5">Klasik Mod Sürümü</div>
+        </button>
+      </div>
+
+      <button type="button" onclick="goToSimStep(2)" class="text-xs font-bold text-gray-400 hover:text-white transition">&larr; 2. Adıma (Yapı Seçimine) Geri Dön</button>
+    </div>
+
+    <!-- ADIM 4: 2 BÖLMELİ ANA SİMÜLASYON EKRANI (SOLDA MODLAR/SHADERLAR/PAKETLER, SAĞDA UYUMLULUK KONTROL EKRANI) -->
+    <div id="simWizardStep4" class="hidden">
+      <!-- SEÇİLEN PROFİL ÖZETİ VE YENİDEN SEÇME BARI -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-modrinth-card border border-modrinth-border rounded-2xl p-3.5 mb-5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs font-bold text-gray-400">Seçilen Kurulum:</span>
+          <div id="simActiveProfileBadges" class="flex items-center gap-2 flex-wrap"></div>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button type="button" onclick="goToSimStep(1)" class="bg-modrinth-dark hover:bg-white/10 border border-modrinth-border text-sky-300 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+            Platform / Yapı / Sürüm Değiştir
+          </button>
+          <button type="button" onclick="resetSimulation()" class="bg-modrinth-dark hover:bg-red-500/20 border border-modrinth-border text-gray-300 hover:text-red-300 font-bold px-3 py-1.5 rounded-xl text-xs transition">
+            Eklenen Modları Temizle
+          </button>
+          <!-- Hızlı Uyumluluk Presets (Gizli Uyumluluk Koruma + İsteğe Bağlı) -->
+          <button type="button" onclick="importCartToSim()" class="hidden">Mod Listem'den Aktar</button>
+          <button type="button" onclick="loadSimPreset('green')" class="hidden">Örnek: Uyumlu</button>
+          <button type="button" onclick="loadSimPreset('orange')" class="hidden">Örnek: Yan Mod Eksik</button>
+          <button type="button" onclick="loadSimPreset('red')" class="hidden">Örnek: Çakışma</button>
+          <button type="button" onclick="resetSimulation()" class="hidden">Sıfırla</button>
+        </div>
+      </div>
+
+      <!-- 2 BÖLMELİ ÇALIŞMA ALANI -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- SOL BÖLME: MODLAR, SHADERLAR VE KAYNAK PAKETLERİ HAVUZU (7 SÜTUN) -->
+        <div class="lg:col-span-7 bg-modrinth-card border border-modrinth-border rounded-3xl p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h3 class="text-base font-extrabold text-white">Modlar, Shaderlar & Kaynak Paketleri</h3>
+              <p class="text-[11px] text-gray-400">İstediğiniz içerikleri manuel olarak ekleyip çıkararak sağdaki ekranda uyumluluğunu kontrol edin.</p>
+            </div>
+            <div class="flex items-center gap-1 bg-modrinth-dark p-1 rounded-xl border border-modrinth-border text-[11px] font-bold shrink-0">
+              <button type="button" onclick="setSimCat('all', this)" class="sim-cat-btn px-2.5 py-1 rounded-lg bg-modrinth text-black font-extrabold">Tümü</button>
+              <button type="button" onclick="setSimCat('mod', this)" class="sim-cat-btn px-2.5 py-1 rounded-lg text-gray-400 hover:text-white">Mod</button>
+              <button type="button" onclick="setSimCat('shader', this)" class="sim-cat-btn px-2.5 py-1 rounded-lg text-gray-400 hover:text-white">Shader</button>
+              <button type="button" onclick="setSimCat('resourcepack', this)" class="sim-cat-btn px-2.5 py-1 rounded-lg text-gray-400 hover:text-white">Paket</button>
+            </div>
+          </div>
+
+          <div class="relative mb-4">
+            <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="simSearchInput" oninput="renderSimulationPool()" placeholder="Mod, shader veya kaynak paketi ara (Örn: sodium, iris, create, vulkan, fresh animations)..." class="w-full bg-modrinth-dark border border-modrinth-border focus:border-modrinth rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:outline-none">
+          </div>
+
+          <div id="simPoolList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[540px] overflow-y-auto pr-1"></div>
+        </div>
+
+        <!-- SAĞ BÖLME: CANLI UYUMLULUK KONTROL EKRANI (5 SÜTUN) -->
+        <div class="lg:col-span-5">
+          <div id="simReactorBox" class="relative overflow-hidden rounded-3xl border-2 border-modrinth-border bg-modrinth-card p-5 transition-all duration-300 shadow-2xl">
+            <div id="simEffectOverlay" class="absolute inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+            <div class="relative z-10">
+              <div class="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-white/10">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-gray-200">Uyumluluk Kontrol Ekranı</span>
+                <span id="simCountBadge" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/10 text-white">0 İçerik</span>
+              </div>
+
+              <!-- MERKEZİ REAKTÖR DURUM GÖSTERGESİ -->
+              <div id="simCoreStatusHeader" class="text-center py-4 px-3 rounded-2xl bg-black/40 border border-white/10 mb-4 relative overflow-hidden"></div>
+
+              <!-- SİMÜLASYON ANALİZ RAPORU -->
+              <div id="simAnalysisMessages" class="space-y-2.5 mb-4"></div>
+
+              <!-- SİMÜLASYONA EKLENEN İÇERİKLER LİSTESİ -->
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[11px] font-extrabold uppercase tracking-wider text-gray-300">Eklediğiniz İçerikler</span>
+                  <button type="button" onclick="syncSimToMyList()" class="text-[11px] font-bold text-modrinth hover:underline">Mod Listeme Kaydet &rarr;</button>
+                </div>
+                <div id="simInstalledContainer" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -564,7 +966,7 @@
   <!-- DRAWER: MOD LIST -->
   <div id="cartModalOverlay" onclick="if(event.target===this)closeCartDrawer()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
     <div id="cartDrawer" class="absolute inset-y-0 right-0 w-full sm:w-[420px] bg-modrinth-card border-l border-modrinth-border shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
-      <div class="p-5 border-b border-modrinth-border flex items-center justify-between">
+      <div class="relative z-10 p-5 border-b border-modrinth-border flex items-center justify-between">
         <div>
           <h3 class="text-lg font-extrabold text-white flex items-center gap-2">
             <span id="drawerTitleText">Mod Listem</span>
@@ -577,7 +979,7 @@
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-5">
+      <div class="relative z-10 flex-1 overflow-y-auto p-5">
         <div id="cartAnalysisBox" class="space-y-2.5 mb-5"></div>
         <div class="flex items-center justify-between mb-3">
           <span class="text-xs font-bold text-gray-300 uppercase tracking-wider" id="drawerAddedLabel">Eklenen İçerikler</span>
@@ -683,8 +1085,12 @@
         instantHint: "Aradığınız içeriği doğrudan buradan inceleyebilir veya Mod Listenize ekleyebilirsiniz.",
         instantScrollBtn: "Katalogda Tümünü Gör ↓",
         instantNoResult: "Aramanızla eşleşen içerik bulunamadı.",
-        comboBadge: "Özel Kombo Seçkisi",
-        comboTitle: "Hazır Mod Komboları (Uyumluluk Garantili Paketler)",
+        comboBadge: "Özel Kombolar",
+        comboTitle: "Hazır Mod Komboları (Uyumlu Paketler)",
+        resolveConflictBoxText: "İsterseniz listedeki çakışan modları tek tıkla otomatik temizleyip uyumlu hale getirebilirsiniz:",
+        resolveConflictBtn: "Çakışmaları Tek Tıkla Çöz",
+        noGuideVideoFound: "Aradığınız kritere uygun destek & rehber videosu bulunamadı.",
+        watchInSiteBtn: "Site İçinde İzle",
         comboSub: "Renkli özet avantajlara göz atın; paketin içindeki tüm modları ve detayları görmek için İçeriği İncele butonuna tıklayın.",
         tagAll: "Tümü", tagPvp: "Rekabetçi PvP", tagSurv: "Hayatta Kalma", tagEng: "Mühendislik & Otomasyon", tagGfx: "Grafik & Shader", tagFps: "Maksimum FPS", tagBedrock: "Bedrock (MCPE)",
         secTitle: "Keşfet & İndir", secSub: "Her kartta desteklenen sürüm aralığı (örn. 1.16.5 - 26.3), yan modlar ve çakışma bilgileri yer alır.",
@@ -736,8 +1142,12 @@
         instantHint: "Axtardığınız modu birbaşa buradan incələyə və ya Mod Siyahınıza əlavə edə bilərsiniz.",
         instantScrollBtn: "Kataloqda Hamısını Gör ↓",
         instantNoResult: "Axtarışınıza uyğun məzmun tapılmadı.",
-        comboBadge: "Xüsusi Kombo Seçimi",
-        comboTitle: "Hazır Mod Komboları (Tam Uyğun Paketlər)",
+        comboBadge: "Xüsusi Kombolar",
+        comboTitle: "Hazır Mod Komboları (Uyğun Paketlər)",
+        resolveConflictBoxText: "İstəsəniz siyahıdakı toqquşan modları tək kliklə avtomatik həll edə bilərsiniz:",
+        resolveConflictBtn: "Toqquşmaları Tək Kliklə Həll Et",
+        noGuideVideoFound: "Axtardığınız meyara uyğun dəstək & rəhbər videosu tapılmadı.",
+        watchInSiteBtn: "Sayt Daxilində İzlə",
         comboSub: "Rəngli üstünlüklərə baxın; paketdəki bütün modları görmək üçün Məzmunu İncələ düyməsinə klikləyin.",
         tagAll: "Hamısı", tagPvp: "Rəqabətli PvP", tagSurv: "Sağ Qalma", tagEng: "Mühəndislik & Avtomatika", tagGfx: "Qrafika & Şeyder", tagFps: "Maksimum FPS", tagBedrock: "Bedrock (MCPE)",
         secTitle: "Kəşf Et və Yüklə", secSub: "Hər kartda dəstəklənən versiya aralığı (məs. 1.16.5 - 26.3), tələb olunan yan modlar və toqquşmalar göstərilir.",
@@ -789,8 +1199,12 @@
         instantHint: "Табылған модты осы жерден қарап немесе Мод Тізіміне қоса аласыз.",
         instantScrollBtn: "Каталогтан Барлығын Көру ↓",
         instantNoResult: "Іздеу бойынша ештеңе табылмады.",
-        comboBadge: "Арнайы Комбо Жинағы",
-        comboTitle: "Дайын Мод Комболары (100% Үйлесімді Пакеттер)",
+        comboBadge: "Арнайы Комболар",
+        comboTitle: "Дайын Мод Комболары (Үйлесімді Пакеттер)",
+        resolveConflictBoxText: "Тізімдегі қайшылықты модтарды бір басу арқылы автоматты түрде шеше аласыз:",
+        resolveConflictBtn: "Қайшылықтарды Бір Басумен Шешу",
+        noGuideVideoFound: "Іздеген критерийге сәйкес қолдау & нұсқаулық бейнесі табылмады.",
+        watchInSiteBtn: "Сайт Ішінде Көру",
         comboSub: "Қысқаша артықшылықтарды көріңіз; толық тізімді ашу үшін Мазмұнын Көру түймесін басыңыз.",
         tagAll: "Барлығы", tagPvp: "PvP Шайқас", tagSurv: "Тірі Қалу", tagEng: "Инженерия & Автоматика", tagGfx: "Графика & Шейдер", tagFps: "Максимум FPS", tagBedrock: "Bedrock (MCPE)",
         secTitle: "Зерттеу және Жүктеу", secSub: "Әр карточкада қолдау көрсетілетін нұсқа аралығы (1.16.5 - 26.3) және қосымша модтар көрсетілген.",
@@ -842,8 +1256,12 @@
         instantHint: "Topilgan modni shu yerdan ko'rib chiqishingiz yoki Mod Ro'yxatingizga qo'shishingiz mumkin.",
         instantScrollBtn: "Katalogda Barchasini Ko'rish ↓",
         instantNoResult: "Qidiruv bo'yicha hech narsa topilmadi.",
-        comboBadge: "Maxsus Kombo To'plami",
-        comboTitle: "Tayyor Mod Kombolari (100% Mos Paketlar)",
+        comboBadge: "Maxsus Kombolar",
+        comboTitle: "Tayyor Mod Kombolari (Mos Paketlar)",
+        resolveConflictBoxText: "Ro'yxatdagi ziddiyatli modlarni bir tugma bilan avtomatik hal qilishingiz mumkin:",
+        resolveConflictBtn: "Ziddiyatlarni Bir Bosishda Hal Qilish",
+        noGuideVideoFound: "Qidiruv mezoniga mos yordam & qo'llanma videosi topilmadi.",
+        watchInSiteBtn: "Sayt Ichida Ko'rish",
         comboSub: "Rangli afzalliklarni ko'ring; paket ichidagi barcha modlarni ko'rish uchun Tarkibni Ko'rish tugmasini bosing.",
         tagAll: "Barchasi", tagPvp: "Raqobatli PvP", tagSurv: "Omon Qolish", tagEng: "Muhandislik & Avtomatika", tagGfx: "Grafika & Sheyder", tagFps: "Maksimal FPS", tagBedrock: "Bedrock (MCPE)",
         secTitle: "Kashf Qiling va Yuklang", secSub: "Har bir kartada qo'llab-quvvatlanadigan versiya oralig'i (1.16.5 - 26.3) va kerakli modlar ko'rsatilgan.",
@@ -895,8 +1313,12 @@
         instantHint: "Табылган модду ушул жерден көрүп же Мод Тизмеге кошо аласыз.",
         instantScrollBtn: "Каталогдон Баарын Көрүү ↓",
         instantNoResult: "Издөө боюнча эч нерсе табылган жок.",
-        comboBadge: "Атайын Комбо Топтому",
-        comboTitle: "Даяр Мод Комболору (100% Шайкеш Пакеттер)",
+        comboBadge: "Атайын Комболор",
+        comboTitle: "Даяр Мод Комболору (Шайкеш Пакеттер)",
+        resolveConflictBoxText: "Тизмедеги кагылышкан моддорду бир басуу менен автоматтык түрдө чече аласыз:",
+        resolveConflictBtn: "Кагылышууларды Бир Басуу Менен Чечүү",
+        noGuideVideoFound: "Издеген критерийге ылайыктуу колдоо & көрсөтмө видеосу табылган жок.",
+        watchInSiteBtn: "Сайт Ичинде Көрүү",
         comboSub: "Кыскача артыкчылыктарды көрүңүз; толук тизмени ачуу үчүн Мазмунду Көрүү баскычын басыңыз.",
         tagAll: "Баары", tagPvp: "PvP Салгылаш", tagSurv: "Аман Калуу", tagEng: "Инженерия & Автоматика", tagGfx: "Графика & Шейдер", tagFps: "Максимум FPS", tagBedrock: "Bedrock (MCPE)",
         secTitle: "Изилдөө жана Жүктөө", secSub: "Ар бир карточкада колдоого алынган версия аралыгы (1.16.5 - 26.3) жана кошумча моддор көрсөтүлгөн.",
@@ -948,8 +1370,12 @@
         instantHint: "Tapylan mody şu ýerden görüp ýa-da Mod Sanawyňyza goşup bilersiňiz.",
         instantScrollBtn: "Katalogda Hemmesini Gör ↓",
         instantNoResult: "Gözlegiňize laýyk mazmun tapylmady.",
-        comboBadge: "Ýörite Kombo Toplumy",
-        comboTitle: "Taýýar Mod Kombolary (100% Sazlaşykly Paketler)",
+        comboBadge: "Ýörite Kombolar",
+        comboTitle: "Taýýar Mod Kombolary (Sazlaşykly Paketler)",
+        resolveConflictBoxText: "Sanawdaky garşylykly modlary bir basyşda awtomatik çözüp bilersiňiz:",
+        resolveConflictBtn: "Garşylyklary Bir Basyşda Çöz",
+        noGuideVideoFound: "Gözleg ölçegiňize laýyk goldaw & gollanma wideosy tapylmady.",
+        watchInSiteBtn: "Saýt Içinde Tomaşa Et",
         comboSub: "Reňkli artykmaçlyklara serediň; paketdäki ähli modlary görmek üçin Mazmuny Gör düwmesine basyň.",
         tagAll: "Hemmesi", tagPvp: "Bäsdeşlik PvP", tagSurv: "Diri Galmak", tagEng: "Inženerçilik & Awtomatika", tagGfx: "Grafika & Şeýder", tagFps: "Maksimum FPS", tagBedrock: "Bedrock (MCPE)",
         secTitle: "Gözle we Ýükle", secSub: "Her kartda goldanylýan wersiýa aralygy (1.16.5 - 26.3) we gerek bolan goşmaça modlar görkezilýär.",
@@ -2544,6 +2970,20 @@
             </div>
           `;
         });
+        if (analysis.errors.length > 0) {
+          analysisBox.innerHTML += `
+            <div class="bg-cyan-500/15 border-2 border-cyan-400 rounded-xl p-3.5 shadow-[0_0_20px_rgba(34,211,238,0.28)] flex flex-col gap-2.5">
+              <div class="flex items-start gap-2 text-xs text-cyan-200 font-semibold leading-relaxed">
+                <svg class="w-4 h-4 text-cyan-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>${t.resolveConflictBoxText || 'İsterseniz listedeki çakışan modları tek tıkla otomatik temizleyip uyumlu hale getirebilirsiniz:'}</span>
+              </div>
+              <button type="button" onclick="resolveAllConflicts()" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-black py-2.5 px-4 rounded-xl text-xs transition shadow-[0_0_15px_rgba(34,211,238,0.45)] flex items-center justify-center gap-2">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <span>${t.resolveConflictBtn || 'Çakışmaları Tek Tıkla Çöz'}</span>
+              </button>
+            </div>
+          `;
+        }
         if (analysis.missingDeps.length > 1) {
           analysisBox.innerHTML += `
             <button type="button" onclick="addAllMissingDeps()" class="w-full bg-orange-500 hover:bg-orange-400 text-black font-extrabold py-2 px-3 rounded-xl text-xs transition shadow-lg">
@@ -2649,6 +3089,7 @@
     }
 
     function filterCategory(cat, el) {
+      closeSimulationView();
       activeCategory = cat;
       visibleCount = 24;
       document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -2664,6 +3105,7 @@
     }
 
     function scrollToCombos() {
+      closeSimulationView();
       document.getElementById('combosSection').scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -2710,6 +3152,7 @@
     }
 
     function resetAllFilters() {
+      closeSimulationView();
       activeCategory = 'all';
       activeLoader = 'all';
       activeVersion = 'all';
@@ -2838,21 +3281,577 @@
 
     function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
-    function searchVideoGuide() {
-      const q = (document.getElementById('guideSearchInput').value || '').trim().toLowerCase();
-      const content = document.getElementById('videoModalContent');
-      document.getElementById('videoModal').classList.remove('hidden');
+    // TEK TIKLA ÇAKIŞMA ÇÖZÜCÜ (İSTEĞE BAĞLI OTOMATİK TEMİZLEME)
+    function resolveAllConflicts() {
+      let items = modCart.map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+      if (items.length === 0) return;
 
-      content.innerHTML = `
-        <h3 class="text-base font-bold text-white mb-2">@frealnds Video Rehberi</h3>
-        <p class="text-xs text-gray-400 mb-4">${q ? `"${q}" konusu ve mod kurulumları` : 'Mod kurulumu, FPS optimizasyonu ve sunucu ayarları'} için @frealnds YouTube kanalındaki dikey Shorts rehberlerine göz atabilirsiniz.</p>
-        <a href="https://www.youtube.com/@frealnds/shorts" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 w-full bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-3 rounded-xl text-xs transition">
-          <span>@frealnds YouTube Shorts Kanalını Aç</span>
-        </a>
+      const removedNames = [];
+
+      // 1) Java ve Bedrock aynı listedeyse çoğunlukta olan (veya aktif sekmedeki) sürümü tut
+      const editions = [...new Set(items.map(i => i.edition))];
+      if (editions.length > 1) {
+        const javaCount = items.filter(i => i.edition === 'java').length;
+        const bedCount = items.filter(i => i.edition === 'bedrock').length;
+        const keepEd = javaCount >= bedCount ? 'java' : 'bedrock';
+        items.forEach(i => {
+          if (i.edition !== keepEd) removedNames.push(i.title);
+        });
+        items = items.filter(i => i.edition === keepEd);
+      }
+
+      // 2) Farklı Java loaderlar (Fabric / Forge / NeoForge) karışmışsa en çok mod olan loader'ı tut
+      const javaMods = items.filter(i => i.edition === 'java' && i.category === 'mod');
+      const loaders = [...new Set(javaMods.map(i => i.loader))];
+      if (loaders.length > 1) {
+        const counts = {};
+        javaMods.forEach(m => { counts[m.loader] = (counts[m.loader] || 0) + 1; });
+        const keepLoader = loaders.sort((a, b) => (counts[b] || 0) - (counts[a] || 0))[0];
+        items = items.filter(i => {
+          if (i.edition === 'java' && i.category === 'mod' && i.loader !== keepLoader) {
+            removedNames.push(i.title);
+            return false;
+          }
+          return true;
+        });
+      }
+
+      // 3) Birbiriyle çakışan modlardan sonradan ekleneni çıkar, ilk ekleneni koru
+      const cleanList = [];
+      items.forEach(candidate => {
+        const hasConflictWithKept = cleanList.some(kept => {
+          const kConflicts = (kept.conflicts || []).map(x => x.toLowerCase());
+          const cConflicts = (candidate.conflicts || []).map(x => x.toLowerCase());
+          return kConflicts.includes(candidate.title.toLowerCase()) ||
+                 cConflicts.includes(kept.title.toLowerCase());
+        });
+        if (hasConflictWithKept) {
+          removedNames.push(candidate.title);
+        } else {
+          cleanList.push(candidate);
+        }
+      });
+
+      modCart = cleanList.map(i => i.id);
+      updateCartUI();
+      renderCards();
+      openCartDrawer();
+      if (removedNames.length > 0) {
+        showToast(`Çakışan içerikler kaldırıldı: ${removedNames.join(', ')}`);
+      }
+    }
+
+    // @FREALNDS GERÇEK YOUTUBE VİDEO VERİTABANI (36 REHBER VİDEOSU)
+    const frealndsVideos = [
+      {
+        videoId: "7r2dLiBnv3g",
+        shortsUrl: "https://youtube.com/shorts/7r2dLiBnv3g?si=aJHhDZcqGVdPQhFb",
+        title: "Aternos'ta Chunk (Görüş Mesafesi) Arttırma Rehberi",
+        category: "Sunucu & Performans",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Aternos ve diğer sunuculardaki düşük görüş mesafesi (chunk) sınırını Bobby modu ve doğru yapılandırma ile 32-64+ chunk'a çıkarma yöntemi.",
+        keywords: ["athernosda chunk arttırma", "aternos chunk arttırma", "chunk", "görüş mesafesi", "uzak görüş", "bobby", "aternos", "athernos", "sis", "render distance"]
+      },
+      {
+        videoId: "RrL_Y3wqXIU",
+        shortsUrl: "https://youtube.com/shorts/RrL_Y3wqXIU?si=An91RnJ1GLhI8qJF",
+        title: "Minecraft'ta Yapışkan Tuşlar (Shift Uyarı Penceresi) Nasıl Kapatılır?",
+        category: "Bilgisayar & Oyun Ayarı",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Oyunda art arda eğilirken (Shift tuşuna basarken) masaüstüne atan ve oyunu bölen Yapışkan Tuşlar bildirimini kalıcı olarak kapatma.",
+        keywords: ["yapışkan tuşlar nasıl kapatılır", "yapışkan tuşlar", "shift", "5 kere shift", "eğilme", "masaüstüne atma", "windows yapışkan tuş"]
+      },
+      {
+        videoId: "JB788OvJxgs",
+        shortsUrl: "https://youtube.com/shorts/JB788OvJxgs?si=i6o1jfMGxI3oRqTT",
+        title: "Aternos'ta SkyBlock Sunucusu Nasıl Kurulur?",
+        category: "Sunucu Kurulumu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Aternos üzerinde arkadaşlarınızla oynayabileceğiniz SkyBlock haritasını ve eklentilerini sunucuya hatasız yükleme rehberi.",
+        keywords: ["aternos sky block nasıl kurulur", "aternos skyblock", "sky block", "skyblock kurma", "ada hayatta kalma", "harita yükleme"]
+      },
+      {
+        videoId: "Mi0Di8oW5SA",
+        shortsUrl: "https://youtube.com/shorts/Mi0Di8oW5SA?si=EuC_3OqWeFl6N_3i",
+        title: "Crack İle Orijinal (Premium) Launcher Aynı Sunucuda Oynama!",
+        category: "Sunucu Çözümleri",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Orijinal Minecraft hesabına sahip oyuncularla ücretsiz (Crackli) başlatıcı kullanan oyuncuların aynı sunucuda birlikte oynama ayarı.",
+        keywords: ["crack ile orjinal aynı serverde oynama", "crack ile orijinal", "premium", "crack", "aynı server", "korsan ayarı", "beraber oynama"]
+      },
+      {
+        videoId: "ZqfrLmMqKuk",
+        shortsUrl: "https://youtube.com/shorts/ZqfrLmMqKuk?si=r81fEj4evIu5iu7l",
+        title: "Sunucu İçine 1'den Fazla Dünya Oluşturma (Multiverse)",
+        category: "Sunucu Yönetimi",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Tek bir Minecraft sunucusu içinde lobi, survival, skyblock veya yaratıcı (creative) gibi birden fazla ayrı dünya oluşturma ve geçiş yapma.",
+        keywords: ["sunucu içine 1 den fazla dünya oluşturma", "birden fazla dünya", "multiverse core", "çoklu dünya", "lobi dünyası", "dünya ekleme"]
+      },
+      {
+        videoId: "tEmOqj3bwzo",
+        shortsUrl: "https://youtube.com/shorts/tEmOqj3bwzo?si=Lil_ha34IPIadaga",
+        title: "Minecraft Envanter Arkaplanı ve Arayüzünü Değiştirme!",
+        category: "Görsel & Arayüz",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Klasik gri envanter, sandık ve çalışma masası menü arkaplanlarını şeffaf, karanlık veya özel tasarımlı arayüzlerle değiştirme.",
+        keywords: ["envanter arkaplanı değiştirme", "envanter teması", "gui değiştirme", "arayüz", "şeffaf envanter", "koyu envanter"]
+      },
+      {
+        videoId: "ijaKVEXn2H8",
+        shortsUrl: "https://youtube.com/shorts/ijaKVEXn2H8?si=DpMIV-1ZON83qTfN",
+        title: "Minecraft Sunucu Lag Azaltma ve TPS Yükseltme Rehberi",
+        category: "Sunucu Optimizasyonu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Aternos ve diğer çok oyunculu sunucularda blok kırılmama, geri atma (rubberband) ve düşük TPS (lag) sorunlarını gideren ayarlar.",
+        keywords: ["sunucu lag azaltma", "server lag", "tps arttırma", "aternos lag", "sunucu kasma", "donma çözümü", "lag giderme"]
+      },
+      {
+        videoId: "PWDRr6JhPhk",
+        shortsUrl: "https://youtube.com/shorts/PWDRr6JhPhk?si=kM_5F7Ciea1nFjE8",
+        title: "Sunucusuz Toplu Modlu Minecraft Oynama Rehberi!",
+        category: "Çok Oyunculu Mod",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Hiçbir sunucu kiralamadan veya Aternos sırası beklemeden arkadaşlarınızla toplu halde modlu Minecraft oynamanın en kolay yolu.",
+        keywords: ["sunucusuz modlu mc oyanama toplu", "sunucusuz modlu oynama", "arkadaşlarla modlu", "essential", "e4mc", "toplu modlu"]
+      },
+      {
+        videoId: "EiAqmV5gFhE",
+        shortsUrl: "https://youtube.com/shorts/EiAqmV5gFhE?si=SJu10y7IKhs5lvv7",
+        title: "Bedrock ve Java Ortak Sunucuya Mod / Eklenti Kurma!",
+        category: "Çapraz Platform",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Hem telefondan (Bedrock/MCPE) hem bilgisayardan (Java) girilen ortak sunucularda her iki tarafta da çalışan mod ve eklenti kurulumu.",
+        keywords: ["bedrock-java aynı sunucu mod kurma", "bedrock java mod kurma", "geyser mod", "ortak sunucu mod", "mcpe java mod"]
+      },
+      {
+        videoId: "NxdiIoLC6Wk",
+        shortsUrl: "https://youtube.com/shorts/NxdiIoLC6Wk?si=8bsZ6AB8u8UFx0qZ",
+        title: "Minecraft Bedrock (MCPE) Sürümüne Java Combat (PvP) Ekleme!",
+        category: "Bedrock & PvP",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Bedrock Edition'a Java sürümündeki kılıç bekleme süresi (cooldown), süpürme vuruşu ve kalkan/balta PvP mekaniğini ekleme.",
+        keywords: ["bedrock java combat ekleme", "java pvp bedrock", "mcpe java combat", "kılıç cooldown", "bedrock savaş modu"]
+      },
+      {
+        videoId: "IaJdGdjuQq8",
+        shortsUrl: "https://youtube.com/shorts/IaJdGdjuQq8?si=x41Zr0bPj3NWe9hy",
+        title: "Minecraft Müzik Disklerini İstediğiniz Şarkıyla Özelleştirme!",
+        category: "Ses & Özelleştirme",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Oyundaki müzik kutusu (Jukebox) disklerine kendi istediğiniz şarkıları ve sesleri ekleme yöntemi.",
+        keywords: ["müzik diski özelleştirme", "müzik kutusu", "özel şarkı ekleme", "jukebox", "custom music disc", "plak değiştirme"]
+      },
+      {
+        videoId: "GVWFyU6ylq0",
+        shortsUrl: "https://youtube.com/shorts/GVWFyU6ylq0?si=SpL9-gDAqrjcZmGL",
+        title: "Aternos Modlu Sunucu Kurma (Adım Adım Rehber)",
+        category: "Sunucu Kurulumu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Aternos üzerinde Forge, Fabric veya mod paketi seçerek arkadaşlarınızla oynayabileceğiniz modlu sunucu kurma adımları.",
+        keywords: ["aternos modlu sunucu kurma", "athernosda nasıl modlu sunucu kurulur", "aternos mod yükleme", "modlu server"]
+      },
+      {
+        videoId: "_z81PqdSxbY",
+        shortsUrl: "https://youtu.be/_z81PqdSxbY?si=oyw_A4Jaf0GeT7nt",
+        isWide: true,
+        title: "Bedrock (MCPE) ve Java Aynı Sunucuda Beraber Oynama (Detaylı Rehber)",
+        category: "Çapraz Platform (Tam Video)",
+        duration: "Tam Rehber",
+        views: "@frealnds Rehber",
+        desc: "Telefon/Tablet (Bedrock) oyuncularıyla Bilgisayar (Java) oyuncularının aynı sunucuya bağlanmasını sağlayan GeyserMC & Floodgate tam kurulumu.",
+        keywords: ["bedrock-java aynı serverda oynama", "bedrock java beraber oynama", "geysermc", "floodgate", "telefondan java sunucusuna girme", "çapraz platform"]
+      },
+      {
+        videoId: "j5ZS-uKFuTc",
+        shortsUrl: "https://youtube.com/shorts/j5ZS-uKFuTc?si=UOCIxdeWVGq3ePLP",
+        title: "Sunucular İçin En Güçlü Anti-Hile (AntiCheat) Kurulumu",
+        category: "Sunucu Güvenliği",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Minecraft sunucunuzda uçma (fly), killaura, speed ve reach gibi hileleri otomatik tespit edip engelleyen Anti-Hile eklentisi kurulumu.",
+        keywords: ["anti hile", "anticheat", "hile engelleme", "hile koruma", "grim", "themis", "sunucu hile", "server koruma", "ban"]
+      },
+      {
+        videoId: "z9vYOezDGlc",
+        shortsUrl: "https://youtube.com/shorts/z9vYOezDGlc?si=wPkDpj7nI0IyVZFP",
+        title: "Fabric İle Forge Modlarını Bir Arada Çalıştırma!",
+        category: "Mod Çakışma Çözümü",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Sinytra Connector ve Forgified Fabric API kullanarak Fabric modlarını Forge / NeoForge modlarıyla aynı anda çökmeden çalıştırma yöntemi.",
+        keywords: ["fabric ile forge bir arada çalıştırma", "fabric forge beraber", "sinytra connector", "forgified fabric api", "loader çakışması", "fabric ve forge", "birlikte"]
+      },
+      {
+        videoId: "g63148eYmjE",
+        shortsUrl: "https://youtube.com/shorts/g63148eYmjE?si=11hgV1jyiYqQLmvM",
+        title: "En İyi Sinematik Çekim ve Kamera Modu",
+        category: "Video & Kamera",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Minecraft'ta film tadında pürüzsüz kamera geçişleri, sinematik sahneler ve profesyonel video kayıtları almanızı sağlayan çekim modu.",
+        keywords: ["sinametik çekim modu", "sinematik çekim modu", "kamera modu", "replay", "video çekme", "zoomify", "camera utils", "sinematik"]
+      },
+      {
+        videoId: "vsdG7BIk2Uw",
+        shortsUrl: "https://youtube.com/shorts/vsdG7BIk2Uw?si=D3DJGvO8A5Rt_id7",
+        title: "Nether Portalı Eşleşme Hatası Çözümü (Nether Portal Fix)",
+        category: "Oyun İçi Çözüm",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Nether'dan geri dönerken yanlış veya başkasının portalından çıkma sorununu tamamen düzelten NetherPortalFix kurulumu ve kullanımı.",
+        keywords: ["nether portalı fix", "nether portal fix", "portal hatası", "yanlış portal", "nether dönüş", "portal eşleşme"]
+      },
+      {
+        videoId: "HAyl-SXl8XI",
+        shortsUrl: "https://youtube.com/shorts/HAyl-SXl8XI?si=5sKblFU5OgQBXnXP",
+        title: "Minecraft Java Sunucular İçin Anti-Xray Koruması",
+        category: "Sunucu Güvenliği",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Java Edition sunucularında oyuncuların X-Ray kaynak paketi veya hilesiyle yeraltındaki elmasları ve antik kalıntıları görmesini engelleme.",
+        keywords: ["anti xray java", "xray engelleme", "anti-xray", "maden hilesi", "elmas koruma", "paper anti xray", "java xray"]
+      },
+      {
+        videoId: "bRn-OpyAzgg",
+        shortsUrl: "https://youtube.com/shorts/bRn-OpyAzgg?si=ZjfYb5n87wCSRSH7",
+        title: "Eşyaların Kalan Canını (Dayanıklılığını) Öğrenme!",
+        category: "Yaşam Kalitesi (QoL)",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Kılıç, kazma, elitra ve zırhlarınızın kırılmadan önce tam olarak kaç vuruşluk canı (durability) kaldığını görme yöntemi.",
+        keywords: ["eşya canını öğrenme", "eşya canı", "dayanıklılık", "durability", "kazma canı", "zırh canı", "f3+h", "kırılma"]
+      },
+      {
+        videoId: "9wCtpaBNdFQ",
+        shortsUrl: "https://youtube.com/shorts/9wCtpaBNdFQ?si=EogQtHv42OEMCHz0",
+        title: "Minecraft Çevre, Doğa ve Atmosfer Güncellemesi Modları",
+        category: "Atmosfer & Dünya",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Minecraft dünyasının doğasını, biyomlarını, ağaçlarını ve çevre detaylarını baştan aşağı yenileyen atmosfer modları.",
+        keywords: ["çevre güncellemesi", "doğa modu", "biyom", "terralith", "ambient", "yaprak", "atmosfer", "dünya oluşumu"]
+      },
+      {
+        videoId: "_l7nQPhg3u8",
+        shortsUrl: "https://youtube.com/shorts/_l7nQPhg3u8?si=QlYo-iqcwlOURgk5",
+        title: "Java, Bedrock (MCPE) ve Eski Sürümlerle Beraber Oynama!",
+        category: "Çapraz Platform",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "GeyserMC ve ViaVersion kullanarak hem telefondaki (Bedrock) hem bilgisayardaki (Java) hem de farklı sürümdeki oyuncuların aynı sunucuda oynaması.",
+        keywords: ["java-bedrock-eski sürüm beraber", "java bedrock beraber", "geyser", "viaversion", "viafabric", "telefondan pc sunucusuna girme", "mcpe java aynı sunucu", "eski sürüm"]
+      },
+      {
+        videoId: "NFLF2kkksQ8",
+        shortsUrl: "https://youtube.com/shorts/NFLF2kkksQ8?si=HLCh6LUDb116z9Xo",
+        title: "Sunucuda 1 Kişinin Uyumasıyla Nasıl Sabah Olur?",
+        category: "Sunucu Ayarları",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Sunucuda herkesin yatağa girmesini beklemeden tek bir kişinin uyumasıyla sabah olmasını sağlayan gamerule / eklenti ayarı.",
+        keywords: ["tek kişi uyuma", "1 kişinin uyumasıyla", "sabah olma", "gece atlama", "uyuma", "sleep", "gamerule playerssleepingpercentage"]
+      },
+      {
+        videoId: "tW6kL_Xwj64",
+        shortsUrl: "https://youtube.com/shorts/tW6kL_Xwj64?si=GGtTqOQHdbBjeoII",
+        title: "Sunucuda Bozuk Skin Hatası (Steve/Alex) Nasıl Düzeltilir?",
+        category: "Sunucu Çözümleri",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Aternos ve diğer sunucularda kostümlerin (skinlerin) gözükmemesi veya herkeste Steve/Alex görünmesi sorununu kesin olarak çözme.",
+        keywords: ["sunucu skin hatası", "bozuk skin", "skin gözükmüyor", "steve", "alex", "skinrestorer", "serverda bozuk skin", "kostüm hatası"]
+      },
+      {
+        videoId: "Cw3ZHzQxTgQ",
+        shortsUrl: "https://youtube.com/shorts/Cw3ZHzQxTgQ?si=an94P1G_PlSJg4NO",
+        title: "Minecraft'ta Kolayca Mod Kurma Rehberi!",
+        category: "Mod Kurulumu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Hiçbir teknik bilgiye gerek kalmadan saniyeler içinde Minecraft'a mod ve mod paketi yüklemenin en pratik yolu.",
+        keywords: ["kolayca mod kurma", "mod kurma", "nasıl mod kurulur", "mods klasörü", "fabric kurulumu", "forge kurulumu", "mod yükleme"]
+      },
+      {
+        videoId: "3T8YIR0mRl8",
+        shortsUrl: "https://youtube.com/shorts/3T8YIR0mRl8?si=k6LCa-6ya6e8uJh_",
+        title: "Gerçekçi Oyun İçi Sesli Konuşma (Simple Voice Chat & Yankı)",
+        category: "Ses & İletişim",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Arkadaşlarınızla mesafeye duyarlı konuşmanızı ve mağaralarda sesinizin gerçekçi şekilde yankılanmasını sağlayan mod kurulumu.",
+        keywords: ["oyun içi konuşma gerçekçi", "sesli sohbet", "simple voice chat", "plasmo voice", "sound physics", "mikrofon", "konuşma modu", "yankı"]
+      },
+      {
+        videoId: "bGxnOITzUNE",
+        shortsUrl: "https://youtube.com/shorts/bGxnOITzUNE?si=CY2hfz15kfHkEwIa",
+        title: "Oyun İçine Kendi Resminizi / Fotoğrafınızı Koyma!",
+        category: "Dekorasyon & Sunucu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Bilgisayarınızdaki veya internetteki herhangi bir fotoğrafı Minecraft dünyasında tablo/poster olarak duvara asma yöntemi.",
+        keywords: ["oyun içi resim koyma", "fotoğraf koyma", "tablo yapma", "image2map", "custom images", "poster", "resim ekleme"]
+      },
+      {
+        videoId: "KweddPMwY6o",
+        shortsUrl: "https://youtube.com/shorts/KweddPMwY6o?si=nQvPEKP4hLgcqWHv",
+        title: "Minecraft'ta Özel Desenli Kalkan Yapma Rehberi!",
+        category: "Oyun İçi Taktik",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Dokuma tezgahında hazırladığınız özel flama (banner) desenlerini kalkanınıza basarak kendi armalı kalkanınızı üretme.",
+        keywords: ["desenli kalkan yapma", "kalkan boyama", "flamalı kalkan", "banner shield", "kalkan deseni", "kalkan"]
+      },
+      {
+        videoId: "rxQNJVlk7p0",
+        shortsUrl: "https://youtube.com/shorts/rxQNJVlk7p0?si=cx8vAJjujf1YKOwC",
+        title: "Oyunu Güçlendiren ve Zevki 2 Katına Çıkaran Modlar!",
+        category: "Mod Önerileri",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Hem performansı güçlendiren hem de hayatta kalma mekaniklerini çok daha eğlenceli hale getiren seçilmiş mod listesi.",
+        keywords: ["oyunu güçlendiren modlar", "oyun zevki", "en iyi modlar", "fps arttırma", "sodium", "survival modları", "güçlendiren"]
+      },
+      {
+        videoId: "bZqGCQmRQcA",
+        shortsUrl: "https://youtube.com/shorts/bZqGCQmRQcA?si=fqOIol4jdH6rbgtT",
+        title: "Envantere ve Kutuların İçine Bakma Modu!",
+        category: "Arayüz & Sunucu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Shulker kutularını yere koymadan içini görme (ShulkerBoxTooltip) ve sunucularda oyuncu envanterini kontrol etme rehberi.",
+        keywords: ["envantere bakma", "shulkerboxtooltip", "sandık içi görme", "invsee", "envanter kontrol", "kutuya bakma"]
+      },
+      {
+        videoId: "RqSSfyEVmFU",
+        shortsUrl: "https://youtube.com/shorts/RqSSfyEVmFU?si=2R5L-xFeqdJKNNq2",
+        title: "Minecraft Bedrock (MCPE) Hızlı Tıklama & Makro Rehberi",
+        category: "Bedrock / MCPE",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Minecraft Bedrock sürümünde hızlı blok koyma, PvP tıklama ayarları ve pratik kısayol yapılandırması.",
+        keywords: ["bedrock makro", "mcpe makro", "hızlı tıklama", "bedrock pvp", "autoclick", "bedrock ayar"]
+      },
+      {
+        videoId: "fMqkjXS6STc",
+        shortsUrl: "https://youtube.com/shorts/fMqkjXS6STc?si=XpGJJ1MQ_nYXdbFR",
+        title: "Aternos Bedrock Sunucular İçin Anti-Xray Kurulumu!",
+        category: "Bedrock Güvenlik",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Aternos üzerinde açtığınız Minecraft Bedrock (MCPE) sunucularında X-Ray doku paketlerini engelleme ve madenleri koruma.",
+        keywords: ["aternos anti xray bedrock", "bedrock anti xray", "mcpe xray engelleme", "aternos bedrock", "maden hilesi bedrock"]
+      },
+      {
+        videoId: "ZRHUCFksWII",
+        shortsUrl: "https://youtube.com/shorts/ZRHUCFksWII?si=pRbutB0r7DBsnLUL",
+        title: "Kod Yazmadan Kendi Minecraft Modunu Yap!",
+        category: "Mod Geliştirme",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Hiç Java kodu bilmeden kendi özel kılıcınızı, bloğunuzu, biyomunuzu ve yaratığınızı tasarlayıp mod olarak dışa aktarma.",
+        keywords: ["kendi modunu yap", "mod yapma", "mcreator", "blockbench", "nasıl mod yapılır", "mod tasarlama"]
+      },
+      {
+        videoId: "MVcfGRE0hPg",
+        shortsUrl: "https://youtube.com/shorts/MVcfGRE0hPg?si=wS3eHiz2NL2YAn4y",
+        title: "Crack Launcher'da Hatasız Mod Kurma Rehberi!",
+        category: "Mod Kurulumu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Ücretsiz / Crackli Minecraft başlatıcılarında Fabric ve Forge modlarını çökme hatası almadan kurma adımları.",
+        keywords: ["crack luncher mod kurma", "crack launcher mod kurma", "crackli mod kurma", "tlauncher mod", "ücretsiz launcher mod"]
+      },
+      {
+        videoId: "3K2M7V-VAiA",
+        shortsUrl: "https://youtube.com/shorts/3K2M7V-VAiA",
+        title: "Ücretsiz Minecraft Sunucusu Nasıl Kurulur?",
+        category: "Sunucu Kurulumu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Hiçbir ücret ödemeden arkadaşlarla oynanabilecek Minecraft sunucusu açma ve temel sunucu ayarları.",
+        keywords: ["ücretsiz sunucu", "bedava server", "sunucu kurma", "server açma"]
+      },
+      {
+        videoId: "R-MNoMgKwf8",
+        shortsUrl: "https://youtube.com/shorts/R-MNoMgKwf8",
+        title: "Crack Launcher'da Essential İle Sunucusuz Oynama!",
+        category: "Çok Oyunculu",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Sunucu açmaya gerek kalmadan dünyanızı arkadaşlarınıza açmanızı sağlayan Essential kurulumu.",
+        keywords: ["essential", "essentail", "sunucusuz", "dünya paylaşma", "arkadaşla oynama"]
+      },
+      {
+        videoId: "E733qdjMVHY",
+        shortsUrl: "https://youtube.com/shorts/E733qdjMVHY",
+        title: "1 Dakikada Replay Mod Kurulumu!",
+        category: "Video & Kamera",
+        duration: "Shorts",
+        views: "@frealnds Rehber",
+        desc: "Fabric üzerine Replay Mod kurarak oyun içi kayıt alma ve 3B kamera açılarıyla video oluşturma.",
+        keywords: ["replay mod", "kayıt", "ffmpeg", "video"]
+      }
+    ];
+
+    let showAllGuidesFlag = false;
+    function showAllGuideVideos() {
+      const input = document.getElementById('guideSearchInput');
+      if (input) input.value = '';
+      showAllGuidesFlag = true;
+      filterGuideVideosInline();
+    }
+    function findMatchingFrealndsVideos(rawQuery) {
+      const q = (rawQuery || '').trim().toLowerCase();
+      if (!q) return showAllGuidesFlag ? frealndsVideos : frealndsVideos.slice(0, 9);
+      const words = q.split(/\s+/).filter(w => w.length >= 2);
+      if (words.length === 0) return [];
+
+      return frealndsVideos.filter(v => {
+        const haystack = (v.title + ' ' + v.desc + ' ' + v.keywords.join(' ')).toLowerCase();
+        return words.some(w => haystack.includes(w)) || haystack.includes(q);
+      });
+    }
+
+    function setGuideQuery(text) {
+      const input = document.getElementById('guideSearchInput');
+      if (input) {
+        input.value = text;
+        filterGuideVideosInline();
+      }
+    }
+
+    function filterGuideVideosInline() {
+      const container = document.getElementById('guideResultsContainer');
+      if (!container) return;
+      const t = i18n[currentLang];
+      const q = (document.getElementById('guideSearchInput').value || '').trim();
+      const matches = findMatchingFrealndsVideos(q);
+
+      if (matches.length === 0) {
+        container.innerHTML = `
+          <div class="bg-modrinth-dark border border-red-500/40 rounded-2xl p-6 text-center max-w-xl mx-auto shadow-lg">
+            <div class="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto mb-2.5">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <p class="text-sm font-extrabold text-red-300 mb-1">${t.noGuideVideoFound || 'Aradığınız kritere uygun destek & rehber videosu bulunamadı.'}</p>
+            <p class="text-xs text-gray-400">Farklı bir anahtar kelime (örn: <strong>aternos</strong>, <strong>bozuk skin</strong>, <strong>mod kurma</strong>, <strong>uyuma</strong>, <strong>essential</strong>, <strong>bedrock</strong>, <strong>shader</strong>) deneyebilirsiniz.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${matches.map(v => `
+            <div onclick="playFrealndsVideoInSite('${v.videoId}')" class="bg-modrinth-dark border border-modrinth-border hover:border-red-500/60 rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer transition shadow-lg hover:-translate-y-0.5">
+              <div>
+                <div class="relative aspect-video bg-black overflow-hidden">
+                  <img src="https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg" alt="${v.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 opacity-90 group-hover:opacity-100">
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-center justify-center">
+                    <div class="w-11 h-11 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_0_20px_rgba(220,38,38,0.7)] group-hover:scale-110 transition">
+                      <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                  </div>
+                  <span class="absolute top-2 left-2 bg-black/80 border border-white/15 text-[10px] font-bold text-red-400 px-2 py-0.5 rounded">@frealnds</span>
+                  <span class="absolute bottom-2 right-2 bg-black/85 text-[10px] font-bold text-white px-2 py-0.5 rounded">${v.category || v.duration}</span>
+                </div>
+                <div class="p-4">
+                  <h4 class="text-sm font-extrabold text-white group-hover:text-red-400 transition mb-1.5 line-clamp-1">${v.title}</h4>
+                  <p class="text-xs text-gray-400 leading-relaxed line-clamp-2">${v.desc}</p>
+                </div>
+              </div>
+              <div class="px-4 pb-4 pt-1">
+                <button type="button" onclick="event.stopPropagation(); playFrealndsVideoInSite('${v.videoId}')" class="w-full bg-red-600/15 hover:bg-red-600 border border-red-500/40 text-red-300 hover:text-white font-bold py-2 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <span>${t.watchInSiteBtn || 'Site İçinde İzle'}</span>
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
       `;
     }
 
-    function closeVideoModal() { document.getElementById('videoModal').classList.add('hidden'); }
+    function playFrealndsVideoInSite(videoId) {
+      const video = frealndsVideos.find(v => v.videoId === videoId) || frealndsVideos[0];
+      const hasHttpOrigin = window.location && (window.location.protocol === 'https:' || window.location.protocol === 'http:');
+      const originParam = hasHttpOrigin ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
+      const embedSrc = `https://www.youtube.com/embed/${video.videoId}?autoplay=1&playsinline=1&rel=0${originParam}`;
+      const directUrl = video.shortsUrl || `https://www.youtube.com/shorts/${video.videoId}`;
+      const aspectClass = video.isWide ? 'aspect-video max-w-full' : 'aspect-[9/16] max-h-[60vh] max-w-[300px]';
+
+      const content = document.getElementById('videoModalContent');
+      const modal = document.getElementById('videoModal');
+      modal.classList.remove('hidden');
+
+      content.innerHTML = `
+        <div class="text-left">
+          <div class="flex items-center gap-2 mb-2 pr-8 flex-wrap">
+            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-red-600/20 text-red-400 border border-red-500/30">@frealnds Rehber</span>
+            <span class="text-[10px] text-gray-400 font-semibold">${video.category || 'Shorts Rehberi'}</span>
+          </div>
+          <h3 class="text-sm sm:text-base font-extrabold text-white mb-3 pr-6">${video.title}</h3>
+
+          <div class="${aspectClass} mx-auto w-full rounded-2xl overflow-hidden mb-3.5 border border-modrinth-border bg-black shadow-2xl relative">
+            <iframe
+              class="w-full h-full"
+              src="${embedSrc}"
+              title="${video.title}"
+              frameborder="0"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+
+          <div class="bg-modrinth-dark border border-modrinth-border rounded-xl p-3 mb-3">
+            <p class="text-xs text-gray-300 leading-relaxed">${video.desc}</p>
+          </div>
+
+          <a href="${directUrl}" target="_blank" rel="noopener noreferrer" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <span>YouTube'da Aç</span>
+          </a>
+        </div>
+      `;
+    }
+
+    function searchVideoGuide() {
+      const q = (document.getElementById('guideSearchInput').value || '').trim();
+      const t = i18n[currentLang];
+      filterGuideVideosInline();
+      const matches = findMatchingFrealndsVideos(q);
+      if (matches.length > 0) {
+        playFrealndsVideoInSite(matches[0].videoId);
+      } else {
+        const content = document.getElementById('videoModalContent');
+        document.getElementById('videoModal').classList.remove('hidden');
+        content.innerHTML = `
+          <div class="py-4 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="text-sm sm:text-base font-extrabold text-red-300 mb-2">${t.noGuideVideoFound || 'Aradığınız kritere uygun destek & rehber videosu bulunamadı.'}</h3>
+            <p class="text-xs text-gray-400 mb-4">Lütfen "aternos", "bozuk skin", "mod kurma", "uyuma", "essential", "replay mod" veya "bedrock" gibi bir sorun yazarak tekrar deneyin.</p>
+          </div>
+        `;
+      }
+    }
+
+    function closeVideoModal() { document.getElementById('videoModal').classList.add('hidden'); document.getElementById('videoModalContent').innerHTML = ''; }
     function openErrorModal() { document.getElementById('errorModal').classList.remove('hidden'); }
     function closeErrorModal() { document.getElementById('errorModal').classList.add('hidden'); }
 
@@ -2938,6 +3937,7 @@
       updateCartUI();
       renderCombos();
       renderCards();
+      filterGuideVideosInline();
 
       const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
       if (q) renderInstantSearchDropdown(q);
@@ -2951,6 +3951,490 @@
         closeInstantSearch();
       }
     });
+
+
+    // =========================================================================
+    // UYUM SİMÜLASYONU LABORATUVARI (JAVA/BEDROCK -> LOADER -> SÜRÜM -> EFEKTLİ TEST)
+    // =========================================================================
+    let simEdition = 'java';
+    let simLoader = 'fabric';
+    let simVersion = '26.3';
+    let simCategory = 'all';
+    let simItems = [];
+    let currentSimStep = 1;
+
+    function updateSimStepBadges(step) {
+      currentSimStep = step;
+      for (let i = 1; i <= 4; i++) {
+        const badge = document.getElementById('simStepBadge' + i);
+        const panel = document.getElementById('simWizardStep' + i);
+        if (panel) {
+          if (i === step) panel.classList.remove('hidden');
+          else panel.classList.add('hidden');
+        }
+        if (badge) {
+          if (i === step) {
+            badge.className = "px-3 py-1.5 rounded-xl bg-modrinth text-black font-extrabold transition shadow-[0_0_12px_rgba(27,217,106,0.35)]";
+          } else if (i < step) {
+            badge.className = "px-3 py-1.5 rounded-xl bg-modrinth/20 border border-modrinth/40 text-modrinth font-bold transition cursor-pointer";
+          } else {
+            badge.className = "px-3 py-1.5 rounded-xl bg-modrinth-card border border-modrinth-border text-gray-400 transition";
+          }
+        }
+      }
+    }
+
+    function goToSimStep(step) {
+      updateSimStepBadges(step);
+      if (step === 4) {
+        renderSimulationPool();
+        renderSimulationReactor();
+      }
+    }
+
+    function selectWizardEdition(ed) {
+      simEdition = ed;
+      const jGroup = document.getElementById('simLoaderJavaGroup');
+      const bGroup = document.getElementById('simLoaderBedrockGroup');
+      if (ed === 'java') {
+        jGroup.classList.remove('hidden');
+        bGroup.classList.add('hidden');
+        goToSimStep(2);
+      } else {
+        jGroup.classList.add('hidden');
+        bGroup.classList.remove('hidden');
+        simLoader = 'bedrock';
+        goToSimStep(2);
+      }
+    }
+
+    function selectWizardLoader(loader) {
+      simLoader = loader;
+      goToSimStep(3);
+    }
+
+    function selectWizardVersion(ver) {
+      simVersion = ver;
+      simItems = [];
+      goToSimStep(4);
+    }
+
+    function openSimulationView() {
+      document.getElementById('mainPortalView').classList.add('hidden');
+      document.getElementById('simViewSection').classList.remove('hidden');
+      simItems = [];
+      goToSimStep(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeSimulationView() {
+      document.getElementById('simViewSection').classList.add('hidden');
+      document.getElementById('mainPortalView').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setSimEdition(ed) {
+      simEdition = ed;
+      const jBtn = document.getElementById('simEdJavaBtn');
+      const bBtn = document.getElementById('simEdBedrockBtn');
+      const jGroup = document.getElementById('simLoaderJavaGroup');
+      const bGroup = document.getElementById('simLoaderBedrockGroup');
+
+      if (ed === 'java') {
+        jBtn.className = "py-2.5 px-3 rounded-xl font-extrabold text-xs border transition bg-modrinth text-black border-modrinth";
+        bBtn.className = "py-2.5 px-3 rounded-xl font-bold text-xs border transition bg-modrinth-dark text-gray-300 border-modrinth-border hover:border-modrinth";
+        jGroup.classList.remove('hidden');
+        bGroup.classList.add('hidden');
+        if (simLoader === 'bedrock') simLoader = 'fabric';
+        setSimLoader(simLoader);
+      } else {
+        bBtn.className = "py-2.5 px-3 rounded-xl font-extrabold text-xs border transition bg-modrinth text-black border-modrinth";
+        jBtn.className = "py-2.5 px-3 rounded-xl font-bold text-xs border transition bg-modrinth-dark text-gray-300 border-modrinth-border hover:border-modrinth";
+        jGroup.classList.add('hidden');
+        bGroup.classList.remove('hidden');
+        simLoader = 'bedrock';
+      }
+      renderSimulationPool();
+      renderSimulationReactor();
+    }
+
+    function setSimLoader(loader) {
+      simLoader = loader;
+      const map = {
+        fabric: { id: 'simLoadFabric', active: 'bg-sky-400 text-black border-sky-400 font-extrabold' },
+        forge: { id: 'simLoadForge', active: 'bg-orange-500 text-black border-orange-500 font-extrabold' },
+        neoforge: { id: 'simLoadNeoforge', active: 'bg-amber-400 text-black border-amber-400 font-extrabold' }
+      };
+      Object.keys(map).forEach(k => {
+        const el = document.getElementById(map[k].id);
+        if (!el) return;
+        if (k === loader) {
+          el.className = `py-2.5 px-2 rounded-xl text-xs border transition ${map[k].active}`;
+        } else {
+          el.className = "py-2.5 px-2 rounded-xl font-bold text-xs border transition bg-modrinth-dark text-gray-300 border-modrinth-border hover:border-white/30";
+        }
+      });
+      renderSimulationPool();
+      renderSimulationReactor();
+    }
+
+    function setSimVersion(ver, btnEl) {
+      simVersion = ver;
+      document.querySelectorAll('.sim-ver-btn').forEach(b => {
+        b.className = "sim-ver-btn py-2 rounded-lg font-bold text-xs border transition bg-modrinth-dark text-gray-300 border-modrinth-border";
+      });
+      if (btnEl) {
+        btnEl.className = "sim-ver-btn py-2 rounded-lg font-extrabold text-xs border transition bg-amber-400 text-black border-amber-400";
+      }
+      renderSimulationPool();
+      renderSimulationReactor();
+    }
+
+    function setSimCat(cat, btnEl) {
+      simCategory = cat;
+      document.querySelectorAll('.sim-cat-btn').forEach(b => {
+        b.className = "sim-cat-btn px-2.5 py-1 rounded-lg text-gray-400 hover:text-white";
+      });
+      if (btnEl) {
+        btnEl.className = "sim-cat-btn px-2.5 py-1 rounded-lg bg-modrinth text-black font-extrabold";
+      }
+      renderSimulationPool();
+    }
+
+    function toggleSimItem(id) {
+      const idx = simItems.indexOf(id);
+      if (idx === -1) simItems.push(id);
+      else simItems.splice(idx, 1);
+      renderSimulationPool();
+      renderSimulationReactor();
+    }
+
+    function importCartToSim() {
+      if (modCart.length === 0) {
+        showToast("Mod Listeniz şu an boş, önce içerik ekleyin.");
+        return;
+      }
+      simItems = [...modCart];
+      renderSimulationPool();
+      renderSimulationReactor();
+      showToast("Mod Listenizdeki içerikler simülasyona aktarıldı.");
+    }
+
+    function syncSimToMyList() {
+      modCart = [...simItems];
+      updateCartUI();
+      renderCards();
+      showToast("Simülasyon kurulumu Mod Listenize kaydedildi!");
+    }
+
+    function resetSimulation() {
+      simItems = [];
+      renderSimulationPool();
+      renderSimulationReactor();
+    }
+
+    function loadSimPreset(type) {
+      if (type === 'green') {
+        setSimEdition('java');
+        setSimLoader('fabric');
+        simItems = ['fabric-api', 'cloth-config', 'sodium', 'lithium', 'ferrite-core', 'iris', 'complementary-reimagined'];
+      } else if (type === 'orange') {
+        setSimEdition('java');
+        setSimLoader('fabric');
+        simItems = ['iris', 'continuity', 'bobby', 'fresh-animations'];
+      } else if (type === 'red') {
+        setSimEdition('java');
+        setSimLoader('fabric');
+        simItems = ['sodium', 'vulkanmod', 'create', 'journeymap', 'xaeros-minimap'];
+      }
+      renderSimulationPool();
+      renderSimulationReactor();
+    }
+
+    function renderSimulationPool() {
+      const poolEl = document.getElementById('simPoolList');
+      if (!poolEl) return;
+      const q = (document.getElementById('simSearchInput').value || '').toLowerCase().trim();
+
+      // Önce seçili platform/loader ile uyumlu olanları üstte göster, ama arama yapıldığında tümünü göster ki kullanıcı çakışmayı da test edebilsin
+      const filtered = catalogueData.filter(item => {
+        const matchCat = simCategory === 'all' || item.category === simCategory;
+        const matchSearch = !q ||
+          item.title.toLowerCase().includes(q) ||
+          getLocalizedTitle(item).toLowerCase().includes(q) ||
+          item.loader.toLowerCase().includes(q) ||
+          item.verText.toLowerCase().includes(q);
+        if (!q) {
+          return matchCat && item.edition === simEdition;
+        }
+        return matchCat && matchSearch;
+      });
+
+      poolEl.innerHTML = filtered.slice(0, 60).map(item => {
+        const added = simItems.includes(item.id);
+        const loaderMismatch = item.edition !== simEdition || (simEdition === 'java' && item.category === 'mod' && item.loader !== simLoader);
+        const verMismatch = !item.versions.includes(simVersion);
+        const catBadge = item.category === 'shader' ? 'Shader' : (item.category === 'resourcepack' ? 'Paket' : 'Mod');
+
+        return `
+          <div class="flex items-center justify-between gap-2.5 p-2.5 rounded-xl bg-modrinth-dark border ${added ? 'border-modrinth bg-modrinth/5' : 'border-modrinth-border hover:border-white/25'} transition">
+            <div class="flex items-center gap-2.5 min-w-0">
+              ${getAvatarHTML(item, "w-9 h-9")}
+              <div class="min-w-0">
+                <div class="text-xs font-bold text-white truncate">${getLocalizedTitle(item)}</div>
+                <div class="flex items-center gap-1 flex-wrap mt-0.5">
+                  <span class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded ${loaderMismatch ? 'bg-red-500/20 text-red-300 border border-red-500/40' : 'bg-white/5 text-gray-300'}">${item.loader}</span>
+                  <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-white/5 text-gray-400">${catBadge}</span>
+                  <span class="text-[9px] font-semibold ${verMismatch ? 'text-red-400' : 'text-modrinth'}">${item.verText}</span>
+                </div>
+              </div>
+            </div>
+            <button type="button" onclick="toggleSimItem('${item.id}')" class="shrink-0 px-2.5 py-1.5 rounded-lg text-[11px] font-extrabold transition ${added ? 'bg-modrinth text-black' : 'bg-modrinth-card border border-modrinth-border text-gray-200 hover:border-modrinth'}">
+              ${added ? '✓ Eklendi' : '+ Ekle'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function evaluateSimulation() {
+      const items = simItems.map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+      const conflicts = [];
+      const badItemIds = new Set();
+      const missingDeps = [];
+      const titles = items.map(i => i.title);
+
+      items.forEach(item => {
+        // 1. Platform (Java vs Bedrock) kontrolü
+        if (item.edition !== simEdition) {
+          conflicts.push(`Platform Çakışması: "${item.title}" (${item.edition.toUpperCase()}), seçtiğiniz ${simEdition.toUpperCase()} platformunda çalışmaz!`);
+          badItemIds.add(item.id);
+        }
+        // 2. Mod Loader (Fabric vs Forge vs NeoForge) kontrolü
+        else if (simEdition === 'java' && item.category === 'mod' && item.loader !== simLoader) {
+          conflicts.push(`Yapı (Loader) Çakışması: "${item.title}" (${item.loader.toUpperCase()}), seçtiğiniz ${simLoader.toUpperCase()} yapısıyla uyumsuzdur!`);
+          badItemIds.add(item.id);
+        }
+        // 3. Sürüm (Version) kontrolü
+        if (!item.versions.includes(simVersion)) {
+          conflicts.push(`Sürüm Uyumsuzluğu: "${item.title}" (${item.verText}), seçtiğiniz ${simVersion} sürümünü desteklemiyor!`);
+          badItemIds.add(item.id);
+        }
+      });
+
+      // 4. Modlar arası doğrudan çakışma kontrolü
+      for (let i = 0; i < items.length; i++) {
+        const itemA = items[i];
+        (itemA.conflicts || []).forEach(cName => {
+          const itemB = items.find(x => x.title.toLowerCase() === cName.toLowerCase());
+          if (itemB && itemB.id !== itemA.id) {
+            const msg1 = `Kritik Mod Çakışması: "${itemA.title}" ile "${itemB.title}" aynı anda kurulamaz!`;
+            const msg2 = `Kritik Mod Çakışması: "${itemB.title}" ile "${itemA.title}" aynı anda kurulamaz!`;
+            if (!conflicts.includes(msg1) && !conflicts.includes(msg2)) {
+              conflicts.push(msg1);
+            }
+            badItemIds.add(itemA.id);
+            badItemIds.add(itemB.id);
+          }
+        });
+      }
+
+      // 5. Eksik yardımcı (yan) mod kontrolü
+      items.forEach(item => {
+        (item.deps || []).forEach(depName => {
+          const hasDep = titles.some(t => t.toLowerCase() === depName.toLowerCase());
+          if (!hasDep) {
+            const depObj = catalogueData.find(m => m.title.toLowerCase() === depName.toLowerCase());
+            if (depObj) {
+              const existing = missingDeps.find(d => d.dep.id === depObj.id);
+              if (existing) {
+                if (!existing.requiredBy.includes(item.title)) existing.requiredBy.push(item.title);
+              } else {
+                missingDeps.push({ dep: depObj, requiredBy: [item.title] });
+              }
+            }
+          }
+        });
+      });
+
+      return { items, conflicts: [...new Set(conflicts)], badItemIds, missingDeps };
+    }
+
+    function addSimMissingDeps() {
+      const res = evaluateSimulation();
+      res.missingDeps.forEach(m => {
+        if (!simItems.includes(m.dep.id)) simItems.push(m.dep.id);
+      });
+      renderSimulationPool();
+      renderSimulationReactor();
+      showToast("Tüm yardımcı yan modlar simülasyona eklendi!");
+    }
+
+    function resolveSimConflicts() {
+      const res = evaluateSimulation();
+      // Önce yanlış platform, yanlış loader veya yanlış sürüm olanları çıkar
+      let cleaned = res.items.filter(item => {
+        if (item.edition !== simEdition) return false;
+        if (simEdition === 'java' && item.category === 'mod' && item.loader !== simLoader) return false;
+        if (!item.versions.includes(simVersion)) return false;
+        return true;
+      });
+      // Sonra birbiriyle çakışanlardan ikincisini çıkar
+      const finalItems = [];
+      cleaned.forEach(cand => {
+        const conflictWithKept = finalItems.some(kept => {
+          const kConf = (kept.conflicts || []).map(x => x.toLowerCase());
+          const cConf = (cand.conflicts || []).map(x => x.toLowerCase());
+          return kConf.includes(cand.title.toLowerCase()) || cConf.includes(kept.title.toLowerCase());
+        });
+        if (!conflictWithKept) finalItems.push(cand);
+      });
+      simItems = finalItems.map(i => i.id);
+      renderSimulationPool();
+      renderSimulationReactor();
+      showToast("Çakışan modlar temizlendi!");
+    }
+
+    function renderSimulationReactor() {
+      const reactorBox = document.getElementById('simReactorBox');
+      const overlay = document.getElementById('simEffectOverlay');
+      const badgesEl = document.getElementById('simActiveProfileBadges');
+      const countEl = document.getElementById('simCountBadge');
+      const headerEl = document.getElementById('simCoreStatusHeader');
+      const messagesEl = document.getElementById('simAnalysisMessages');
+      const installedEl = document.getElementById('simInstalledContainer');
+      if (!reactorBox) return;
+
+      const res = evaluateSimulation();
+      countEl.innerText = `${res.items.length} İçerik`;
+
+      badgesEl.innerHTML = `
+        <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-white/10 text-white border border-white/15">${simEdition === 'java' ? 'Java Edition' : 'Bedrock (MCPE)'}</span>
+        <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-400/40">${simLoader.toUpperCase()}</span>
+        <span class="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-400/40">Sürüm: ${simVersion}</span>
+      `;
+
+      // 3 FARKLI EFEKTLİ DURUMU BELİRLE
+      reactorBox.className = "relative overflow-hidden rounded-3xl border-2 p-5 transition-all duration-300 shadow-2xl ";
+      overlay.innerHTML = '';
+      messagesEl.innerHTML = '';
+
+      if (res.items.length === 0) {
+        reactorBox.classList.add('border-modrinth-border', 'bg-modrinth-card');
+        headerEl.innerHTML = `
+          <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-2 text-gray-400">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          </div>
+          <div class="text-sm font-extrabold text-white">Simülasyon Çekirdeği Hazır</div>
+          <p class="text-xs text-gray-400 mt-1">Sol taraftan mod, shader veya kaynak paketi ekleyerek uyumluluk testini başlatın.</p>
+        `;
+      } else if (res.conflicts.length > 0) {
+        // DURUM C: KIRMIZI EFEKTLİ (SORUNUN BÜYÜKLÜĞÜNE GÖRE ŞİDDETLENEN YILDIRIM & ALARM)
+        reactorBox.classList.add('sim-effect-red');
+        const severityLevel = res.conflicts.length >= 2 ? 'KRİTİK ÇÖKME RİSKİ (YÜKSEK ŞİDDET)' : 'ÇAKIŞMA TESPİT EDİLDİ';
+        overlay.innerHTML = `
+          <svg class="absolute top-4 left-6 w-14 h-56 mc-bolt-1 pixelated opacity-80" viewBox="0 0 32 128" fill="none">
+            <path d="M18 0H26L16 36H26L10 82H20L4 128L8 86H2L14 42H6L18 0Z" fill="#EF4444"/>
+            <path d="M20 4H24L16 36H23L11 78H18L7 118L10 84H5L15 42H9L20 4Z" fill="#FFFFFF"/>
+          </svg>
+          <svg class="absolute top-12 right-6 w-14 h-56 mc-bolt-2 pixelated opacity-80" viewBox="0 0 32 128" fill="none">
+            <path d="M16 0H24L14 40H24L8 88H18L2 128L6 88H0L12 44H4L16 0Z" fill="#F87171"/>
+            <path d="M18 6H22L14 40H21L9 84H16L5 116L8 86H3L13 44H7L18 6Z" fill="#FEF08A"/>
+          </svg>
+        `;
+        headerEl.innerHTML = `
+          <div class="w-14 h-14 rounded-2xl bg-red-500/20 border-2 border-red-500 flex items-center justify-center mx-auto mb-2 text-red-400 shadow-[0_0_25px_rgba(239,68,68,0.8)]">
+            <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <div class="text-xs font-black uppercase tracking-widest text-red-400 mb-0.5">${severityLevel}</div>
+          <div class="text-base font-black text-white">${res.conflicts.length} Çakışma Oyunu Çökertiyor!</div>
+          <div class="w-full bg-red-950/80 h-2 rounded-full overflow-hidden mt-3 border border-red-500/40">
+            <div class="bg-gradient-to-r from-red-600 via-rose-400 to-red-600 h-full w-full animate-pulse"></div>
+          </div>
+        `;
+        res.conflicts.forEach(c => {
+          messagesEl.innerHTML += `
+            <div class="text-xs text-red-200 bg-red-500/20 border border-red-500 rounded-xl p-3 font-semibold flex items-start gap-2">
+              <svg class="w-4 h-4 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span>${c}</span>
+            </div>
+          `;
+        });
+        messagesEl.innerHTML += `
+          <button type="button" onclick="resolveSimConflicts()" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-black py-2.5 px-4 rounded-xl text-xs transition shadow-[0_0_18px_rgba(34,211,238,0.5)] flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            <span>Çakışan Modları Tek Tıkla Otomatik Temizle</span>
+          </button>
+        `;
+      } else if (res.missingDeps.length > 0) {
+        // DURUM B: TURUNCU EFEKTLİ (YARDIMCI MOD EKSİK - SONAR RADAR HALKALARI + İKAZ ŞERİDİ)
+        reactorBox.classList.add('sim-effect-orange');
+        headerEl.innerHTML = `
+          <div class="sim-hazard-bar h-2 w-full absolute top-0 left-0 right-0"></div>
+          <div class="relative w-14 h-14 rounded-full bg-orange-500/20 border-2 border-orange-400 flex items-center justify-center mx-auto mb-2 mt-1 text-orange-300">
+            <span class="sim-sonar-ring"></span>
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <div class="text-xs font-black uppercase tracking-widest text-orange-400 mb-0.5">YARDIMCI MOD BEKLENİYOR</div>
+          <div class="text-base font-black text-white">${res.missingDeps.length} Zorunlu Yan Mod Eksik</div>
+          <p class="text-[11px] text-orange-200/90 mt-1">Çakışma yok ancak modların çalışması için aşağıdaki yardımcı kütüphaneler gerekiyor.</p>
+        `;
+        res.missingDeps.forEach(m => {
+          messagesEl.innerHTML += `
+            <div class="text-xs text-orange-100 bg-orange-500/20 border border-orange-400/60 rounded-xl p-3 flex items-center justify-between gap-2">
+              <span><strong>${m.requiredBy.join(', ')}</strong> için <strong>${m.dep.title}</strong> gerekli.</span>
+              <button type="button" onclick="toggleSimItem('${m.dep.id}')" class="shrink-0 bg-orange-400 hover:bg-orange-300 text-black font-black px-2.5 py-1 rounded-lg text-[11px] transition">+ Ekle</button>
+            </div>
+          `;
+        });
+        messagesEl.innerHTML += `
+          <button type="button" onclick="addSimMissingDeps()" class="w-full bg-orange-500 hover:bg-orange-400 text-black font-black py-2.5 px-4 rounded-xl text-xs transition shadow-[0_0_18px_rgba(249,115,22,0.5)]">
+            + Tüm Yardımcı Modları Tek Tıkla Ekle (${res.missingDeps.length})
+          </button>
+        `;
+      } else {
+        // DURUM A: EFEKTLİ YEŞİL (KUSURSUZ UYUM - ZÜMRÜT AURORA + XP PARTİKÜLLERİ + HARMONİK ÇEKİRDEK)
+        reactorBox.classList.add('sim-effect-green');
+        overlay.innerHTML = `
+          <span class="sim-xp-orb" style="left: 15%; bottom: 12px; animation-delay: 0s;"></span>
+          <span class="sim-xp-orb" style="left: 35%; bottom: 8px; animation-delay: 0.6s;"></span>
+          <span class="sim-xp-orb" style="left: 55%; bottom: 16px; animation-delay: 1.2s;"></span>
+          <span class="sim-xp-orb" style="left: 75%; bottom: 10px; animation-delay: 0.4s;"></span>
+          <span class="sim-xp-orb" style="left: 88%; bottom: 14px; animation-delay: 1.7s;"></span>
+        `;
+        headerEl.innerHTML = `
+          <div class="relative w-14 h-14 rounded-full bg-modrinth/20 border-2 border-modrinth flex items-center justify-center mx-auto mb-2 text-modrinth shadow-[0_0_30px_rgba(27,217,106,0.75)]">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="text-xs font-black uppercase tracking-widest text-modrinth mb-0.5">%100 KUSURSUZ SİNERJİ</div>
+          <div class="text-base font-black text-white">Tüm Paketler Birbiriyle Tam Uyumlu!</div>
+          <p class="text-[11px] text-emerald-200/90 mt-1">${simEdition.toUpperCase()} • ${simLoader.toUpperCase()} ${simVersion} profilinde sıfır çakışma ve tam performans.</p>
+          <div class="w-full bg-emerald-950/80 h-2 rounded-full overflow-hidden mt-3 border border-modrinth/40">
+            <div class="bg-gradient-to-r from-modrinth via-lime-300 to-modrinth h-full w-full"></div>
+          </div>
+        `;
+      }
+
+      if (res.items.length === 0) {
+        installedEl.innerHTML = `<div class="text-xs text-gray-500 text-center py-6 bg-black/20 rounded-xl border border-white/5">Henüz simülasyona içerik eklenmedi.</div>`;
+      } else {
+        installedEl.innerHTML = res.items.map(item => {
+          const isBad = res.badItemIds.has(item.id);
+          return `
+            <div class="flex items-center justify-between gap-2.5 p-2.5 rounded-xl bg-black/50 border ${isBad ? 'border-red-500 bg-red-500/10' : 'border-white/10'}">
+              <div class="flex items-center gap-2.5 min-w-0">
+                ${getAvatarHTML(item, "w-8 h-8")}
+                <div class="min-w-0">
+                  <div class="text-xs font-bold ${isBad ? 'text-red-300' : 'text-white'} truncate">${getLocalizedTitle(item)}</div>
+                  <div class="text-[10px] text-gray-400 uppercase">${item.loader} • ${item.verText}</div>
+                </div>
+              </div>
+              <button type="button" onclick="toggleSimItem('${item.id}')" class="p-1.5 rounded-lg bg-red-500/15 text-red-300 hover:bg-red-500 hover:text-white transition text-xs font-bold">✕</button>
+            </div>
+          `;
+        }).join('');
+      }
+    }
 
     // COMPASS MOUSE TRACKER
     const compassContainer = document.getElementById('compassContainer');
@@ -2968,6 +4452,7 @@
     renderCombos();
     renderCards();
     updateCartUI();
+    filterGuideVideosInline();
     fetchRealModrinthIcons();
   </script>
 </body>

@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>McPusula - Minecraft Türkiye Mod & Rehber Portalı</title>
+  <title>McPusula - Minecraft Türkiye Mod, Kombo & Rehber Portalı</title>
+  <meta property="og:title" content="McPusula - Minecraft Türkiye Mod & Rehber Portalı">
+  <meta property="og:description" content="Java & Bedrock modları, PvP & Hayatta Kalma komboları, çakışma kontrolü ve Türkçe video rehberleri.">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -18,9 +20,9 @@
               DEFAULT: '#1bd96a',
               hover: '#15b858',
               dark: '#0c0d0f',
-              card: '#181a1d',
-              cardHover: '#22252a',
-              border: '#2a2e35'
+              card: '#16181c',
+              cardHover: '#1f2228',
+              border: '#282c34'
             },
             loader: {
               fabric: '#38bdf8',
@@ -45,30 +47,31 @@
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
     }
-    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
     ::-webkit-scrollbar-track { background: #0c0d0f; }
-    ::-webkit-scrollbar-thumb { background: #2a2e35; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: #282c34; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #1bd96a; }
     .pixelated { image-rendering: pixelated; }
-    .glass { background: rgba(24, 26, 29, 0.85); backdrop-filter: blur(12px); }
+    .glass { background: rgba(22, 24, 28, 0.88); backdrop-filter: blur(14px); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-modrinth selection:text-black">
 
   <!-- TOP BANNER (NON-PROFIT DISCLAIMER) -->
-  <div class="bg-modrinth/10 border-b border-modrinth/20 py-2 px-4 text-center text-xs sm:text-sm font-medium text-modrinth flex items-center justify-center gap-2">
-    <span class="w-2 h-2 rounded-full bg-modrinth animate-pulse"></span>
+  <div class="bg-modrinth/10 border-b border-modrinth/20 py-2 px-4 text-center text-xs font-medium text-modrinth flex items-center justify-center gap-2">
+    <span class="w-2 h-2 rounded-full bg-modrinth animate-pulse shrink-0"></span>
     <span id="bannerText">Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.</span>
   </div>
 
   <!-- HEADER -->
   <header class="sticky top-0 z-40 glass border-b border-modrinth-border px-4 lg:px-8 py-3">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
       
-      <!-- LOGO WITH INTEGRATED INTERACTIVE COMPASS -->
-      <a href="#" class="flex items-center gap-3 group">
-        <div class="relative w-11 h-11 flex items-center justify-center bg-modrinth-card border border-modrinth-border rounded-xl group-hover:border-modrinth transition drop-shadow-[0_0_12px_rgba(27,217,106,0.15)] overflow-hidden" id="compassContainer">
-          <!-- WOODEN LOG COMPASS SVG -->
+      <!-- LOGO WITH INTERACTIVE WOODEN COMPASS -->
+      <a href="#" onclick="resetAllFilters()" class="flex items-center gap-3 group shrink-0">
+        <div class="relative w-11 h-11 flex items-center justify-center bg-modrinth-card border border-modrinth-border rounded-xl group-hover:border-modrinth transition shadow-[0_0_15px_rgba(27,217,106,0.12)] overflow-hidden" id="compassContainer">
           <svg class="w-9 h-9 pixelated" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="8" y="4" width="16" height="24" fill="#3E2723"/>
             <rect x="4" y="8" width="24" height="16" fill="#3E2723"/>
@@ -82,8 +85,6 @@
             <rect x="4" y="24" width="4" height="4" fill="#15B858"/>
             <rect x="26" y="14" width="4" height="4" fill="#1BD96A"/>
           </svg>
-
-          <!-- MOUSE TRACKING NEEDLE -->
           <div id="compassNeedle" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-transform duration-75 ease-out">
             <svg class="w-7 h-7 pixelated" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <polygon points="12,2 15,12 12,10 9,12" fill="#EF4444"/>
@@ -94,29 +95,42 @@
         </div>
 
         <div>
-          <span class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+          <span class="text-lg sm:text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
             McPusula <span class="text-[10px] bg-modrinth text-black font-extrabold px-1.5 py-0.5 rounded">TR</span>
           </span>
-          <p class="text-[10px] text-gray-400 font-medium leading-none" id="subLogoText">Mod & Rehber Portalı</p>
+          <p class="text-[10px] text-gray-400 font-medium leading-none" id="subLogoText">Mod, Kombo & Rehber Portalı</p>
         </div>
       </a>
 
-      <!-- NAVIGATION & LANGUAGE SELECTOR -->
-      <div class="flex items-center gap-3">
-        <nav class="hidden md:flex items-center gap-1 bg-modrinth-card p-1 rounded-xl border border-modrinth-border text-sm font-medium">
-          <button onclick="filterCategory('all', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-white bg-modrinth/20 border border-modrinth/40 font-semibold" id="navAll">Tümü</button>
-          <button onclick="filterCategory('mod', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navMods">Modlar</button>
-          <button onclick="filterCategory('shader', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navShaders">Shaderlar</button>
-          <button onclick="filterCategory('resourcepack', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navPacks">Kaynak Paketleri</button>
-          <button onclick="openUploadModal()" class="px-3 py-1.5 rounded-lg text-gray-500 flex items-center gap-1.5 cursor-not-allowed">
-            <span id="navUpload">Mod Yükle</span>
-            <span class="text-[9px] bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 px-1.5 py-0.2 rounded font-bold uppercase" id="badgeSoon">Yakında</span>
-          </button>
-        </nav>
+      <!-- DESKTOP NAVIGATION -->
+      <nav class="hidden xl:flex items-center gap-1 bg-modrinth-card p-1 rounded-xl border border-modrinth-border text-xs font-semibold">
+        <button onclick="filterCategory('all', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-white bg-modrinth/20 border border-modrinth/40" id="navAll">Tümü</button>
+        <button onclick="filterCategory('mod', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navMods">Modlar</button>
+        <button onclick="filterCategory('shader', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navShaders">Shaderlar</button>
+        <button onclick="filterCategory('resourcepack', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navPacks">Kaynak Paketleri</button>
+        <button onclick="scrollToCombos(this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-modrinth hover:bg-modrinth/10 flex items-center gap-1" id="navCombos">
+          <span>⚡ Kombolar</span>
+        </button>
+        <button onclick="openErrorModal()" class="px-3 py-1.5 rounded-lg transition text-gray-300 hover:text-white hover:bg-white/5" id="navErrors">Hata Çözücü</button>
+        <button onclick="openUploadModal()" class="px-3 py-1.5 rounded-lg text-gray-500 flex items-center gap-1.5 cursor-not-allowed">
+          <span id="navUpload">Mod Yükle</span>
+          <span class="text-[9px] bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 px-1.5 py-0.2 rounded font-bold uppercase" id="badgeSoon">Yakında</span>
+        </button>
+      </nav>
+
+      <!-- RIGHT ACTIONS: MOD CART + LANGUAGE -->
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- MOD LIST / CONFLICT CHECKER BUTTON -->
+        <button onclick="openCartModal()" class="relative flex items-center gap-2 bg-modrinth-card border border-modrinth-border hover:border-modrinth px-3 py-2 rounded-xl text-xs font-bold text-white transition">
+          <svg class="w-4 h-4 text-modrinth" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          <span class="hidden sm:inline" id="btnMyList">Mod Listem</span>
+          <span id="cartCountBadge" class="bg-modrinth text-black text-[10px] font-extrabold px-1.5 py-0.5 rounded-full">0</span>
+          <span id="cartWarningDot" class="hidden absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-modrinth-dark animate-ping"></span>
+        </button>
 
         <!-- LANGUAGE SELECTOR -->
         <div class="relative">
-          <button onclick="toggleLangDropdown(event)" id="langDropdownBtn" class="flex items-center gap-2 bg-modrinth-card border border-modrinth-border hover:border-modrinth px-3 py-2 rounded-xl text-xs font-semibold text-white transition">
+          <button onclick="toggleLangDropdown(event)" id="langDropdownBtn" class="flex items-center gap-1.5 bg-modrinth-card border border-modrinth-border hover:border-modrinth px-3 py-2 rounded-xl text-xs font-semibold text-white transition">
             <span id="currentLangFlag">🇹🇷</span>
             <span id="currentLangCode">TR</span>
             <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -134,19 +148,29 @@
       </div>
 
     </div>
+
+    <!-- MOBILE / TABLET SCROLLABLE SUB-NAV -->
+    <div class="flex xl:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-2.5 mt-2.5 border-t border-modrinth-border/60 text-xs font-semibold">
+      <button onclick="filterCategory('all', this)" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-white bg-modrinth/20 border border-modrinth/40" id="mobNavAll">Tümü</button>
+      <button onclick="filterCategory('mod', this)" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-gray-400" id="mobNavMods">Modlar</button>
+      <button onclick="filterCategory('shader', this)" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-gray-400" id="mobNavShaders">Shaderlar</button>
+      <button onclick="filterCategory('resourcepack', this)" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-gray-400" id="mobNavPacks">Kaynak Paketleri</button>
+      <button onclick="scrollToCombos(this)" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-modrinth bg-modrinth/10" id="mobNavCombos">⚡ Kombolar</button>
+      <button onclick="openErrorModal()" class="shrink-0 px-3 py-1.5 rounded-lg transition text-gray-300 bg-modrinth-card border border-modrinth-border" id="mobNavErrors">Hata Çözücü</button>
+    </div>
   </header>
 
-  <!-- HERO SECTION WITH SADE JAVA / BEDROCK SELECTOR -->
-  <section class="relative py-10 px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center">
+  <!-- HERO SECTION -->
+  <section class="relative py-9 px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center">
     <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-3">
       <span id="heroTitle1">Minecraft Türkiye</span> <span class="text-modrinth" id="heroTitle2">Mod & Rehber Portalı</span>
     </h1>
     <p class="text-gray-400 max-w-2xl text-sm sm:text-base mb-6 leading-relaxed" id="heroDesc">
-      En güncel Java & Bedrock (MCPE) modları, kasma azaltan performans paketleri ve dikey video rehberleri.
+      En güncel Java & Bedrock (MCPE) modları, PvP & Hayatta Kalma komboları, çakışma kontrolü ve dikey video rehberleri.
     </p>
 
-    <!-- EDITION TOGGLE CONTROL (SADE VE ŞIK SEGMENT) -->
-    <div class="inline-flex p-1 bg-modrinth-card border border-modrinth-border rounded-xl mb-6 text-xs font-bold">
+    <!-- EDITION TOGGLE CONTROL -->
+    <div class="inline-flex p-1 bg-modrinth-card border border-modrinth-border rounded-xl mb-5 text-xs font-bold">
       <button onclick="filterEdition('java', this)" class="edition-btn px-5 py-2 rounded-lg bg-modrinth text-black font-extrabold transition" id="btnEdJava">
         ☕ Java Edition
       </button>
@@ -159,36 +183,74 @@
     <div class="w-full max-w-2xl bg-modrinth-card border border-modrinth-border p-2 rounded-2xl shadow-2xl focus-within:border-modrinth transition">
       <div class="relative flex items-center">
         <svg class="w-5 h-5 text-gray-400 absolute left-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Mod, shader veya kaynak paketi adı ara (Örn: sodium, iris, create)..." class="w-full bg-transparent pl-12 pr-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
+        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Mod, shader, kaynak paketi veya özellik ara (Örn: sodium, pvp, create, fps)..." class="w-full bg-transparent pl-12 pr-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
       </div>
     </div>
   </section>
 
-  <!-- MAIN CATALOGUE SECTION -->
-  <main id="catalogSection" class="max-w-7xl mx-auto px-4 lg:px-8 py-4 w-full flex-1">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-modrinth-border">
+  <!-- CURATED MOD COMBOS SECTION (KOMBOLAR) -->
+  <section id="combosSection" class="max-w-7xl mx-auto px-4 lg:px-8 py-6 w-full">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
       <div>
-        <h2 class="text-xl font-bold text-white flex items-center gap-2" id="secTitle">
-          Keşfet & İndir <span class="text-xs bg-modrinth/20 text-modrinth font-bold px-2 py-0.5 rounded-full border border-modrinth/30" id="itemCount">150 İçerik</span>
-        </h2>
-        <p class="text-xs text-gray-400" id="secSub">Minecraft 1.20 - 1.21.4 Uyumlu Sürümler</p>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-modrinth/15 text-modrinth border border-modrinth/30 rounded-md">Özel Paketler</span>
+          <h2 class="text-xl font-extrabold text-white" id="comboSecTitle">Hazır Mod Komboları (PvP, Hayatta Kalma & FPS)</h2>
+        </div>
+        <p class="text-xs text-gray-400 mt-0.5" id="comboSecSub">Birbiriyle %100 uyumlu test edilmiş mod kombinasyonlarını tek tıkla Mod Listene aktar ve çakışmasız kur.</p>
       </div>
 
-      <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-2 sm:pb-0">
-        <button onclick="filterLoader('all', this)" class="loader-btn active text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth text-white transition" id="loaderAll">Tüm Loaderlar</button>
-        <button onclick="filterLoader('fabric', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-fabric/40 text-loader-fabric hover:bg-loader-fabric/10 transition">Fabric</button>
-        <button onclick="filterLoader('forge', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-forge/40 text-loader-forge hover:bg-loader-forge/10 transition">Forge</button>
-        <button onclick="filterLoader('neoforge', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-neoforge/40 text-loader-neoforge hover:bg-loader-neoforge/10 transition">NeoForge</button>
-        <button onclick="filterLoader('quilt', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-quilt/40 text-loader-quilt hover:bg-loader-quilt/10 transition">Quilt</button>
+      <!-- COMBO CATEGORY PILLS -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0 text-xs font-semibold">
+        <button onclick="filterComboTag('all', this)" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth text-black font-bold transition">Tümü</button>
+        <button onclick="filterComboTag('pvp', this)" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-modrinth transition">⚔️ PvP</button>
+        <button onclick="filterComboTag('survival', this)" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-modrinth transition">🌲 Hayatta Kalma</button>
+        <button onclick="filterComboTag('fps', this)" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-modrinth transition">🚀 Maksimum FPS</button>
+        <button onclick="filterComboTag('visual', this)" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-modrinth transition">✨ Görsel</button>
+        <button onclick="filterComboTag('bedrock', this)" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-modrinth transition">📱 Bedrock</button>
       </div>
     </div>
 
-    <!-- CARDS GRID (SADE & TEMİZ MOD KARTLARI) -->
+    <div id="combosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Rendered via JS -->
+    </div>
+  </section>
+
+  <!-- MAIN CATALOGUE SECTION -->
+  <main id="catalogSection" class="max-w-7xl mx-auto px-4 lg:px-8 py-6 w-full flex-1 border-t border-modrinth-border/60 mt-4">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-4 border-b border-modrinth-border">
+      <div>
+        <h2 class="text-xl font-bold text-white flex items-center gap-2" id="secTitle">
+          Keşfet & İndir <span class="text-xs bg-modrinth/20 text-modrinth font-bold px-2 py-0.5 rounded-full border border-modrinth/30" id="itemCount">0 İçerik</span>
+        </h2>
+        <p class="text-xs text-gray-400" id="secSub">Gerçek Modrinth ikonları, Client/Server etiketleri ve çakışma bilgileri</p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- VERSION QUICK FILTERS -->
+        <div class="flex items-center gap-1 bg-modrinth-card p-1 rounded-xl border border-modrinth-border text-xs font-semibold">
+          <button onclick="filterVersion('all', this)" class="ver-btn px-2.5 py-1 rounded-lg bg-white/10 text-white transition" id="verAll">Tüm Sürümler</button>
+          <button onclick="filterVersion('1.21', this)" class="ver-btn px-2.5 py-1 rounded-lg text-gray-400 hover:text-white transition">1.21+</button>
+          <button onclick="filterVersion('1.20', this)" class="ver-btn px-2.5 py-1 rounded-lg text-gray-400 hover:text-white transition">1.20.1</button>
+          <button onclick="filterVersion('1.16.5', this)" class="ver-btn px-2.5 py-1 rounded-lg text-gray-400 hover:text-white transition">1.16.5</button>
+        </div>
+
+        <!-- LOADER FILTERS -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <button onclick="filterLoader('all', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth text-white transition" id="loaderAll">Tüm Loaderlar</button>
+          <button onclick="filterLoader('fabric', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-fabric/40 text-loader-fabric hover:bg-loader-fabric/10 transition">Fabric</button>
+          <button onclick="filterLoader('forge', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-forge/40 text-loader-forge hover:bg-loader-forge/10 transition">Forge</button>
+          <button onclick="filterLoader('neoforge', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-neoforge/40 text-loader-neoforge hover:bg-loader-neoforge/10 transition">NeoForge</button>
+          <button onclick="filterLoader('quilt', this)" class="loader-btn text-xs font-semibold px-3 py-1.5 rounded-lg bg-modrinth-card border border-loader-quilt/40 text-loader-quilt hover:bg-loader-quilt/10 transition">Quilt</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARDS GRID -->
     <div id="cardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
   </main>
 
   <!-- BOTTOM SECTION: YOUTUBE SHORTS GUIDE -->
-  <section class="max-w-7xl mx-auto px-4 lg:px-8 py-10 w-full border-t border-modrinth-border mt-10">
+  <section class="max-w-7xl mx-auto px-4 lg:px-8 py-10 w-full border-t border-modrinth-border mt-8">
     <div class="bg-modrinth-card border border-modrinth-border rounded-3xl p-6 sm:p-8 relative overflow-hidden text-center flex flex-col items-center">
       <div class="w-12 h-12 rounded-2xl bg-red-600/10 border border-red-600/30 text-red-500 flex items-center justify-center text-2xl mb-3">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
@@ -198,7 +260,7 @@
       <p class="text-gray-400 text-xs max-w-xl mb-5" id="guideSecSub">Minecraft sunucu hataları, mod kurulum problemleri veya Bobby/Sodium ayarları için dikey YouTube Shorts videolarımızı aratın.</p>
 
       <div class="w-full max-w-xl bg-modrinth-dark border border-modrinth-border p-2 rounded-2xl flex flex-col sm:flex-row gap-2">
-        <input type="text" id="guideSearchInput" placeholder="Sorun veya konu yazın (Örn: bobby, aternos, fps)..." class="w-full bg-transparent px-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
+        <input type="text" id="guideSearchInput" placeholder="Sorun veya konu yazın (Örn: bobby, aternos, fps, create, pvp)..." class="w-full bg-transparent px-4 py-3 text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
         <button onclick="searchVideoGuide()" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl text-sm transition flex items-center justify-center gap-2 shrink-0">
           <span id="btnGuideSearch">Rehber Videosu Ara</span>
         </button>
@@ -206,7 +268,7 @@
     </div>
   </section>
 
-  <!-- MODAL: MOD DETAIL -->
+  <!-- MODAL: MOD DETAIL (WITH DEPENDENCIES, CONFLICTS, CLIENT/SERVER & SHORTS) -->
   <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-modrinth-card border border-modrinth-border rounded-2xl max-w-2xl w-full p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl">
       <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-modrinth-border p-1.5 rounded-xl transition">
@@ -214,34 +276,127 @@
       </button>
 
       <div class="flex items-start gap-4 mb-4">
-        <div id="modalIcon" class="w-12 h-12 rounded-xl bg-modrinth/10 border border-modrinth/30 flex items-center justify-center text-xl shrink-0">📦</div>
-        <div>
-          <div class="flex items-center gap-2 flex-wrap mb-1" id="modalBadges"></div>
-          <h3 id="modalTitle" class="text-xl font-bold text-white">Mod Başlığı</h3>
-          <p id="modalVersions" class="text-xs text-modrinth font-medium">1.20 - 1.21.4</p>
+        <div id="modalIconWrap" class="w-14 h-14 rounded-2xl bg-modrinth-dark border border-modrinth-border flex items-center justify-center overflow-hidden shrink-0"></div>
+        <div class="pr-8">
+          <div class="flex items-center gap-1.5 flex-wrap mb-1.5" id="modalBadges"></div>
+          <h3 id="modalTitle" class="text-xl sm:text-2xl font-bold text-white">Mod Başlığı</h3>
+          <p id="modalVersions" class="text-xs text-modrinth font-semibold mt-0.5">1.20 - 1.21.4</p>
         </div>
       </div>
 
-      <div class="space-y-4 mb-6 text-sm">
+      <div class="space-y-3.5 mb-5 text-sm">
+        <!-- DESCRIPTION -->
         <div>
-          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1" id="lblDesc">Ne İşe Yarar?</h4>
-          <p id="modalDesc" class="text-gray-300 leading-relaxed bg-modrinth-dark/50 p-3 rounded-xl border border-modrinth-border/50 text-xs sm:text-sm"></p>
+          <h4 class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1" id="lblDesc">Ne İşe Yarar?</h4>
+          <p id="modalDesc" class="text-gray-300 leading-relaxed bg-modrinth-dark/60 p-3 rounded-xl border border-modrinth-border/60 text-xs sm:text-sm"></p>
         </div>
+
+        <!-- DEPENDENCIES & CONFLICTS GRID -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="bg-yellow-500/5 border border-yellow-500/25 rounded-xl p-3">
+            <h4 class="text-[11px] font-bold uppercase tracking-wider text-yellow-400 mb-1.5 flex items-center gap-1.5">
+              <span>⚠️</span> <span id="lblDeps">Gerekli Yan Modlar</span>
+            </h4>
+            <div id="modalDeps" class="text-xs text-gray-300 space-y-1"></div>
+          </div>
+
+          <div class="bg-red-500/5 border border-red-500/25 rounded-xl p-3">
+            <h4 class="text-[11px] font-bold uppercase tracking-wider text-red-400 mb-1.5 flex items-center gap-1.5">
+              <span>🚫</span> <span id="lblConflicts">Çakışan Modlar</span>
+            </h4>
+            <div id="modalConflicts" class="text-xs text-gray-300 space-y-1"></div>
+          </div>
+        </div>
+
+        <!-- INSTALLATION STEPS -->
         <div>
-          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1" id="lblSteps">Kurulum Talimatı</h4>
-          <ol id="modalSteps" class="list-decimal list-inside text-gray-300 space-y-1 bg-modrinth-dark/50 p-3 rounded-xl border border-modrinth-border/50 text-xs"></ol>
+          <h4 class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1" id="lblSteps">Kurulum Talimatı</h4>
+          <ol id="modalSteps" class="list-decimal list-inside text-gray-300 space-y-1 bg-modrinth-dark/60 p-3 rounded-xl border border-modrinth-border/60 text-xs"></ol>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-modrinth-border">
-        <a id="btnModrinth" href="#" target="_blank" class="bg-modrinth hover:bg-modrinth-hover text-black font-bold py-3 px-4 rounded-xl text-center text-sm transition flex items-center justify-center gap-2">
-          <span>Modrinth'ten İndir</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-        </a>
-        <a id="btnCurseforge" href="#" target="_blank" class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 px-4 rounded-xl text-center text-sm transition flex items-center justify-center gap-2">
-          <span>CurseForge'dan İndir</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-        </a>
+      <!-- ACTION BUTTONS -->
+      <div class="flex flex-col gap-2.5 pt-4 border-t border-modrinth-border">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <a id="btnModrinth" href="#" target="_blank" class="bg-modrinth hover:bg-modrinth-hover text-black font-bold py-2.5 px-4 rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2">
+            <span>Modrinth / MCPDL'den İndir</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </a>
+          <a id="btnCurseforge" href="#" target="_blank" class="bg-orange-600 hover:bg-orange-500 text-white font-bold py-2.5 px-4 rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2">
+            <span>CurseForge'dan İndir</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button id="modalAddCartBtn" class="bg-modrinth-dark hover:bg-white/5 border border-modrinth-border text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2">
+            <span>+ Mod Listeme Ekle</span>
+          </button>
+          <button id="modalWatchShortBtn" class="bg-red-600/15 hover:bg-red-600/25 border border-red-600/30 text-red-400 font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2">
+            <span>▶ Shorts Rehberini İzle</span>
+          </button>
+        </div>
+      </div>
+
+      <p class="text-[10px] text-gray-500 text-center mt-3" id="safeDownloadNote">
+        🔒 Tüm indirme bağlantıları güvenli resmi kaynaklara (Modrinth, CurseForge, MCPDL) yönlendirir.
+      </p>
+    </div>
+  </div>
+
+  <!-- MODAL: MOD LIST & CONFLICT CHECKER -->
+  <div id="cartModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-modrinth-card border border-modrinth-border rounded-2xl max-w-xl w-full p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+      <button onclick="closeCartModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-modrinth-border p-1.5 rounded-xl transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="flex items-center justify-between mb-4 pr-8">
+        <div>
+          <h3 class="text-lg font-extrabold text-white" id="cartModalTitle">Mod Listem & Çakışma Kontrolü</h3>
+          <p class="text-xs text-gray-400" id="cartModalSub">Seçtiğiniz modların uyumluluğu ve eksik yan modlar otomatik analiz edilir.</p>
+        </div>
+        <button onclick="clearCart()" class="text-xs text-red-400 hover:underline font-semibold" id="btnClearCart">Temizle</button>
+      </div>
+
+      <!-- CONFLICT & DEPENDENCY ALERTS -->
+      <div id="cartAnalysisBox" class="space-y-2 mb-4"></div>
+
+      <!-- SELECTED ITEMS LIST -->
+      <div id="cartItemsContainer" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: EXIT CODE ERROR SOLVER -->
+  <div id="errorModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-modrinth-card border border-modrinth-border rounded-2xl max-w-xl w-full p-6 relative max-h-[90vh] overflow-y-auto shadow-2xl">
+      <button onclick="closeErrorModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-modrinth-border p-1.5 rounded-xl transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <h3 class="text-lg font-extrabold text-white mb-1" id="errModalTitle">Minecraft Hata Kodu Çözücü</h3>
+      <p class="text-xs text-gray-400 mb-4" id="errModalSub">Oyununuz çöktüğünde Launcher ekranında çıkan hata kodunu seçin:</p>
+
+      <div class="space-y-3 text-xs">
+        <div class="bg-modrinth-dark border border-modrinth-border rounded-xl p-3.5">
+          <div class="font-bold text-red-400 mb-1">Exit Code: 1 (Genel Mod / Java Çakışması)</div>
+          <p class="text-gray-300 leading-relaxed">1) Eksik yan mod (örneğin Fabric API, Cloth Config veya Architectury API) olup olmadığını kontrol edin.<br>2) Minecraft 1.20.5+ sürümleri için <strong>Java 21</strong>, 1.18-1.20.4 için <strong>Java 17</strong> kurulu olmalıdır.<br>3) Fabric ve Forge modlarını aynı <code>mods</code> klasörüne karıştırmadığınızdan emin olun.</p>
+        </div>
+
+        <div class="bg-modrinth-dark border border-modrinth-border rounded-xl p-3.5">
+          <div class="font-bold text-orange-400 mb-1">Exit Code: -1 (Oyun İçi Çökme / Render Hatası)</div>
+          <p class="text-gray-300 leading-relaxed">1) <strong>OptiFine</strong> ile <strong>Sodium / Iris</strong> aynı anda yüklüyse OptiFine'ı kaldırın.<br>2) Oyun sürümünüzle mod sürümünün (örneğin 1.20.1 modu 1.21'de çalışmaz) birebir eşleştiğini doğrulayın.</p>
+        </div>
+
+        <div class="bg-modrinth-dark border border-modrinth-border rounded-xl p-3.5">
+          <div class="font-bold text-yellow-400 mb-1">GLFW Error 65542 (OpenGL / Ekran Kartı Hatası)</div>
+          <p class="text-gray-300 leading-relaxed">Ekran kartı sürücünüz (NVIDIA, AMD veya Intel) güncel değildir. Ekran kartı sürücünüzü resmi sitesinden güncelleyin ve bilgisayarı yeniden başlatın.</p>
+        </div>
+
+        <div class="bg-modrinth-dark border border-modrinth-border rounded-xl p-3.5">
+          <div class="font-bold text-blue-400 mb-1">OutOfMemoryError (Yetersiz RAM Hatası)</div>
+          <p class="text-gray-300 leading-relaxed">Launcher &gt; Yüklemeler &gt; Düzenle &gt; Daha Fazla Seçenek kısmından <code>-Xmx2G</code> değerini bilgisayarınızın RAM kapasitesine göre <code>-Xmx4G</code> veya <code>-Xmx6G</code> yapın ve <strong>FerriteCore</strong> modunu ekleyin.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -256,7 +411,10 @@
     </div>
   </div>
 
-  <!-- FOOTER WITH MOJANG, MICROSOFT, MODRINTH, CURSEFORGE & MCPDL DISCLAIMERS -->
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastBox" class="fixed bottom-5 right-5 z-50 bg-modrinth text-black font-bold text-xs px-4 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none"></div>
+
+  <!-- FOOTER WITH COMPLETE DISCLAIMERS -->
   <footer class="border-t border-modrinth-border bg-modrinth-card py-8 px-4 lg:px-8 text-xs text-gray-400">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
       <div>
@@ -264,7 +422,6 @@
         <p class="max-w-xl text-gray-400" id="footerNonProfit">Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.</p>
       </div>
       <div class="text-center md:text-right border-t md:border-t-0 pt-4 md:pt-0 border-modrinth-border w-full md:w-auto">
-        <!-- COMPLETE DISCLAIMERS -->
         <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
           NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG, MICROSOFT, MODRINTH, CURSEFORGE OR MCPDL.
         </p>
@@ -279,61 +436,77 @@
     const i18n = {
       tr: {
         banner: "Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.",
-        subLogo: "Mod & Rehber Portalı",
-        all: "Tümü", mods: "Modlar", shaders: "Shaderlar", packs: "Kaynak Paketleri", upload: "Mod Yükle", soon: "Yakında",
+        subLogo: "Mod, Kombo & Rehber Portalı",
+        all: "Tümü", mods: "Modlar", shaders: "Shaderlar", packs: "Kaynak Paketleri", combos: "⚡ Kombolar", errors: "Hata Çözücü", upload: "Mod Yükle", soon: "Yakında",
+        myList: "Mod Listem",
         hero1: "Minecraft Türkiye", hero2: "Mod & Rehber Portalı",
-        heroDesc: "En güncel Java & Bedrock (MCPE) modları, kasma azaltan performans paketleri ve dikey video rehberleri.",
-        searchPlaceholder: "Mod, shader veya kaynak paketi adı ara (Örn: sodium, iris, create)...",
-        secTitle: "Keşfet & İndir", secSub: "Minecraft 1.20 - 1.21.4 Uyumlu Sürümler",
-        loaderAll: "Tüm Loaderlar", descLbl: "Ne İşe Yarar?", stepsLbl: "Kurulum Talimatı",
+        heroDesc: "En güncel Java & Bedrock (MCPE) modları, PvP & Hayatta Kalma komboları, çakışma kontrolü ve dikey video rehberleri.",
+        searchPlaceholder: "Mod, shader, kaynak paketi veya özellik ara (Örn: sodium, pvp, create, fps)...",
+        comboTitle: "Hazır Mod Komboları (PvP, Hayatta Kalma & FPS)",
+        comboSub: "Birbiriyle %100 uyumlu test edilmiş mod kombinasyonlarını tek tıkla Mod Listene aktar ve çakışmasız kur.",
+        secTitle: "Keşfet & İndir", secSub: "Gerçek Modrinth ikonları, Client/Server etiketleri ve çakışma bilgileri",
+        verAll: "Tüm Sürümler", loaderAll: "Tüm Loaderlar",
+        descLbl: "Ne İşe Yarar?", depsLbl: "Gerekli Yan Modlar", conflictsLbl: "Çakışan Modlar", stepsLbl: "Kurulum Talimatı",
         dlModrinth: "Modrinth / MCPDL'den İndir", dlCurse: "CurseForge'dan İndir",
+        addList: "+ Mod Listeme Ekle", inList: "✓ Mod Listesinde", watchShort: "▶ Shorts Rehberini İzle",
         guideTitle: "@frealnds Rehber & Yarı Destek Videosu Ara",
         guideSub: "Minecraft sunucu hataları, mod kurulum problemleri veya Bobby/Sodium ayarları için dikey YouTube Shorts videolarımızı aratın.",
-        guidePlaceholder: "Sorun veya konu yazın (Örn: bobby, aternos, fps)...",
+        guidePlaceholder: "Sorun veya konu yazın (Örn: bobby, aternos, fps, create, pvp)...",
         btnGuideSearch: "Rehber Videosu Ara",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
         requestBtn: "YouTube'da Video İstek Gönder",
         footerNonProfit: "Bu site Minecraft Türkiye topluluğu için hazırlanmış, hiçbir ticari amacı ve geliri bulunmayan ücretsiz bir rehber projesidir.",
-        stepJava1: "Minecraft Launcher'ı kapatın ve uyumlu Mod Loader'ı (Fabric/Forge) kurun.",
-        stepJava2: "İndirdiğiniz .jar dosyasını %appdata%/.minecraft/mods klasörüne atın.",
+        stepJava1: "Minecraft Launcher'ı kapatın ve uyumlu Mod Loader'ı (Fabric/Forge/NeoForge) kurun.",
+        stepJava2: "İndirdiğiniz .jar dosyasını (ve varsa gerekli yan modları) %appdata%/.minecraft/mods klasörüne atın.",
         stepJava3: "Oyunu ilgili loader profiliyle başlatın.",
         stepBedrock1: "İndirdiğiniz .mcaddon veya .mcpack dosyasına çift tıklayın.",
         stepBedrock2: "Minecraft Bedrock oyunu otomatik açılacak ve paketi içeri aktaracaktır.",
-        stepBedrock3: "Dünya ayarlarından Kaynak / Davranış paketini aktif edin."
+        stepBedrock3: "Dünya ayarlarından Kaynak / Davranış paketini aktif edin.",
+        noDeps: "Ek yan mod gerekmez.", noConflicts: "Bilinen kritik çakışma yok."
       },
       az: {
         banner: "Bu sayt Minecraft Azərbaycan və Türkiyə icması üçün hazırlanmış pulsuz rəhbər layihəsidir.",
-        subLogo: "Mod və Rəhbər Portalı",
-        all: "Hamısı", mods: "Modlar", shaders: "Şeyderlər", packs: "Resurs Paketləri", upload: "Mod Yüklə", soon: "Tezliklə",
+        subLogo: "Mod, Kombo və Rəhbər Portalı",
+        all: "Hamısı", mods: "Modlar", shaders: "Şeyderlər", packs: "Resurs Paketləri", combos: "⚡ Kombolar", errors: "Xəta Həlli", upload: "Mod Yüklə", soon: "Tezliklə",
+        myList: "Mod Siyahım",
         hero1: "Minecraft Türk", hero2: "Mod və Rəhbər Portalı",
-        heroDesc: "Ən yenilənmiş Java və Bedrock modları tək ünvanda.",
+        heroDesc: "Ən yenilənmiş Java və Bedrock modları, PvP & Sağqalma komboları və toqquşma yoxlanışı.",
         searchPlaceholder: "Mod, şeyder və ya resurs paketi axtar...",
-        secTitle: "Kəşf Et və Yüklə", secSub: "Minecraft 1.20 - 1.21.4 Uyğun Versiyalar",
-        loaderAll: "Bütün Yükləyicilər", descLbl: "Nə İşi Görür?", stepsLbl: "Quraşdırma Təlimatı",
+        comboTitle: "Hazır Mod Komboları (PvP, Sağqalma & FPS)",
+        comboSub: "Bir-biri ilə tam uyğun mod paketlərini tək kliklə siyahınıza əlavə edin.",
+        secTitle: "Kəşf Et və Yüklə", secSub: "Client/Server etiketləri və uyğunluq məlumatları",
+        verAll: "Bütün Versiyalar", loaderAll: "Bütün Yükləyicilər",
+        descLbl: "Nə İşi Görür?", depsLbl: "Tələb Olunan Modlar", conflictsLbl: "Toqquşan Modlar", stepsLbl: "Quraşdırma Təlimatı",
         dlModrinth: "Modrinth / MCPDL-dən Yüklə", dlCurse: "CurseForge-dan Yüklə",
+        addList: "+ Siyahıya Əlavə Et", inList: "✓ Siyahıdadır", watchShort: "▶ Shorts Rəhbərini İzlə",
         guideTitle: "@frealnds Rəhbər Videosu Axtar",
         guideSub: "Problem və ya mod adını yazaraq Shorts videolarımızı tapın.",
         guidePlaceholder: "Problem yazın (Örn: bobby, fps)...", btnGuideSearch: "Rəhbər Videosu Axtar",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
         requestBtn: "YouTube-da Video İstəyi Göndər",
         footerNonProfit: "Bu sayt Minecraft icması üçün hazırlanmış pulsuz rəhbər layihəsidir.",
-        stepJava1: "Minecraft-i bağlayın və Fabric/Forge quraşdırın.",
+        stepJava1: "Minecraft Launcher-i bağlayın və uyğun Loader-i quraşdırın.",
         stepJava2: ".jar faylını mods qovluğuna atın.",
         stepJava3: "Oyunu müvafiq profil ilə başladın.",
         stepBedrock1: ".mcaddon faylına cüt klikləyin.",
         stepBedrock2: "Minecraft Bedrock avtomatik açılacaqdır.",
-        stepBedrock3: "Dünya parametrlərindən paketi aktiv edin."
+        stepBedrock3: "Dünya parametrlərindən paketi aktiv edin.",
+        noDeps: "Əlavə mod tələb olunmur.", noConflicts: "Kritik toqquşma yoxdur."
       },
       kz: {
         banner: "Бұл сайт Minecraft қауымдастығы үшін дайындалған тегін нұсқаулық жобасы.",
-        subLogo: "Мод және Нұсқаулық Порталы",
-        all: "Барлығы", mods: "Модтар", shaders: "Шейдерлер", packs: "Ресурс Пакеттері", upload: "Мод Жүктеу", soon: "Жуырда",
+        subLogo: "Мод, Комбо және Нұсқаулық",
+        all: "Барлығы", mods: "Модтар", shaders: "Шейдерлер", packs: "Ресурс Пакеттері", combos: "⚡ Комболар", errors: "Қате Шешуші", upload: "Мод Жүктеу", soon: "Жуырда",
+        myList: "Менің Тізімім",
         hero1: "Minecraft Түркі", hero2: "Мод Порталы",
-        heroDesc: "Java және Bedrock модтары бір жерде.",
+        heroDesc: "Java және Bedrock модтары, PvP комболары және үйлесімділік тексеруі.",
         searchPlaceholder: "Мод немесе шейдер іздеңіз...",
-        secTitle: "Зерттеу және Жүктеу", secSub: "Minecraft 1.20 - 1.21.4 Нұсқалары",
-        loaderAll: "Барлық Жүктеушілер", descLbl: "Сипаттамасы", stepsLbl: "Орнату Нұсқаулығы",
+        comboTitle: "Дайын Мод Комболары", comboSub: "Бір-бірімен үйлесімді модтар жинағы.",
+        secTitle: "Зерттеу және Жүктеу", secSub: "Client/Server белгілері және үйлесімділік",
+        verAll: "Барлық Нұсқалар", loaderAll: "Барлық Жүктеушілер",
+        descLbl: "Сипаттамасы", depsLbl: "Қажетті Модтар", conflictsLbl: "Қайшы Модтар", stepsLbl: "Орнату Нұсқаулығы",
         dlModrinth: "Modrinth / MCPDL-ден Жүктеу", dlCurse: "CurseForge-тан Жүктеу",
+        addList: "+ Тізімге Қосу", inList: "✓ Тізімде", watchShort: "▶ Shorts Көру",
         guideTitle: "Бейненұсқаулық Іздеу", guideSub: "Мәселені жазып бейненұсқаулықты табыңыз.",
         guidePlaceholder: "Мәселені жазыңыз...", btnGuideSearch: "Видео Іздеу",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
@@ -344,18 +517,23 @@
         stepJava3: "Ойынды сәйкес профильмен бастаңыз.",
         stepBedrock1: ".mcaddon файлын басыңыз.",
         stepBedrock2: "Minecraft Bedrock автоматты түрде ашылады.",
-        stepBedrock3: "Әлем баптауларынан пакетті белсендіріңіз."
+        stepBedrock3: "Әлем баптауларынан пакетті белсендіріңіз.",
+        noDeps: "Қосымша мод қажет емес.", noConflicts: "Қайшылық жоқ."
       },
       uz: {
         banner: "Ushbu sayt Minecraft hamjamiyati uchun tayyorlangan bepul qo'llanma loyihasidir.",
-        subLogo: "Mod va Qo'llanma Portali",
-        all: "Barchasi", mods: "Modlar", shaders: "Sheyderlar", packs: "Resurs Paketlari", upload: "Mod Yuklash", soon: "Tez orada",
+        subLogo: "Mod, Kombo va Qo'llanma",
+        all: "Barchasi", mods: "Modlar", shaders: "Sheyderlar", packs: "Resurs Paketlari", combos: "⚡ Kombolar", errors: "Xato Yechimi", upload: "Mod Yuklash", soon: "Tez orada",
+        myList: "Mod Ro'yxatim",
         hero1: "Minecraft Turkiy", hero2: "Mod Portali",
-        heroDesc: "Java va Bedrock modlari bir joyda.",
+        heroDesc: "Java va Bedrock modlari, PvP kombolari va moslik tekshiruvi.",
         searchPlaceholder: "Mod yoki sheyder qidiring...",
-        secTitle: "Kashf qiling va Yuklang", secSub: "Minecraft 1.20 - 1.21.4 Versiyalari",
-        loaderAll: "Barcha Yuklovchilar", descLbl: "Tavsifi", stepsLbl: "O'rnatish Qo'llanmasi",
+        comboTitle: "Tayyor Mod Kombolari", comboSub: "Bir-biriga mos modlar to'plami.",
+        secTitle: "Kashf qiling va Yuklang", secSub: "Client/Server belgilari va moslik ma'lumotlari",
+        verAll: "Barcha Versiyalar", loaderAll: "Barcha Yuklovchilar",
+        descLbl: "Tavsifi", depsLbl: "Kerakli Modlar", conflictsLbl: "Zid Modlar", stepsLbl: "O'rnatish Qo'llanmasi",
         dlModrinth: "Modrinth / MCPDL-dan Yuklash", dlCurse: "CurseForge-dan Yuklash",
+        addList: "+ Ro'yxatga Qo'shish", inList: "✓ Ro'yxatda", watchShort: "▶ Shorts Ko'rish",
         guideTitle: "Video Qo'llanma Qidirish", guideSub: "Muammoni yozib video qo'llanmani toping.",
         guidePlaceholder: "Muammoni yozing...", btnGuideSearch: "Video Qidirish",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
@@ -366,18 +544,23 @@
         stepJava3: "O'yinni mos profil bilan ishga tushiring.",
         stepBedrock1: ".mcaddon faylini bosing.",
         stepBedrock2: "Minecraft Bedrock avtomatik ochiladi.",
-        stepBedrock3: "Dunyo sozlamalaridan paketni faollashtiring."
+        stepBedrock3: "Dunyo sozlamalaridan paketni faollashtiring.",
+        noDeps: "Qo'shimcha mod kerak emas.", noConflicts: "Ziddiyat yo'q."
       },
       kg: {
         banner: "Бул сайт Minecraft коомчулугу үчүн даярдалган акысыз көрсөтмө долбоору.",
-        subLogo: "Мод жана Көрсөтмө Порталы",
-        all: "Баары", mods: "Моддор", shaders: "Шейдерлер", packs: "Ресурс Пакеттери", upload: "Мод Жүктөө", soon: "Жакында",
+        subLogo: "Мод, Комбо жана Көрсөтмө",
+        all: "Баары", mods: "Моддор", shaders: "Шейдерлер", packs: "Ресурс Пакеттери", combos: "⚡ Комболор", errors: "Ката Чечүүчү", upload: "Мод Жүктөө", soon: "Жакында",
+        myList: "Менин Тизмем",
         hero1: "Minecraft Түрк", hero2: "Мод Порталы",
-        heroDesc: "Java жана Bedrock моддору.",
+        heroDesc: "Java жана Bedrock моддору, PvP комболору.",
         searchPlaceholder: "Мод же шейдер издөө...",
-        secTitle: "Изилдөө жана Жүктөө", secSub: "Minecraft 1.20 - 1.21.4 Версиялары",
-        loaderAll: "Бардык Жүктөөчүлөр", descLbl: "Сүрөттөмөсү", stepsLbl: "Орнотуу Көрсөтмөсү",
+        comboTitle: "Даяр Мод Комболору", comboSub: "Бири-бирине шайкеш моддор топтому.",
+        secTitle: "Изилдөө жана Жүктөө", secSub: "Client/Server белгилери",
+        verAll: "Бардык Версиялар", loaderAll: "Бардык Жүктөөчүлөр",
+        descLbl: "Сүрөттөмөсү", depsLbl: "Керектүү Моддор", conflictsLbl: "Карама-каршы Моддор", stepsLbl: "Орнотуу Көрсөтмөсү",
         dlModrinth: "Modrinth / MCPDL'ден Жүктөө", dlCurse: "CurseForge'дон Жүктөө",
+        addList: "+ Тизмеге Кошуу", inList: "✓ Тизмеде", watchShort: "▶ Shorts Көрүү",
         guideTitle: "Видео Көрсөтмө Издөө", guideSub: "Көйгөйдү жазып көрсөтмөнү табыңыз.",
         guidePlaceholder: "Көйгөйдү жазыңыз...", btnGuideSearch: "Видео İздөө",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
@@ -388,18 +571,23 @@
         stepJava3: "Оюнду тиешелүү профиль менен баштаңыз.",
         stepBedrock1: ".mcaddon файлын басыңыз.",
         stepBedrock2: "Minecraft Bedrock автоматтык түрдө ачылат.",
-        stepBedrock3: "Дүйнө жөндөөлөрүнөн пакетти активдештириңиз."
+        stepBedrock3: "Дүйнө жөндөөлөрүнөн пакетти активдештириңиз.",
+        noDeps: "Кошумча мод керек эмес.", noConflicts: "Карама-каршылык жок."
       },
       tm: {
         banner: "Bu saýt Minecraft jemgyýeti üçin taýýarlanan mugt gollanma taslamasydyr.",
-        subLogo: "Mod we Gollanma Portaly",
-        all: "Hemmesi", mods: "Modlar", shaders: "Şeýderler", packs: "Resurs Paketleri", upload: "Mod Ýüklemek", soon: "Tiz arada",
+        subLogo: "Mod, Kombo we Gollanma",
+        all: "Hemmesi", mods: "Modlar", shaders: "Şeýderler", packs: "Resurs Paketleri", combos: "⚡ Kombolar", errors: "Ýalňyşlyk Çözüji", upload: "Mod Ýüklemek", soon: "Tiz arada",
+        myList: "Mod Sanawym",
         hero1: "Minecraft Türk", hero2: "Mod Portaly",
-        heroDesc: "Java we Bedrock modlary bir ýerde.",
+        heroDesc: "Java we Bedrock modlary, PvP kombolary.",
         searchPlaceholder: "Mod ýa-da şeýder gözleň...",
-        secTitle: "Gözle we Ýükle", secSub: "Minecraft 1.20 - 1.21.4 Wersiýalary",
-        loaderAll: "Ähli Ýükleyjiler", descLbl: "Düşündirişi", stepsLbl: "Gurnaşdyrmak Gollanmasy",
+        comboTitle: "Taýýar Mod Kombolary", comboSub: "Bir-biri bilen sazlaşykly modlar toplumy.",
+        secTitle: "Gözle we Ýükle", secSub: "Client/Server bellikleri",
+        verAll: "Ähli Wersiýalar", loaderAll: "Ähli Ýükleyjiler",
+        descLbl: "Düşündirişi", depsLbl: "Gerekli Modlar", conflictsLbl: "Garşy Modlar", stepsLbl: "Gurnaşdyrmak Gollanmasy",
         dlModrinth: "Modrinth / MCPDL-den Ýükle", dlCurse: "CurseForge-dan Ýükle",
+        addList: "+ Sanawa Goş", inList: "✓ Sanawda", watchShort: "▶ Shorts Gör",
         guideTitle: "Wideo Gollanma Gözle", guideSub: "Meseleňizi ýazyp wideony tapyň.",
         guidePlaceholder: "Meseleňizi ýazyň...", btnGuideSearch: "Wideo Gözle",
         videoNotFound: "Maalesef aradığınız içerik ile ilgili henüz bir rehber videosu bulunamadı.",
@@ -410,7 +598,8 @@
         stepJava3: "Oýuny degişli profil bilen başlaň.",
         stepBedrock1: ".mcaddon faýlyna basyň.",
         stepBedrock2: "Minecraft Bedrock awtomatiki açylar.",
-        stepBedrock3: "Dünýä sazlamalaryndan paketi işjeňleşdiriň."
+        stepBedrock3: "Dünýä sazlamalaryndan paketi işjeňleşdiriň.",
+        noDeps: "Goşmaça mod gerek däl.", noConflicts: "Garşylyk ýok."
       }
     };
 
@@ -418,36 +607,246 @@
     let activeEdition = 'java';
     let activeCategory = 'all';
     let activeLoader = 'all';
+    let activeVersion = 'all';
+    let activeComboTag = 'all';
+    let modCart = JSON.parse(localStorage.getItem('mcpusula_cart') || '[]');
 
+    // COMPREHENSIVE REAL CATALOGUE (JAVA & BEDROCK MODS, SHADERS, RESOURCE PACKS)
     const catalogueData = [
-      { id: "j1", title: "Sodium", edition: "java", category: "mod", loader: "fabric", versions: "1.20 - 1.21.4", icon: "⚡", desc: "FPS katlayan ve işlemci yükünü düşüren en güçlü modern Minecraft grafik motoru.", modrinth: "https://modrinth.com/mod/sodium", curse: "https://www.curseforge.com/minecraft/mc-mods/sodium" },
-      { id: "j2", title: "Iris Shaders", edition: "java", category: "mod", loader: "fabric", versions: "1.20 - 1.21.4", icon: "🌈", desc: "Sodium ile tam uyumlu çalışan modern shader destek modu.", modrinth: "https://modrinth.com/mod/iris", curse: "https://www.curseforge.com/minecraft/mc-mods/irisshaders" },
-      { id: "j3", title: "Lithium", edition: "java", category: "mod", loader: "fabric", versions: "1.20 - 1.21.4", icon: "🛡️", desc: "Fizik ve mob yapay zekasını optimize eden sunucu/tek oyunculu performans modu.", modrinth: "https://modrinth.com/mod/lithium", curse: "https://www.curseforge.com/minecraft/mc-mods/lithium" },
-      { id: "j4", title: "Bobby", edition: "java", category: "mod", loader: "fabric", versions: "1.20 - 1.21.4", icon: "🔭", desc: "Sunucularda bile önceden yüklenmiş chunkları görüş mesafesinde tutar (64+ chunk).", modrinth: "https://modrinth.com/mod/bobby", curse: "https://www.curseforge.com/minecraft/mc-mods/bobby" },
-      { id: "j5", title: "Create", edition: "java", category: "mod", loader: "forge", versions: "1.20.1 - 1.21", icon: "⚙️", desc: "Çarklar ve otomasyon araçlarıyla sanayi devrimi yaşatan efsanevi mod.", modrinth: "https://modrinth.com/mod/create", curse: "https://www.curseforge.com/minecraft/mc-mods/create" },
-      { id: "b1", title: "Furniture Addon", edition: "bedrock", category: "mod", loader: "bedrock", versions: "1.20 - 1.21", icon: "🪑", desc: "Bedrock Edition için 100+ işlevsel ev eşyası ve dekorasyon bloğu ekleyen eklenti.", modrinth: "https://mcpdl.com", curse: "https://mcpdl.com" },
-      { id: "b2", title: "Mutant Creatures PE", edition: "bedrock", category: "mod", loader: "bedrock", versions: "1.20 - 1.21", icon: "🧟", desc: "Bedrock dünyasına devasa mutant zombi, creeper ve golem bossları ekler.", modrinth: "https://mcpdl.com", curse: "https://mcpdl.com" },
-      { id: "b3", title: "Bare Bones PE", edition: "bedrock", category: "resourcepack", loader: "bedrock", versions: "1.20 - 1.21", icon: "🎨", desc: "Bedrock MCPE için Minecraft fragman tarzı pürüzsüz sade doku paketi.", modrinth: "https://mcpdl.com", curse: "https://mcpdl.com" }
+      // CORE & PERFORMANCE MODS
+      { id: "fabric-api", mrId: "P7dR8mSH", title: "Fabric API", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#38bdf8", desc: "Fabric modlarının %95'inin çalışması için gereken temel çekirdek kütüphane modu.", deps: [], conflicts: ["Forge", "NeoForge"], modrinth: "https://modrinth.com/mod/fabric-api", curse: "https://www.curseforge.com/minecraft/mc-mods/fabric-api", yt: "dQw4w9WgXcQ" },
+      { id: "sodium", mrId: "AAN0FDMm", title: "Sodium", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#1bd96a", desc: "FPS değerlerini 2-4 kat artıran ve takılmaları gideren en güçlü modern Minecraft render motoru.", deps: [], conflicts: ["OptiFine", "VulkanMod"], modrinth: "https://modrinth.com/mod/sodium", curse: "https://www.curseforge.com/minecraft/mc-mods/sodium", yt: "dQw4w9WgXcQ" },
+      { id: "iris", mrId: "YL57xq9U", title: "Iris Shaders", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#60a5fa", desc: "Sodium ile tam uyumlu çalışan, yüksek FPS'li modern shader yükleme modu.", deps: ["Sodium"], conflicts: ["OptiFine"], modrinth: "https://modrinth.com/mod/iris", curse: "https://www.curseforge.com/minecraft/mc-mods/irisshaders", yt: "dQw4w9WgXcQ" },
+      { id: "lithium", mrId: "gvQqBUqZ", title: "Lithium", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#a855f7", desc: "Oyun fiziği, mob yapay zekası ve chunk tiklerini optimize ederek sunucu ve tek oyunculu TPS'ini yükseltir.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/lithium", curse: "https://www.curseforge.com/minecraft/mc-mods/lithium" },
+      { id: "ferrite-core", mrId: "uXXizFIs", title: "FerriteCore", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#ef4444", desc: "Minecraft'ın RAM (bellek) kullanımını %35-50 oranında azaltarak düşük RAM'li sistemlerde çökmeleri önler.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/ferrite-core", curse: "https://www.curseforge.com/minecraft/mc-mods/ferritecore" },
+      { id: "immediatelyfast", mrId: "5ZwdcRci", title: "ImmediatelyFast", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20"], verText: "1.18.2 - 1.21.4", color: "#f59e0b", desc: "Sandık, tabela, eşya çerçevesi, yazılar ve GUI arayüzlerinin çizimini hızlandırarak FPS kazandırır.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/immediatelyfast", curse: "https://www.curseforge.com/minecraft/mc-mods/immediatelyfast" },
+      { id: "entityculling", mrId: "NNAgCjsB", title: "Entity Culling", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#10b981", desc: "Duvarların arkasında kalan ve görüş açınızda olmayan mob/sandıkları işlemeyi durdurarak FPS artırır.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/entityculling", curse: "https://www.curseforge.com/minecraft/mc-mods/entityculling" },
+      { id: "modernfix", mrId: "nmDcB62a", title: "ModernFix", edition: "java", category: "mod", loader: "forge", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.1", color: "#f97316", desc: "Büyük mod paketlerinin açılış süresini yarıya indiren ve RAM sızıntılarını önleyen hepsi bir arada optimizasyon modu.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/modernfix", curse: "https://www.curseforge.com/minecraft/mc-mods/modernfix" },
+      { id: "dynamic-fps", mrId: "LQ3K71Q1", title: "Dynamic FPS", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#06b6d4", desc: "Oyunu Alt+Tab ile arka plana attığınızda FPS'i düşürerek işlemci ve ekran kartı ısınmasını önler.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/dynamic-fps", curse: "https://www.curseforge.com/minecraft/mc-mods/dynamic-fps" },
+      { id: "bobby", mrId: "M08ruV16", title: "Bobby", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20"], verText: "1.17 - 1.21.4", color: "#3b82f6", desc: "Aternos gibi görüş mesafesi kısıtlı sunucularda bile gezdiğiniz chunkları önbelleğe alıp 64+ chunk uzağı görmenizi sağlar.", deps: ["Fabric API"], conflicts: ["Distant Horizons"], modrinth: "https://modrinth.com/mod/bobby", curse: "https://www.curseforge.com/minecraft/mc-mods/bobby", yt: "dQw4w9WgXcQ" },
+      { id: "distant-horizons", mrId: "uCdwusMi", title: "Distant Horizons", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.1", color: "#6366f1", desc: "LOD teknolojisi kullanarak FPS düşürmeden 256+ chunk uzaklıktaki dağları ve yapıları görmenizi sağlar.", deps: ["Fabric API"], conflicts: ["Bobby"], modrinth: "https://modrinth.com/mod/distanthorizons", curse: "https://www.curseforge.com/minecraft/mc-mods/distant-horizons" },
+      { id: "krypton", mrId: "fQEb0iXm", title: "Krypton", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20"], verText: "1.18 - 1.21.4", color: "#8b5cf6", desc: "Minecraft ağ (network) yığınını optimize ederek çok oyunculu sunucularda ping ve paket gecikmelerini azaltır.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/krypton", curse: "https://www.curseforge.com/minecraft/mc-mods/krypton" },
+      { id: "spark", mrId: "l6YH9Als", title: "spark", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#eab308", desc: "Sunucuda veya oyunda hangi modun veya entity'nin lag/TPS düşüşü yarattığını tespit eden profesyonel analiz aracı.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/spark", curse: "https://www.curseforge.com/minecraft/mc-mods/spark" },
+
+      // PVP & HUD / QOL MODS
+      { id: "modmenu", mrId: "mOgUt4GM", title: "Mod Menu", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#22c55e", desc: "Oyun içi menüye 'Modlar' sekmesi ekleyerek yüklü modların ayarlarını (Config) düzenlemenizi sağlar.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/modmenu", curse: "https://www.curseforge.com/minecraft/mc-mods/modmenu" },
+      { id: "cloth-config", mrId: "9s6osm5g", title: "Cloth Config API", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#94a3b8", desc: "Birçok PvP ve QoL modunun ayar menüsü ekranını oluşturan gerekli kütüphane modu.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/cloth-config", curse: "https://www.curseforge.com/minecraft/mc-mods/cloth-config" },
+      { id: "appleskin", mrId: "EsAfCjCV", title: "AppleSkin", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#ef4444", desc: "Yiyeceklerin ne kadar açlık ve doygunluk (saturation) vereceğini açlık barı üzerinde gösterir.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/appleskin", curse: "https://www.curseforge.com/minecraft/mc-mods/appleskin" },
+      { id: "zoomify", mrId: "w7ThoJFB", title: "Zoomify", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20"], verText: "1.19 - 1.21.4", color: "#38bdf8", desc: "OptiFine'daki dürbün yakınlaştırma (C tuşu zoom) özelliğini akıcı animasyon ve fare tekerleği kontrolüyle ekler.", deps: ["Fabric API", "Cloth Config API"], conflicts: [], modrinth: "https://modrinth.com/mod/zoomify", curse: "https://www.curseforge.com/minecraft/mc-mods/zoomify" },
+      { id: "betterf3", mrId: "8shC1gFX", title: "BetterF3", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#14b8a6", desc: "Karmaşık F3 hata ayıklama ekranını renkli, okunaklı ve özelleştirilebilir hale getirir.", deps: ["Fabric API", "Cloth Config API"], conflicts: [], modrinth: "https://modrinth.com/mod/betterf3", curse: "https://www.curseforge.com/minecraft/mc-mods/betterf3" },
+      { id: "not-enough-animations", mrId: "MPCX6s5C", title: "Not Enough Animations", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#f43f5e", desc: "Üçüncü şahıs kamerasında harita tutma, yemek yeme, tekne küreği çekme ve merdiven tırmanma animasyonları ekler.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/not-enough-animations", curse: "https://www.curseforge.com/minecraft/mc-mods/not-enough-animations" },
+      { id: "3dskinlayers", mrId: "zV5r3pPn", title: "3D Skin Layers", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#ec4899", desc: "Oyuncu skinlerinin ikinci katmanını (şapka, ceket, saç) düz yerine gerçek 3 boyutlu pikseller olarak işler.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/3dskinlayers", curse: "https://www.curseforge.com/minecraft/mc-mods/skin-layers-3d" },
+      { id: "mouse-tweaks", mrId: "aC3cM3Vq", title: "Mouse Tweaks", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#64748b", desc: "Sandık ve envanterlerde eşyaları sürükleyerek veya fare tekerleğiyle hızlıca taşımanızı sağlar.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/mouse-tweaks", curse: "https://www.curseforge.com/minecraft/mc-mods/mouse-tweaks" },
+      { id: "litematica", mrId: "bEpr0Arc", title: "Litematica", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#0ea5e9", desc: "Büyük yapıları hologram şematik olarak kopyalayıp hayatta kalma modunda blok blok inşa etmenizi sağlar.", deps: ["MaLiLib"], conflicts: [], modrinth: "https://modrinth.com/mod/litematica", curse: "https://www.curseforge.com/minecraft/mc-mods/litematica" },
+      { id: "malilib", mrId: "GcWjdA9I", title: "MaLiLib", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#475569", desc: "Litematica, MiniHUD ve Tweakeroo modlarının çalışması için zorunlu olan çekirdek kütüphane modu.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/malilib", curse: "https://www.curseforge.com/minecraft/mc-mods/malilib" },
+
+      // SURVIVAL & CONTENT MODS (FORGE / NEOFORGE / FABRIC)
+      { id: "create", mrId: "LNytGkhc", title: "Create", edition: "java", category: "mod", loader: "forge", env: "Client & Server", versions: ["1.21", "1.20"], verText: "1.18.2 - 1.21.1", color: "#d97706", desc: "Dönen çarklar, trenler, yürüyen bantlar ve hareketli mekanizmalarla muazzam otomasyon sistemleri kurmanızı sağlar.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/create", curse: "https://www.curseforge.com/minecraft/mc-mods/create", yt: "dQw4w9WgXcQ" },
+      { id: "jei", mrId: "u6dRKJwZ", title: "Just Enough Items (JEI)", edition: "java", category: "mod", loader: "forge", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#eab308", desc: "Oyundaki tüm eşyaların ve modlu blokların üretim tariflerini sağ tarafta listeleyen rehber modu.", deps: [], conflicts: ["Roughly Enough Items (REI)"], modrinth: "https://modrinth.com/mod/jei", curse: "https://www.curseforge.com/minecraft/mc-mods/jei" },
+      { id: "rei", mrId: "nfn13YXA", title: "Roughly Enough Items (REI)", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#f59e0b", desc: "Fabric ve NeoForge için modern arayüzlü eşya üretim ve iksir tarifi görüntüleme modu.", deps: ["Fabric API", "Cloth Config API"], conflicts: ["Just Enough Items (JEI)"], modrinth: "https://modrinth.com/mod/rei", curse: "https://www.curseforge.com/minecraft/mc-mods/roughly-enough-items" },
+      { id: "emi", mrId: "fRiHVvU7", title: "EMI", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20"], verText: "1.18.2 - 1.21.1", color: "#10b981", desc: "Tarif ağaçları ve tek tıkla üretim planlama sunan yeni nesil tarif görüntüleyici.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/emi", curse: "https://www.curseforge.com/minecraft/mc-mods/emi" },
+      { id: "waystones", mrId: "LOpKWr2A", title: "Waystones", edition: "java", category: "mod", loader: "forge", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#6366f1", desc: "Köylere ve üssünüze ışınlanma taşları kurarak uzak mesafeler arasında hızlı seyahat etmenizi sağlar.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/waystones", curse: "https://www.curseforge.com/minecraft/mc-mods/waystones" },
+      { id: "journeymap", mrId: "lfHFW1mp", title: "JourneyMap", edition: "java", category: "mod", loader: "forge", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#22c55e", desc: "Sağ üstte canlı mini harita ve tam ekran dünya haritası sunan keşif modu.", deps: [], conflicts: ["Xaero's Minimap"], modrinth: "https://modrinth.com/mod/journeymap", curse: "https://www.curseforge.com/minecraft/mc-mods/journeymap" },
+      { id: "xaeros-minimap", mrId: "1bokaNcj", title: "Xaero's Minimap", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#ef4444", desc: "Vanilla dokusuna sadık, hafif ve yüksek FPS dostu mini harita ve waypoint modu.", deps: ["Fabric API"], conflicts: ["JourneyMap"], modrinth: "https://modrinth.com/mod/xaeros-minimap", curse: "https://www.curseforge.com/minecraft/mc-mods/xaeros-minimap" },
+      { id: "farmers-delight", mrId: "R2OftAxM", title: "Farmer's Delight", edition: "java", category: "mod", loader: "forge", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.1", color: "#84cc16", desc: "Oyuna tencereler, kesme tahtaları ve onlarca yeni yemek tarifi ekleyen kapsamlı tarım/mutfak modu.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/farmers-delight", curse: "https://www.curseforge.com/minecraft/mc-mods/farmers-delight" },
+      { id: "sophisticated-backpacks", mrId: "F7wXgwZa", title: "Sophisticated Backpacks", edition: "java", category: "mod", loader: "neoforge", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.1", color: "#a855f7", desc: "Geliştirilebilir sırt çantaları, otomatik eşya toplama ve çanta içi çalışma masası özellikleri sunar.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/sophisticated-backpacks", curse: "https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks" },
+      { id: "terralith", mrId: "8oi3bsk5", title: "Terralith", edition: "java", category: "mod", loader: "neoforge", env: "Server", versions: ["1.21", "1.20"], verText: "1.18.2 - 1.21.4", color: "#10b981", desc: "Hiç yeni blok eklemeden sadece vanilla bloklarla 100'den fazla nefes kesici yeni biyom oluşturur.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/terralith", curse: "https://www.curseforge.com/minecraft/mc-mods/terralith" },
+      { id: "simple-voice-chat", mrId: "9eGKb6K1", title: "Simple Voice Chat", edition: "java", category: "mod", loader: "fabric", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#3b82f6", desc: "Oyundaki arkadaşlarınıza yaklaştıkça sesinizi duymalarını sağlayan yakınlık tabanlı sesli sohbet modu.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/simple-voice-chat", curse: "https://www.curseforge.com/minecraft/mc-mods/simple-voice-chat", yt: "dQw4w9WgXcQ" },
+      { id: "jade", mrId: "nvQzSEkH", title: "Jade", edition: "java", category: "mod", loader: "neoforge", env: "Client & Server", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#22c55e", desc: "Baktığınız bloğun, sandığın veya mobun canını ve hangi moda ait olduğunu ekranın üstünde gösterir.", deps: [], conflicts: [], modrinth: "https://modrinth.com/mod/jade", curse: "https://www.curseforge.com/minecraft/mc-mods/jade" },
+      { id: "continuity", mrId: "1IjD5062", title: "Continuity", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20"], verText: "1.18.2 - 1.21.4", color: "#38bdf8", desc: "Cam bloklarının birleşik (çerçevesiz) görünmesini ve parlak maden dokularını Sodium üzerinde çalıştırır.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/continuity", curse: "https://www.curseforge.com/minecraft/mc-mods/continuity" },
+      { id: "sound-physics", mrId: "qyVF9oeo", title: "Sound Physics Remastered", edition: "java", category: "mod", loader: "fabric", env: "Client", versions: ["1.21", "1.20"], verText: "1.18.2 - 1.21.4", color: "#8b5cf6", desc: "Mağaralarda gerçekçi yankı ve duvar arkasındaki seslerin boğuklaşması gibi akustik ses fiziği ekler.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/sound-physics-remastered", curse: "https://www.curseforge.com/minecraft/mc-mods/sound-physics-remastered" },
+      { id: "physics-mod", mrId: "vyyrk647", title: "Physics Mod", edition: "java", category: "mod", loader: "quilt", env: "Client", versions: ["1.21", "1.20"], verText: "1.18.2 - 1.21.4", color: "#ec4899", desc: "Kırılan blokların parçalanarak yere dökülmesini ve mobların ragdoll fiziğiyle devrilmesini sağlar.", deps: ["Fabric API"], conflicts: [], modrinth: "https://modrinth.com/mod/physicsmod", curse: "https://www.curseforge.com/minecraft/mc-mods/physics-mod" },
+
+      // SHADERS (JAVA)
+      { id: "complementary-reimagined", mrId: "HVnmMxH1", title: "Complementary Reimagined", edition: "java", category: "shader", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#38bdf8", desc: "Minecraft'ın piksel dokusunu bozmadan muhteşem bulutlar, su yansımaları ve ışıklandırma sunan en popüler shader.", deps: ["Iris Shaders", "Sodium"], conflicts: [], modrinth: "https://modrinth.com/shader/complementary-reimagined", curse: "https://www.curseforge.com/minecraft/shaders/complementary-reimagined" },
+      { id: "complementary-unbound", mrId: "R6NEzAwj", title: "Complementary Unbound", edition: "java", category: "shader", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#f59e0b", desc: "Gerçekçi su dalgaları ve sinematik gökyüzü detaylarıyla öne çıkan Complementary sürümü.", deps: ["Iris Shaders", "Sodium"], conflicts: [], modrinth: "https://modrinth.com/shader/complementary-unbound", curse: "https://www.curseforge.com/minecraft/shaders/complementary-unbound" },
+      { id: "bsl-shaders", mrId: "Q1vvjJYV", title: "BSL Shaders", edition: "java", category: "shader", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#fbbf24", desc: "Sıcak ve canlı renk tonlarıyla bilinen, özelleştirme seçenekleri çok geniş yüksek performanslı shader.", deps: ["Iris Shaders", "Sodium"], conflicts: [], modrinth: "https://modrinth.com/shader/bsl-shaders", curse: "https://www.curseforge.com/minecraft/shaders/bsl-shaders" },
+      { id: "solas-shader", mrId: "BAscRYxg", title: "Solas Shader", edition: "java", category: "shader", loader: "fabric", env: "Client", versions: ["1.21", "1.20"], verText: "1.18 - 1.21.4", color: "#a855f7", desc: "Büyüleyici aurora borealis (kuzey ışıkları) ve End/Nether atmosferiyle ünlü sinematik shader.", deps: ["Iris Shaders", "Sodium"], conflicts: [], modrinth: "https://modrinth.com/shader/solas-shader", curse: "https://www.curseforge.com/minecraft/shaders/solas-shader" },
+      { id: "makeup-ultra-fast", mrId: "izsIPI7a", title: "MakeUp - Ultra Fast", edition: "java", category: "shader", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#1bd96a", desc: "Düşük sistemli bilgisayarlar ve laptoplar için özel optimize edilmiş en hafif gölgelendirici paketi.", deps: ["Iris Shaders", "Sodium"], conflicts: [], modrinth: "https://modrinth.com/shader/make-up-ultra-fast", curse: "https://www.curseforge.com/minecraft/shaders/makeup-ultra-fast-shaders" },
+      { id: "rethinking-voxels", mrId: "kmWfBMVK", title: "Rethinking Voxels", edition: "java", category: "shader", loader: "fabric", env: "Client", versions: ["1.21", "1.20"], verText: "1.18 - 1.21.4", color: "#f97316", desc: "Her meşale ve ışık kaynağının gerçek zamanlı keskin gölgeler ve renkli ışık yaymasını sağlayan RTX tarzı shader.", deps: ["Iris Shaders", "Sodium"], conflicts: [], modrinth: "https://modrinth.com/shader/rethinking-voxels", curse: "https://www.curseforge.com/minecraft/shaders/rethinking-voxels" },
+
+      // RESOURCE PACKS (JAVA)
+      { id: "bare-bones", mrId: "r4KnwR62", title: "Bare Bones", edition: "java", category: "resourcepack", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#22c55e", desc: "Resmi Minecraft fragmanlarındaki pürüzsüz, sade ve canlı renkli görünümü oyuna kazandırır.", deps: [], conflicts: [], modrinth: "https://modrinth.com/resourcepack/bare-bones", curse: "https://www.curseforge.com/minecraft/texture-packs/bare-bones-pack" },
+      { id: "fresh-animations", mrId: "50dA9sJR", title: "Fresh Animations", edition: "java", category: "resourcepack", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#f43f5e", desc: "Köylüler, zombiler ve hayvanların göz kırpmasını ve akıcı yürümesini sağlayan efsanevi animasyon paketi.", deps: [], conflicts: [], modrinth: "https://modrinth.com/resourcepack/fresh-animations", curse: "https://www.curseforge.com/minecraft/texture-packs/fresh-animations" },
+      { id: "stay-true", mrId: "Pvw9E56v", title: "Stay True", edition: "java", category: "resourcepack", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#84cc16", desc: "Vanilla dokularına gür yapraklar, çiçek çeşitliliği ve doğal geçişler ekleyerek atmosferi zenginleştirir.", deps: [], conflicts: [], modrinth: "https://modrinth.com/resourcepack/stay-true", curse: "https://www.curseforge.com/minecraft/texture-packs/stay-true" },
+      { id: "faithful-32x", mrId: "w0TnAp1p", title: "Faithful 32x", edition: "java", category: "resourcepack", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#3b82f6", desc: "Klasik Minecraft dokularını orijinalliğini bozmadan 2 kat daha keskin (32x32) hale getirir.", deps: [], conflicts: [], modrinth: "https://modrinth.com/resourcepack/faithful-32x", curse: "https://www.curseforge.com/minecraft/texture-packs/faithful-32x" },
+      { id: "default-dark-mode", mrId: "6SLU7tS5", title: "Default Dark Mode", edition: "java", category: "resourcepack", loader: "fabric", env: "Client", versions: ["1.21", "1.20", "1.16.5"], verText: "1.16.5 - 1.21.4", color: "#334155", desc: "Envanter, sandık ve çalışma masası menülerini göz yormayan şık koyu temaya çevirir.", deps: [], conflicts: [], modrinth: "https://modrinth.com/resourcepack/default-dark-mode", curse: "https://www.curseforge.com/minecraft/texture-packs/default-dark-mode" },
+
+      // BEDROCK EDITION (MCPE / WIN10 / MOBILE)
+      { id: "actions-and-stuff", title: "Actions & Stuff PE", edition: "bedrock", category: "resourcepack", loader: "bedrock", env: "Client", versions: ["1.21", "1.20"], verText: "1.20.80 - 1.21.50", color: "#10b981", desc: "Bedrock Edition için oyuncu, mob ve eşya tutuş animasyonlarını tamamen yenileyen ultra akıcı paket.", deps: [], conflicts: [], modrinth: "https://mcpedl.com", curse: "https://www.curseforge.com/minecraft-bedrock" },
+      { id: "better-on-bedrock", title: "Better on Bedrock", edition: "bedrock", category: "mod", loader: "bedrock", env: "Client & Server", versions: ["1.21", "1.20"], verText: "1.20.80 - 1.21.50", color: "#22c55e", desc: "Bedrock hayatta kalma moduna yeni bosslar, görev sistemi, zindanlar ve madenler ekleyen dev eklenti.", deps: [], conflicts: [], modrinth: "https://mcpedl.com", curse: "https://www.curseforge.com/minecraft-bedrock" },
+      { id: "furniture-addon-pe", title: "Loled Furniture Addon", edition: "bedrock", category: "mod", loader: "bedrock", env: "Client & Server", versions: ["1.21", "1.20"], verText: "1.20 - 1.21.50", color: "#f59e0b", desc: "MCPE dünyanıza 120'den fazla etkileşimli koltuk, TV, bilgisayar ve mutfak eşyası ekler.", deps: [], conflicts: [], modrinth: "https://mcpedl.com", curse: "https://www.curseforge.com/minecraft-bedrock" },
+      { id: "dynamic-lights-pe", title: "Dynamic Lights PE", edition: "bedrock", category: "mod", loader: "bedrock", env: "Client & Server", versions: ["1.21", "1.20"], verText: "1.20 - 1.21.50", color: "#eab308", desc: "Elinizde meşale veya fener tutarken etrafınızın gerçek zamanlı aydınlanmasını sağlar.", deps: [], conflicts: [], modrinth: "https://mcpedl.com", curse: "https://www.curseforge.com/minecraft-bedrock" },
+      { id: "bare-bones-pe", title: "Bare Bones Bedrock", edition: "bedrock", category: "resourcepack", loader: "bedrock", env: "Client", versions: ["1.21", "1.20"], verText: "1.20 - 1.21.50", color: "#1bd96a", desc: "Bedrock Edition'ı resmi Minecraft fragmanlarındaki sade ve pürüzsüz görsel tarza dönüştürür.", deps: [], conflicts: [], modrinth: "https://mcpedl.com", curse: "https://www.curseforge.com/minecraft-bedrock" },
+      { id: "newb-x-shader", title: "Newb X Legacy Shader", edition: "bedrock", category: "shader", loader: "bedrock", env: "Client", versions: ["1.21", "1.20"], verText: "1.20.70 - 1.21.50", color: "#38bdf8", desc: "Mobil ve Windows Bedrock RenderDragon motorunda çalışan hafif ve canlı gökyüzü shader paketi.", deps: [], conflicts: [], modrinth: "https://mcpedl.com", curse: "https://www.curseforge.com/minecraft-bedrock" },
+      { id: "pvp-essentials-pe", title: "Bedrock PvP Utility UI", edition: "bedrock", category: "resourcepack", loader: "bedrock", env: "Client", versions: ["1.21", "1.20"], verText: "1.20 - 1.21.50", color: "#ef4444", desc: "Düşük ateş, şeffaf envanter, hızlı zırh değiştirme ve FPS artırıcı sade partiküller içeren PvP paketi.", deps: [], conflicts: [], modrinth: "https://mcpedl.com", curse: "https://www.curseforge.com/minecraft-bedrock" },
+      { id: "veinminer-pe", title: "TreeCapitator & VeinMiner PE", edition: "bedrock", category: "mod", loader: "bedrock", env: "Client & Server", versions: ["1.21", "1.20"], verText: "1.20 - 1.21.50", color: "#d97706", desc: "Eğilerek tek bir odunu veya madeni kırdığınızda tüm ağacı veya damarı tek seferde toplamanızı sağlar.", deps: [], conflicts: [], modrinth: "https://mcpedl.com", curse: "https://www.curseforge.com/minecraft-bedrock" }
     ];
 
-    // GENERATE CATALOGUE UP TO 150 ITEMS
-    const icons = ["⚡", "🌿", "🛡️", "🔮", "⚙️", "⛵", "🎨", "🚀", "💎", "🏹"];
-    for (let i = 9; i <= 150; i++) {
-      let isBedrock = i % 4 === 0;
-      catalogueData.push({
-        id: "item-" + i,
-        title: isBedrock ? `Bedrock Addon #${i}` : `Java Mod #${i}`,
-        edition: isBedrock ? "bedrock" : "java",
-        category: i % 5 === 0 ? "shader" : (i % 3 === 0 ? "resourcepack" : "mod"),
-        loader: isBedrock ? "bedrock" : (i % 2 === 0 ? "fabric" : "forge"),
-        versions: "1.20 - 1.21.4",
-        icon: icons[i % icons.length],
-        desc: isBedrock ? "Bedrock MCPE ve Windows 10/11 için optimize edilmiş topluluk içeriği." : "Java Edition için yüksek performanslı ve güncel Minecraft eklentisi.",
-        modrinth: isBedrock ? "https://mcpdl.com" : "https://modrinth.com",
-        curse: "https://www.curseforge.com"
+    // CURATED MOD COMBOS DATA
+    const combosData = [
+      {
+        id: "combo-pvp",
+        tag: "pvp",
+        badge: "⚔️ PvP & Crystal",
+        title: "Rekabetçi PvP & Akıcı Hit Kombo",
+        loader: "Fabric 1.20.1 - 1.21.4",
+        desc: "Yüksek FPS, net görüş alanı, hızlı envanter kontrolü ve düşman can/doygunluk takibi için en iyi PvP paketi.",
+        mods: ["fabric-api", "sodium", "immediatelyfast", "entityculling", "appleskin", "zoomify", "mouse-tweaks", "default-dark-mode"],
+        warning: "OptiFine ile birlikte kullanmayın; Sodium tüm görüntü optimizasyonunu tek başına sağlar."
+      },
+      {
+        id: "combo-survival",
+        tag: "survival",
+        badge: "🌲 Hayatta Kalma+",
+        title: "Zengin Hayatta Kalma & Keşif Kombo",
+        loader: "Fabric 1.20.1 - 1.21.4",
+        desc: "Vanilla atmosferini bozmadan mini harita, eşya tarifleri, sesli sohbet ve şematik inşa ekleyen dengeli paket.",
+        mods: ["fabric-api", "sodium", "lithium", "xaeros-minimap", "emi", "appleskin", "litematica", "malilib", "simple-voice-chat"],
+        warning: "Xaero's Minimap yerine JourneyMap kullanmak isterseniz ikisini aynı anda yüklemeyin."
+      },
+      {
+        id: "combo-fps",
+        tag: "fps",
+        badge: "🚀 Maksimum FPS",
+        title: "Düşük Sistem & Maksimum FPS Kombo",
+        loader: "Fabric 1.20.1 - 1.21.4",
+        desc: "Eski laptop ve düşük RAM'li bilgisayarlarda kasmaları bitiren, RAM kullanımını %45 düşüren saf hız kombosu.",
+        mods: ["fabric-api", "sodium", "lithium", "ferrite-core", "immediatelyfast", "entityculling", "dynamic-fps", "krypton"],
+        warning: "Shader kullanmayacaksanız Iris yüklemenize gerek yoktur."
+      },
+      {
+        id: "combo-visual",
+        tag: "visual",
+        badge: "✨ Sinematik Görsel",
+        title: "Fragman Tadında Görsel & Shader Kombo",
+        loader: "Fabric 1.20.1 - 1.21.4",
+        desc: "Complementary shader, birleşik camlar, 3D skinler ve mağara yankı sesleriyle sinematik deneyim.",
+        mods: ["fabric-api", "sodium", "iris", "complementary-reimagined", "continuity", "3dskinlayers", "not-enough-animations", "sound-physics"],
+        warning: "Iris Shaders'ın çalışması için listedeki Sodium modu zorunludur."
+      },
+      {
+        id: "combo-forge-tech",
+        tag: "survival",
+        badge: "⚙️ Sanayi & Macera",
+        title: "Create Otomasyon & Macera Kombo",
+        loader: "Forge / NeoForge 1.20.1",
+        desc: "Create fabrikaları, Waystones ışınlanma taşları, Farmer's Delight mutfağı ve ModernFix hızlandırması.",
+        mods: ["create", "jei", "waystones", "journeymap", "farmers-delight", "modernfix"],
+        warning: "Bu kombo Forge altyapısı içindir; Fabric modlarıyla karıştırmayın."
+      },
+      {
+        id: "combo-bedrock",
+        tag: "bedrock",
+        badge: "📱 Bedrock MCPE",
+        title: "Bedrock Hayatta Kalma & Animasyon",
+        loader: "Bedrock 1.21+ (Mobil / PC)",
+        desc: "Actions & Stuff akıcı animasyonları, dinamik meşale ışığı ve Better on Bedrock zindanlarıyla tam paket.",
+        mods: ["better-on-bedrock", "actions-and-stuff", "dynamic-lights-pe", "veinminer-pe", "newb-x-shader"],
+        warning: "Dünya ayarlarından 'Deneysel Özellikler' (Experimental) sekmesini aktif etmeyi unutmayın."
+      }
+    ];
+
+    // FETCH REAL MODRINTH ICONS AUTOMATICALLY (WITH LOCALSTORAGE CACHE)
+    async function fetchRealModrinthIcons() {
+      const cached = JSON.parse(localStorage.getItem('mcpusula_icons_v1') || '{}');
+      catalogueData.forEach(item => {
+        if (item.mrId && cached[item.mrId]) {
+          item.iconUrl = cached[item.mrId];
+        }
+      });
+      renderCards();
+
+      const idsToFetch = catalogueData.filter(i => i.mrId && !cached[i.mrId]).map(i => i.mrId);
+      if (idsToFetch.length === 0) return;
+
+      try {
+        const res = await fetch(`https://api.modrinth.com/v2/projects?ids=${encodeURIComponent(JSON.stringify(idsToFetch))}`);
+        if (!res.ok) return;
+        const projects = await res.json();
+        projects.forEach(p => {
+          if (p.icon_url) cached[p.id] = p.icon_url;
+        });
+        localStorage.setItem('mcpusula_icons_v1', JSON.stringify(cached));
+        catalogueData.forEach(item => {
+          if (item.mrId && cached[item.mrId]) {
+            item.iconUrl = cached[item.mrId];
+          }
+        });
+        renderCards();
+      } catch (e) {
+        // Fallback SVG avatar displays automatically
+      }
+    }
+
+    function getAvatarHTML(item, sizeClass = "w-11 h-11") {
+      const initials = item.title.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      const bgStyle = `background: linear-gradient(135deg, ${item.color}33, ${item.color}11); border-color: ${item.color}55; color: ${item.color};`;
+      if (item.iconUrl) {
+        return `
+          <div class="${sizeClass} rounded-xl border border-modrinth-border bg-modrinth-dark flex items-center justify-center overflow-hidden shrink-0">
+            <img src="${item.iconUrl}" alt="${item.title}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div style="display:none; ${bgStyle}" class="w-full h-full items-center justify-center font-extrabold text-sm">${initials}</div>
+          </div>
+        `;
+      }
+      return `
+        <div style="${bgStyle}" class="${sizeClass} rounded-xl border flex items-center justify-center font-extrabold text-sm shrink-0">
+          ${initials}
+        </div>
+      `;
+    }
+
+    // RENDER COMBOS
+    function renderCombos() {
+      const grid = document.getElementById('combosGrid');
+      grid.innerHTML = '';
+
+      const filtered = combosData.filter(c => activeComboTag === 'all' || c.tag === activeComboTag);
+
+      filtered.forEach(combo => {
+        const modObjects = combo.mods.map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+        const modPills = modObjects.map(m => `<span class="text-[11px] bg-modrinth-dark border border-modrinth-border px-2 py-0.5 rounded-md text-gray-300 font-medium">${m.title}</span>`).join('');
+
+        const card = document.createElement('div');
+        card.className = "bg-modrinth-card border border-modrinth-border hover:border-modrinth/50 rounded-2xl p-5 flex flex-col justify-between transition group";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2.5">
+              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-modrinth/15 text-modrinth border border-modrinth/30">${combo.badge}</span>
+              <span class="text-[11px] font-semibold text-gray-400">${combo.loader}</span>
+            </div>
+            <h3 class="text-base font-extrabold text-white group-hover:text-modrinth transition mb-1.5">${combo.title}</h3>
+            <p class="text-xs text-gray-400 leading-relaxed mb-3">${combo.desc}</p>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              ${modPills}
+            </div>
+            <div class="text-[11px] text-yellow-400/90 bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-2 mb-4">
+              <strong>Not:</strong> ${combo.warning}
+            </div>
+          </div>
+          <button onclick="addComboToCart('${combo.id}')" class="w-full bg-modrinth hover:bg-modrinth-hover text-black font-extrabold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+            <span>+ Tüm Komboyu Mod Listeme Aktar (${modObjects.length} Mod)</span>
+          </button>
+        `;
+        grid.appendChild(card);
       });
     }
 
+    function filterComboTag(tag, el) {
+      activeComboTag = tag;
+      document.querySelectorAll('.combo-tag-btn').forEach(btn => {
+        btn.classList.remove('bg-modrinth', 'text-black', 'font-bold');
+        btn.classList.add('bg-modrinth-card', 'border', 'border-modrinth-border', 'text-gray-300');
+      });
+      if (el) {
+        el.classList.add('bg-modrinth', 'text-black', 'font-bold');
+        el.classList.remove('bg-modrinth-card', 'border', 'border-modrinth-border', 'text-gray-300');
+      }
+      renderCombos();
+    }
+
+    // RENDER MAIN CATALOGUE CARDS
     function renderCards() {
       const grid = document.getElementById('cardsGrid');
       const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -457,8 +856,9 @@
         let matchEd = item.edition === activeEdition;
         let matchCat = activeCategory === 'all' || item.category === activeCategory;
         let matchLoader = activeLoader === 'all' || item.loader === activeLoader;
-        let matchSearch = item.title.toLowerCase().includes(searchVal) || item.desc.toLowerCase().includes(searchVal);
-        return matchEd && matchCat && matchLoader && matchSearch;
+        let matchVer = activeVersion === 'all' || item.versions.includes(activeVersion);
+        let matchSearch = item.title.toLowerCase().includes(searchVal) || item.desc.toLowerCase().includes(searchVal) || item.loader.toLowerCase().includes(searchVal);
+        return matchEd && matchCat && matchLoader && matchVer && matchSearch;
       });
 
       document.getElementById('itemCount').innerText = filtered.length + " İçerik";
@@ -467,29 +867,189 @@
         let loaderColor = item.loader === 'fabric' ? 'border-loader-fabric/40 text-loader-fabric bg-loader-fabric/10' :
                          item.loader === 'forge' ? 'border-loader-forge/40 text-loader-forge bg-loader-forge/10' :
                          item.loader === 'bedrock' ? 'border-loader-bedrock/40 text-loader-bedrock bg-loader-bedrock/10' :
+                         item.loader === 'quilt' ? 'border-loader-quilt/40 text-loader-quilt bg-loader-quilt/10' :
                          'border-loader-neoforge/40 text-loader-neoforge bg-loader-neoforge/10';
 
+        const inCart = modCart.includes(item.id);
+        const envBadge = item.env === 'Client' ? 'Sadece Sende' : (item.env === 'Server' ? 'Sunucu' : 'Client & Server');
+
         let card = document.createElement('div');
-        card.className = "bg-modrinth-card border border-modrinth-border hover:border-modrinth/60 rounded-2xl p-4 transition duration-200 cursor-pointer flex flex-col justify-between group hover:shadow-xl hover:-translate-y-1";
-        card.onclick = () => openDetailModal(item);
+        card.className = "bg-modrinth-card border border-modrinth-border hover:border-modrinth/60 rounded-2xl p-4 transition duration-200 flex flex-col justify-between group hover:shadow-xl hover:-translate-y-0.5";
         card.innerHTML = `
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <span class="w-9 h-9 rounded-xl bg-modrinth-dark border border-modrinth-border flex items-center justify-center text-lg">${item.icon}</span>
-              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${loaderColor}">${item.loader}</span>
+          <div onclick="openDetailModal('${item.id}')" class="cursor-pointer">
+            <div class="flex items-start justify-between gap-2 mb-3">
+              ${getAvatarHTML(item, "w-11 h-11")}
+              <div class="flex flex-col items-end gap-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${loaderColor}">${item.loader}</span>
+                <span class="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 text-gray-400 border border-white/10">${envBadge}</span>
+              </div>
             </div>
             <h3 class="font-bold text-white text-sm group-hover:text-modrinth transition mb-1">${item.title}</h3>
             <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-3">${item.desc}</p>
           </div>
-          <div class="pt-3 border-t border-modrinth-border/50 flex items-center justify-between text-[11px] font-medium text-gray-400">
-            <span>Sürüm: <strong class="text-gray-300">${item.versions}</strong></span>
-            <span class="text-modrinth font-bold group-hover:translate-x-1 transition flex items-center gap-0.5">Detay →</span>
+          <div class="pt-3 border-t border-modrinth-border/60 flex items-center justify-between gap-2 text-[11px]">
+            <span class="text-gray-400 font-medium">${item.verText}</span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="toggleCartItem('${item.id}', event)" class="px-2.5 py-1 rounded-lg font-bold transition ${inCart ? 'bg-modrinth text-black' : 'bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-modrinth hover:text-white'}">
+                ${inCart ? '✓ Listede' : '+ Ekle'}
+              </button>
+              <button onclick="openDetailModal('${item.id}')" class="px-2 py-1 rounded-lg bg-modrinth/10 text-modrinth font-bold hover:bg-modrinth/20 transition">
+                İndir
+              </button>
+            </div>
           </div>
         `;
         grid.appendChild(card);
       });
     }
 
+    // CART & AUTOMATIC CONFLICT / DEPENDENCY ANALYZER
+    function updateCartUI() {
+      localStorage.setItem('mcpusula_cart', JSON.stringify(modCart));
+      document.getElementById('cartCountBadge').innerText = modCart.length;
+
+      const items = modCart.map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+      const analysis = analyzeModList(items);
+
+      const dot = document.getElementById('cartWarningDot');
+      if (analysis.errors.length > 0 || analysis.missingDeps.length > 0) {
+        dot.classList.remove('hidden');
+      } else {
+        dot.classList.add('hidden');
+      }
+    }
+
+    function analyzeModList(items) {
+      const errors = [];
+      const missingDeps = [];
+      const titles = items.map(i => i.title);
+      const loadersUsed = [...new Set(items.filter(i => i.edition === 'java').map(i => i.loader))];
+
+      if (loadersUsed.includes('fabric') && (loadersUsed.includes('forge') || loadersUsed.includes('neoforge'))) {
+        errors.push("Loader Çakışması: Listede hem Fabric hem de Forge/NeoForge modları var! Bu modlar aynı anda çalışmaz.");
+      }
+      if (items.some(i => i.edition === 'java') && items.some(i => i.edition === 'bedrock')) {
+        errors.push("Sürüm Uyumsuzluğu: Java Edition ve Bedrock Edition modları aynı listede seçilmiş.");
+      }
+
+      items.forEach(item => {
+        (item.conflicts || []).forEach(cName => {
+          if (titles.includes(cName)) {
+            errors.push(`Mod Çakışması: "${item.title}" ile "${cName}" birbiriyle çakışır.`);
+          }
+        });
+        (item.deps || []).forEach(depName => {
+          if (!titles.includes(depName)) {
+            const depObj = catalogueData.find(m => m.title === depName);
+            if (depObj && !missingDeps.some(d => d.id === depObj.id)) {
+              missingDeps.push({ dep: depObj, requiredBy: item.title });
+            }
+          }
+        });
+      });
+
+      return { errors: [...new Set(errors)], missingDeps };
+    }
+
+    function toggleCartItem(id, event) {
+      if (event) event.stopPropagation();
+      const idx = modCart.indexOf(id);
+      const item = catalogueData.find(m => m.id === id);
+      if (idx === -1) {
+        modCart.push(id);
+        showToast(`"${item.title}" Mod Listene eklendi!`);
+      } else {
+        modCart.splice(idx, 1);
+        showToast(`"${item.title}" listeden çıkarıldı.`);
+      }
+      updateCartUI();
+      renderCards();
+    }
+
+    function addComboToCart(comboId) {
+      const combo = combosData.find(c => c.id === comboId);
+      if (!combo) return;
+      combo.mods.forEach(id => {
+        if (!modCart.includes(id)) modCart.push(id);
+      });
+      updateCartUI();
+      renderCards();
+      showToast(`"${combo.title}" kombosu listene eklendi!`);
+      openCartModal();
+    }
+
+    function openCartModal() {
+      const modal = document.getElementById('cartModal');
+      const container = document.getElementById('cartItemsContainer');
+      const analysisBox = document.getElementById('cartAnalysisBox');
+      const items = modCart.map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+      const analysis = analyzeModList(items);
+
+      analysisBox.innerHTML = '';
+      if (items.length === 0) {
+        analysisBox.innerHTML = `<div class="text-xs text-gray-400 bg-modrinth-dark p-3 rounded-xl border border-modrinth-border text-center">Mod listeniz şu anda boş. Kartlardaki <strong>+ Ekle</strong> butonunu veya <strong>Kombolar</strong> bölümünü kullanabilirsiniz.</div>`;
+      } else if (analysis.errors.length === 0 && analysis.missingDeps.length === 0) {
+        analysisBox.innerHTML = `<div class="text-xs text-modrinth bg-modrinth/10 p-3 rounded-xl border border-modrinth/30 font-semibold">✅ Harika! Seçtiğiniz ${items.length} mod arasında hiçbir çakışma veya eksik yan mod bulunmadı.</div>`;
+      } else {
+        analysis.errors.forEach(err => {
+          analysisBox.innerHTML += `<div class="text-xs text-red-400 bg-red-500/10 p-3 rounded-xl border border-red-500/30 font-semibold">🚫 ${err}</div>`;
+        });
+        analysis.missingDeps.forEach(m => {
+          analysisBox.innerHTML += `
+            <div class="text-xs text-yellow-300 bg-yellow-500/10 p-3 rounded-xl border border-yellow-500/30 flex items-center justify-between gap-2">
+              <span>⚠️ <strong>${m.requiredBy}</strong> için <strong>${m.dep.title}</strong> gerekli!</span>
+              <button onclick="addMissingDep('${m.dep.id}')" class="shrink-0 bg-yellow-400 text-black font-extrabold px-2.5 py-1 rounded-lg text-[11px] hover:bg-yellow-300 transition">+ Hemen Ekle</button>
+            </div>
+          `;
+        });
+      }
+
+      container.innerHTML = '';
+      items.forEach(item => {
+        container.innerHTML += `
+          <div class="flex items-center justify-between gap-3 bg-modrinth-dark border border-modrinth-border p-2.5 rounded-xl">
+            <div class="flex items-center gap-2.5 min-w-0">
+              ${getAvatarHTML(item, "w-9 h-9")}
+              <div class="truncate">
+                <div class="text-xs font-bold text-white truncate">${item.title}</div>
+                <div class="text-[10px] text-gray-400 uppercase">${item.loader} • ${item.verText}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <a href="${item.modrinth}" target="_blank" class="px-2.5 py-1 rounded-lg bg-modrinth text-black font-bold text-[11px] hover:bg-modrinth-hover transition">İndir</a>
+              <button onclick="removeFromCartModal('${item.id}')" class="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition" title="Çıkar">✕</button>
+            </div>
+          </div>
+        `;
+      });
+
+      modal.classList.remove('hidden');
+    }
+
+    function addMissingDep(depId) {
+      if (!modCart.includes(depId)) modCart.push(depId);
+      updateCartUI();
+      renderCards();
+      openCartModal();
+    }
+
+    function removeFromCartModal(id) {
+      modCart = modCart.filter(x => x !== id);
+      updateCartUI();
+      renderCards();
+      openCartModal();
+    }
+
+    function clearCart() {
+      modCart = [];
+      updateCartUI();
+      renderCards();
+      openCartModal();
+    }
+
+    function closeCartModal() { document.getElementById('cartModal').classList.add('hidden'); }
+
+    // FILTER CONTROLS
     function filterEdition(ed, el) {
       activeEdition = ed;
       document.querySelectorAll('.edition-btn').forEach(btn => {
@@ -517,6 +1077,16 @@
       document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth' });
     }
 
+    function scrollToCombos(el) {
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-modrinth/20', 'text-white', 'font-semibold', 'border', 'border-modrinth/40');
+      });
+      if (el) {
+        el.classList.add('bg-modrinth/20', 'text-white', 'font-semibold', 'border', 'border-modrinth/40');
+      }
+      document.getElementById('combosSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
     function filterLoader(loader, el) {
       activeLoader = loader;
       document.querySelectorAll('.loader-btn').forEach(btn => btn.classList.remove('border-modrinth', 'text-white'));
@@ -524,20 +1094,117 @@
       renderCards();
     }
 
+    function filterVersion(ver, el) {
+      activeVersion = ver;
+      document.querySelectorAll('.ver-btn').forEach(btn => {
+        btn.classList.remove('bg-white/10', 'text-white');
+        btn.classList.add('text-gray-400');
+      });
+      if (el) {
+        el.classList.add('bg-white/10', 'text-white');
+        el.classList.remove('text-gray-400');
+      }
+      renderCards();
+    }
+
     function handleSearch() { renderCards(); }
 
+    function resetAllFilters() {
+      activeCategory = 'all';
+      activeLoader = 'all';
+      activeVersion = 'all';
+      document.getElementById('searchInput').value = '';
+      renderCards();
+    }
+
+    // DETAIL MODAL WITH HASH ROUTING & DEPENDENCIES
+    function openDetailModal(id) {
+      const item = catalogueData.find(m => m.id === id);
+      if (!item) return;
+
+      window.history.replaceState(null, '', '#' + item.id);
+      const t = i18n[currentLang];
+
+      document.getElementById('modalIconWrap').innerHTML = getAvatarHTML(item, "w-14 h-14");
+      document.getElementById('modalTitle').innerText = item.title;
+      document.getElementById('modalVersions').innerText = "Minecraft " + item.verText + " • " + item.env;
+      document.getElementById('modalDesc').innerText = item.desc;
+      document.getElementById('btnModrinth').href = item.modrinth;
+      document.getElementById('btnCurseforge').href = item.curse;
+
+      // Dependencies
+      const depsBox = document.getElementById('modalDeps');
+      if (item.deps && item.deps.length > 0) {
+        depsBox.innerHTML = item.deps.map(d => `<div class="font-semibold text-yellow-200">• ${d}</div>`).join('');
+      } else {
+        depsBox.innerHTML = `<span class="text-gray-400">${t.noDeps}</span>`;
+      }
+
+      // Conflicts
+      const confBox = document.getElementById('modalConflicts');
+      if (item.conflicts && item.conflicts.length > 0) {
+        confBox.innerHTML = item.conflicts.map(c => `<div class="font-semibold text-red-300">• ${c}</div>`).join('');
+      } else {
+        confBox.innerHTML = `<span class="text-gray-400">${t.noConflicts}</span>`;
+      }
+
+      // Steps
+      const steps = document.getElementById('modalSteps');
+      if (item.edition === 'bedrock') {
+        steps.innerHTML = `<li>${t.stepBedrock1}</li><li>${t.stepBedrock2}</li><li>${t.stepBedrock3}</li>`;
+      } else {
+        steps.innerHTML = `<li>${t.stepJava1}</li><li>${t.stepJava2}</li><li>${t.stepJava3}</li>`;
+      }
+
+      // Badges
+      document.getElementById('modalBadges').innerHTML = `
+        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-modrinth/40 text-modrinth bg-modrinth/10">${item.edition}</span>
+        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-loader-${item.loader}/40 text-loader-${item.loader} bg-loader-${item.loader}/10">${item.loader}</span>
+        <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-white/5 text-gray-300 border border-white/10">${item.env}</span>
+      `;
+
+      // Cart Button in Modal
+      const addBtn = document.getElementById('modalAddCartBtn');
+      const inCart = modCart.includes(item.id);
+      addBtn.innerHTML = `<span>${inCart ? t.inList : t.addList}</span>`;
+      addBtn.onclick = () => {
+        toggleCartItem(item.id);
+        openDetailModal(item.id);
+      };
+
+      // Watch Short Button
+      const shortBtn = document.getElementById('modalWatchShortBtn');
+      shortBtn.innerHTML = `<span>${t.watchShort}</span>`;
+      shortBtn.onclick = () => {
+        closeDetailModal();
+        document.getElementById('guideSearchInput').value = item.title.toLowerCase();
+        searchVideoGuide();
+      };
+
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    // YOUTUBE SHORTS VIDEO SEARCH
     function searchVideoGuide() {
       const q = document.getElementById('guideSearchInput').value.trim().toLowerCase();
       const content = document.getElementById('videoModalContent');
       document.getElementById('videoModal').classList.remove('hidden');
 
-      if (q.includes('bobby') || q.includes('fps') || q.includes('fabric') || q.includes('aternos') || q.includes('sodium')) {
+      const keywords = ['bobby', 'fps', 'fabric', 'aternos', 'sodium', 'create', 'pvp', 'voice', 'shader'];
+      const hasMatch = keywords.some(k => q.includes(k));
+
+      if (hasMatch) {
         content.innerHTML = `
           <h3 class="text-lg font-bold text-white mb-3">@frealnds Shorts Rehberi</h3>
           <div class="aspect-[9/16] max-w-[260px] mx-auto w-full rounded-2xl overflow-hidden mb-4 border border-modrinth-border bg-black shadow-2xl">
             <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1" title="Shorts Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
-          <p class="text-xs text-gray-400">${q.toUpperCase()} konusuyla ilgili rehber videosu oynatılıyor.</p>
+          <p class="text-xs text-gray-400">${q.toUpperCase()} konusuyla ilgili dikey rehber videosu oynatılıyor.</p>
         `;
       } else {
         content.innerHTML = `
@@ -552,45 +1219,29 @@
       }
     }
 
-    function openDetailModal(item) {
-      document.getElementById('modalIcon').innerText = item.icon;
-      document.getElementById('modalTitle').innerText = item.title;
-      document.getElementById('modalVersions').innerText = "Minecraft " + item.versions;
-      document.getElementById('modalDesc').innerText = item.desc;
-      document.getElementById('btnModrinth').href = item.modrinth;
-      document.getElementById('btnCurseforge').href = item.curse;
-
-      const steps = document.getElementById('modalSteps');
-      if (item.edition === 'bedrock') {
-        steps.innerHTML = `
-          <li>${i18n[currentLang].stepBedrock1}</li>
-          <li>${i18n[currentLang].stepBedrock2}</li>
-          <li>${i18n[currentLang].stepBedrock3}</li>
-        `;
-      } else {
-        steps.innerHTML = `
-          <li>${i18n[currentLang].stepJava1}</li>
-          <li>${i18n[currentLang].stepJava2}</li>
-          <li>${i18n[currentLang].stepJava3}</li>
-        `;
-      }
-
-      document.getElementById('modalBadges').innerHTML = `
-        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-modrinth/40 text-modrinth bg-modrinth/10">${item.edition}</span>
-        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-loader-${item.loader}/40 text-loader-${item.loader} bg-loader-${item.loader}/10">${item.loader}</span>
-      `;
-
-      document.getElementById('detailModal').classList.remove('hidden');
-    }
-
-    function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
     function closeVideoModal() {
       document.getElementById('videoModal').classList.add('hidden');
       document.getElementById('videoModalContent').innerHTML = '';
     }
 
-    function openUploadModal() { alert("Mod Yükleme paneli topluluk moderasyonu için çok yakında aktif edilecektir!"); }
-    function toggleLangDropdown(event) { event.stopPropagation(); document.getElementById('langDropdownMenu').classList.toggle('hidden'); }
+    function openErrorModal() { document.getElementById('errorModal').classList.remove('hidden'); }
+    function closeErrorModal() { document.getElementById('errorModal').classList.add('hidden'); }
+    function openUploadModal() { showToast("Mod Yükleme paneli topluluk moderasyonu için çok yakında aktif edilecektir!"); }
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.innerText = msg;
+      box.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        box.classList.add('translate-y-20', 'opacity-0');
+      }, 2800);
+    }
+
+    // LANGUAGE DROPDOWN
+    function toggleLangDropdown(event) {
+      event.stopPropagation();
+      document.getElementById('langDropdownMenu').classList.toggle('hidden');
+    }
 
     function selectLang(lang) {
       currentLang = lang;
@@ -606,18 +1257,35 @@
       document.getElementById('navMods').innerText = t.mods;
       document.getElementById('navShaders').innerText = t.shaders;
       document.getElementById('navPacks').innerText = t.packs;
+      document.getElementById('navCombos').innerText = t.combos;
+      document.getElementById('navErrors').innerText = t.errors;
       document.getElementById('navUpload').innerText = t.upload;
       document.getElementById('badgeSoon').innerText = t.soon;
+      document.getElementById('btnMyList').innerText = t.myList;
+
+      document.getElementById('mobNavAll').innerText = t.all;
+      document.getElementById('mobNavMods').innerText = t.mods;
+      document.getElementById('mobNavShaders').innerText = t.shaders;
+      document.getElementById('mobNavPacks').innerText = t.packs;
+      document.getElementById('mobNavCombos').innerText = t.combos;
+      document.getElementById('mobNavErrors').innerText = t.errors;
 
       document.getElementById('heroTitle1').innerText = t.hero1;
       document.getElementById('heroTitle2').innerText = t.hero2;
       document.getElementById('heroDesc').innerText = t.heroDesc;
       document.getElementById('searchInput').placeholder = t.searchPlaceholder;
 
+      document.getElementById('comboSecTitle').innerText = t.comboTitle;
+      document.getElementById('comboSecSub').innerText = t.comboSub;
+
       document.getElementById('secTitle').childNodes[0].nodeValue = t.secTitle + " ";
       document.getElementById('secSub').innerText = t.secSub;
+      document.getElementById('verAll').innerText = t.verAll;
       document.getElementById('loaderAll').innerText = t.loaderAll;
+
       document.getElementById('lblDesc').innerText = t.descLbl;
+      document.getElementById('lblDeps').innerText = t.depsLbl;
+      document.getElementById('lblConflicts').innerText = t.conflictsLbl;
       document.getElementById('lblSteps').innerText = t.stepsLbl;
       document.getElementById('btnModrinth').querySelector('span').innerText = t.dlModrinth;
       document.getElementById('btnCurseforge').querySelector('span').innerText = t.dlCurse;
@@ -635,7 +1303,7 @@
 
     window.addEventListener('click', () => { document.getElementById('langDropdownMenu').classList.add('hidden'); });
 
-    // MOUSE & TOUCH TRACKING FOR COMPASS
+    // COMPASS 360 DEGREE TRACKING
     const compassContainer = document.getElementById('compassContainer');
     const needle = document.getElementById('compassNeedle');
 
@@ -644,11 +1312,7 @@
       const rect = compassContainer.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
-
-      const deltaX = clientX - centerX;
-      const deltaY = clientY - centerY;
-
-      let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI) + 90;
+      const angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI) + 90;
       needle.style.transform = `rotate(${angle}deg)`;
     }
 
@@ -657,7 +1321,19 @@
       if (e.touches.length > 0) updateNeedleAngle(e.touches[0].clientX, e.touches[0].clientY);
     });
 
+    // INITIALIZE
+    renderCombos();
     renderCards();
+    updateCartUI();
+    fetchRealModrinthIcons();
+
+    // OPEN DIRECT HASH LINK IF PRESENT (e.g., #sodium)
+    if (window.location.hash) {
+      const slug = window.location.hash.replace('#', '');
+      if (catalogueData.some(m => m.id === slug)) {
+        openDetailModal(slug);
+      }
+    }
   </script>
 </body>
 </html>

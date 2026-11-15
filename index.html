@@ -14104,6 +14104,323 @@
     updateCartUI();
     filterGuideVideosInline();
     fetchRealModrinthIcons();
-  </script>
+    <!-- MCPUSULA DİL VE BAĞIMLILIK (YAN MOD) TAMİR PAKETİ -->
+<script>
+(function() {
+  // 1. ARAMA ÇUBUĞU VE DİL SIFIRLAMA ÇÖZÜMÜ (TR, AZ, KZ, UZ, TM, KG)
+  const SEARCH_TEXTS = {
+    tr: "Mod, shader, kaynak paketi veya sürüm ara (Örn: sodium, 1.20.1, büyü)...",
+    az: "Mod, şeyder, resurs paketi və ya versiya axtar (Məs: sodium, 1.20.1)...",
+    kz: "Мод, шейдер, ресурс пакетін немесе нұсқаны іздеу (Мыс: sodium, 1.20.1)...",
+    uz: "Mod, sheyder, resurs paketi yoki versiyani qidirish (Masalan: sodium)...",
+    tm: "Mod, şeýder, resurs paketi ýa-da wersiýa gözle (Mysal: sodium)...",
+    kg: "Мод, шейдер, ресурс пакетин же версиясын издөө (Мис: sodium)..."
+  };
+
+  function forceUpdatePlaceholders(langCode) {
+    const lang = (langCode || window.currentLang || 'tr').toLowerCase();
+    const placeholderText = SEARCH_TEXTS[lang] || SEARCH_TEXTS.tr;
+
+    // Sayfadaki ana arama çubuğunu ve diğer arama inputlarını bulup zorla güncelle
+    const inputs = document.querySelectorAll(
+      '#searchInput, #modSearchInput, input[type="search"], input[data-i18n-placeholder], input[placeholder*="sodium"], input[placeholder*="Мод"]'
+    );
+    inputs.forEach(inp => {
+      inp.setAttribute('placeholder', placeholderText);
+      inp.placeholder = placeholderText;
+    });
+  }
+
+  // Dil değiştirme fonksiyonlarını yakala ve her dil değişiminde çalıştır
+  ['setLanguage', 'changeLanguage', 'switchLanguage', 'applyTranslations'].forEach(fnName => {
+    if (typeof window[fnName] === 'function') {
+      const originalFn = window[fnName];
+      window[fnName] = function(lang, ...rest) {
+        window.currentLang = lang || window.currentLang || 'tr';
+        const result = originalFn.apply(this, [lang, ...rest]);
+        forceUpdatePlaceholders(window.currentLang);
+        setTimeout(() => forceUpdatePlaceholders(window.currentLang), 50);
+        return result;
+      };
+    }
+  });
+
+  // Dil butonlarına tıklanmasını ayrıca dinle (Garanti çözüm)
+  document.addEventListener('click', (e) => {
+    const langBtn = e.target.closest('[onclick*="Language"], [data-lang]');
+    if (langBtn) {
+      const attrLang = langBtn.getAttribute('data-lang') || 
+                       (langBtn.getAttribute('onclick') || '').match(/['"]([a-z]{2})['"]/i)?.[1];
+      if (attrLang) {
+        setTimeout(() => forceUpdatePlaceholders(attrLang), 20);
+      }
+    }
+  });
+
+  // 2. TÜM MODLAR İÇİN YAN MOD (BAĞIMLILIK) VE ÇAKIŞMA MOTORU
+  function extractDeps(mod) {
+    if (!mod) return [];
+    const raw = [
+      ...(Array.isArray(mod.dependencies) ? mod.dependencies : []),
+      ...(Array.isArray(mod.deps) ? mod.deps : []),
+      ...(Array.isArray(mod.requiredMods) ? mod.requiredMods : []),
+      ...(Array.isArray(mod.requires) ? mod.requires : []),
+      ...(typeof mod.dependency === 'string' ? [mod.dependency] : []),
+      ...(typeof mod.dependencies === 'string' ? mod.dependencies.split(',') : []),
+      ...(typeof mod.deps === 'string' ? mod.deps.split(',') : [])
+    ];
+    const ignore = ['yok', 'none', 'hayır', 'gerektirmez', 'bağımlılık yok', 'bilinen', '-'];
+    return [...new Set(raw.map(x => String(x || '').trim()).filter(d => {
+      const l = d.toLowerCase();
+      return l.length > 1 && !ignore.some(w => l === w || l.includes('bağımlılık yok') || l.includes('gerektirmez'));
+    }))];
+  }
+
+  function extractConflicts(mod) {
+    if (!mod) return [];
+    const raw = [
+      ...(Array.isArray(mod.conflicts) ? mod.conflicts : []),
+      ...(Array.isArray(mod.incompatible) ? mod.incompatible : []),
+      ...(Array.isArray(mod.incompatibleWith) ? mod.incompatibleWith : []),
+      ...(typeof mod.conflicts === 'string' ? mod.conflicts.split(',') : [])
+    ];
+    const ignore = ['yok', 'none', 'bilinen kritik çakışma yok', 'çakışma yok', '-'];
+    return [...new Set(raw.map(x => String(x || '').trim()).filter(c => {
+      const l = c.toLowerCase();
+      return l.length > 1 && !ignore.some(w => l === w || l.includes('çakışma yok'));
+    }))];
+  }
+
+  function normalizeStr(s) {
+    return String(s || '').toLowerCase().trim().replace(/[-_\s]+/g, '');
+  }
+
+  function matchMod(mod, targetNameOrId) {
+    if (!mod || !targetNameOrId) return false;
+    const t = normalizeStr(targetNameOrId);
+    const id = normalizeStr(mod.id);
+    const name = normalizeStr(mod.name || mod.title);
+    return id === t || name === t || (name.length > 3 && t.length > 3 && (name.includes(t) || t.includes(name)));
+  }
+
+  function getModPool() {
+    return window.ALL_MODS || window.MODS_DATA || window.MODS || window.allItems || window.items || [];
+  }
+
+  function getActiveCart() {
+    return window.cart || window.modCart || window.selectedMods || window.cartItems || [];
+  }
+
+  // Eksik yan modu (Örn: Blueprint) tek tıkla sepete ekleme
+  window.quickAddMissingDependency = function(depName, parentId) {
+    const cart = getActiveCart();
+    const pool = getModPool();
+    const parent = cart.find(m => (m.id || m) === parentId) || pool.find(m => m.id === parentId);
+    let depMod = pool.find(m => matchMod(m, depName));
+
+    if (!depMod) {
+      depMod = {
+        id: depName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        name: depName,
+        title: depName,
+        category: 'mod',
+        edition: parent?.edition || 'java',
+        loader: parent?.loader || 'FORGE',
+        version: parent?.version || '1.16.5 - 26.3',
+        description: `${depName}, ${parent?.name || 'modların'} çalışması için zorunlu olan temel kütüphane (API/Core) modudur.`,
+        icon: parent?.icon || 'https://cdn.modrinth.com/data/cached_images/default_mod.png',
+        downloadUrl: `https://modrinth.com/mods?q=${encodeURIComponent(depName)}`,
+        dependencies: [],
+        conflicts: []
+      };
+      pool.push(depMod);
+    }
+
+    const alreadyIn = cart.some(item => {
+      const obj = typeof item === 'string' ? pool.find(m => m.id === item) : item;
+      return matchMod(obj, depName);
+    });
+
+    if (!alreadyIn) {
+      if (typeof cart[0] === 'string') {
+        cart.push(depMod.id);
+      } else {
+        cart.push(depMod);
+      }
+      if (typeof window.saveCart === 'function') window.saveCart();
+      if (typeof window.renderCart === 'function') window.renderCart();
+      if (typeof window.updateCartUI === 'function') window.updateCartUI();
+      setTimeout(refreshCartWarnings, 30);
+    }
+  };
+
+  function refreshCartWarnings() {
+    const rawCart = getActiveCart();
+    const pool = getModPool();
+    const cartMods = rawCart.map(item => {
+      if (typeof item === 'string') return pool.find(m => m.id === item) || { id: item, name: item };
+      return item;
+    }).filter(Boolean);
+
+    const missingDeps = [];
+    const conflicts = [];
+    const loaders = new Set();
+
+    cartMods.forEach(mod => {
+      if (!mod.category || String(mod.category).toLowerCase() === 'mod') {
+        if (mod.loader) loaders.add(String(mod.loader).toUpperCase());
+      }
+
+      // Yan Mod Kontrolü
+      extractDeps(mod).forEach(dep => {
+        const exists = cartMods.some(cm => matchMod(cm, dep));
+        if (!exists) {
+          missingDeps.push({
+            modName: mod.name || mod.title,
+            modId: mod.id,
+            depName: dep
+          });
+        }
+      });
+
+      // Çakışma Kontrolü
+      extractConflicts(mod).forEach(conf => {
+        const other = cartMods.find(cm => cm.id !== mod.id && matchMod(cm, conf));
+        if (other) {
+          const key = [mod.name, other.name].sort().join('|');
+          if (!conflicts.some(c => c.key === key)) {
+            conflicts.push({
+              key,
+              modA: mod.name || mod.title,
+              modB: other.name || other.title,
+              reason: 'Bu iki mod birbiriyle çakışıyor, aynı anda kullanmayın.'
+            });
+          }
+        }
+      });
+    });
+
+    if (loaders.has('FORGE') && loaders.has('FABRIC')) {
+      conflicts.push({
+        key: 'LOADER_MIX',
+        modA: 'Forge Modları',
+        modB: 'Fabric Modları',
+        reason: 'Listenizde hem FORGE hem FABRIC modu var! Aynı oyun profilinde çalışmazlar.'
+      });
+    }
+
+    // Sepetteki yeşil "Listenizdeki içerikler birbiriyle tamamen uyumlu" kutusunu bul
+    let statusBox = document.querySelector('#cartStatusBox, #cartAnalysisBox, #cartCompatBox, [data-cart-status]');
+    if (!statusBox) {
+      document.querySelectorAll('div').forEach(div => {
+        const txt = (div.textContent || '').trim();
+        if (
+          (txt.includes('Listenizdeki içerikler birbiriyle tamamen uyumlu') ||
+           txt.includes('Eksik Yan Mod') ||
+           txt.includes('Kritik Mod Çakışması')) &&
+          div.querySelectorAll('div').length < 6
+        ) {
+          statusBox = div;
+        }
+      });
+    }
+
+    // Üstteki "TAM UYUMLU" rozetini bul
+    let topBadge = null;
+    document.querySelectorAll('span, div').forEach(el => {
+      const t = (el.textContent || '').trim();
+      if ((t === 'TAM UYUMLU' || t === 'EKSİK YAN MOD' || t === 'ÇAKIŞMA VAR!') && el.children.length === 0) {
+        topBadge = el;
+      }
+    });
+
+    if (!statusBox || cartMods.length === 0) return;
+    statusBox.setAttribute('data-cart-status', 'true');
+
+    if (conflicts.length === 0 && missingDeps.length === 0) {
+      if (topBadge) {
+        topBadge.textContent = 'TAM UYUMLU';
+        topBadge.style.backgroundColor = 'rgba(16, 185, 129, 0.15)';
+        topBadge.style.color = '#34d399';
+        topBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+      }
+      statusBox.className = 'p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/25 text-emerald-400 text-sm flex items-center gap-3 my-3';
+      statusBox.innerHTML = `
+        <span style="font-size:18px;">✅</span>
+        <span>Listenizdeki içerikler birbiriyle tamamen uyumlu. Hiçbir çakışma veya eksik yan mod bulunmuyor. (${cartMods.length})</span>
+      `;
+      return;
+    }
+
+    let alertsHTML = '';
+
+    if (conflicts.length > 0) {
+      if (topBadge) {
+        topBadge.textContent = 'ÇAKIŞMA VAR!';
+        topBadge.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+        topBadge.style.color = '#f87171';
+        topBadge.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+      }
+      alertsHTML += `
+        <div style="padding:14px; border-radius:12px; border:1px solid rgba(239,68,68,0.5); background:rgba(69,10,10,0.45); color:#fca5a5; margin-bottom:10px;">
+          <div style="font-weight:700; color:#f87171; margin-bottom:6px;">⚠️ Kritik Çakışma Tespit Edildi (${conflicts.length})</div>
+          <ul style="margin:0; padding-left:18px; font-size:12.5px;">
+            ${conflicts.map(c => `<li style="margin-bottom:4px;"><strong>${c.modA}</strong> & <strong>${c.modB}</strong>: ${c.reason}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    if (missingDeps.length > 0) {
+      if (topBadge && conflicts.length === 0) {
+        topBadge.textContent = 'EKSİK YAN MOD';
+        topBadge.style.backgroundColor = 'rgba(245, 158, 11, 0.2)';
+        topBadge.style.color = '#fbbf24';
+        topBadge.style.borderColor = 'rgba(245, 158, 11, 0.5)';
+      }
+      alertsHTML += `
+        <div style="padding:14px; border-radius:12px; border:1px solid rgba(245,158,11,0.5); background:rgba(69,26,3,0.45); color:#fde68a;">
+          <div style="font-weight:700; color:#fbbf24; margin-bottom:8px;">🔗 Eksik Yan Mod / Bağımlılık Gerekli (${missingDeps.length})</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${missingDeps.map(d => `
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(0,0,0,0.4); padding:8px 10px; border-radius:8px; border:1px solid rgba(245,158,11,0.3);">
+                <span style="font-size:12.5px;"><strong>${d.modName}</strong> çalışmak için <strong>${d.depName}</strong> eklentisini istiyor!</span>
+                <button onclick="quickAddMissingDependency('${d.depName.replace(/'/g, "\\'")}', '${d.modId}')"
+                  style="background:#f59e0b; color:#000; font-weight:700; font-size:11.5px; padding:5px 10px; border-radius:6px; border:none; cursor:pointer; white-space:nowrap;">
+                  + ${d.depName} Ekle
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    statusBox.className = 'my-3';
+    statusBox.innerHTML = alertsHTML;
+  }
+
+  // Sepet fonksiyonlarını ve tıklamaları dinle
+  ['renderCart', 'updateCartUI', 'toggleCart', 'openCart', 'addToCart', 'removeFromCart'].forEach(fn => {
+    if (typeof window[fn] === 'function') {
+      const orig = window[fn];
+      window[fn] = function(...args) {
+        const res = orig.apply(this, args);
+        setTimeout(refreshCartWarnings, 25);
+        return res;
+      };
+    }
+  });
+
+  document.addEventListener('click', () => {
+    setTimeout(refreshCartWarnings, 50);
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    forceUpdatePlaceholders(window.currentLang || 'tr');
+    setTimeout(refreshCartWarnings, 200);
+  });
+})();
+</script>
 </body>
 </html>

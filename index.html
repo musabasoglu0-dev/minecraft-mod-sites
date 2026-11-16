@@ -14087,6 +14087,2375 @@
     window.addEventListener('mousemove', (e) => updateNeedleAngle(e.clientX, e.clientY));
 
 
+    // =========================================================================
+    // DİL GEÇİŞİ (KZ -> TR ARAMA ÇUBUĞU SIFIRLAMA) & EVRENSEL YAN MOD / BAĞIMLILIK MOTORU
+    // =========================================================================
+    (function initMcPusulaFixes() {
+      // 1. Eksik çekirdek kütüphaneleri (Blueprint, MaFgLib vb.) kataloğun en başına ekle
+      const extraCoreLibs = [
+        makeItem("blueprint", "blueprint", "Blueprint", "java", "mod", "forge", "Client & Server", V_ALL, "1.16.5 - 26.3", "#38bdf8", "Team Abnormals modlarının (Atmospheric, Autumnity, Environmental, Upgrade Aquatic, Neapolitan, Savage & Ravage, Boatload, Woodworks, Clayworks vb.) çalışması için zorunlu olan temel çekirdek kütüphane modu.", [], []),
+        makeItem("mafglib", "mafglib", "MaFgLib", "java", "mod", "neoforge", "Client & Server", V_120, "1.20.1 - 26.3", "#6366f1", "Forgematica ve Litematica NeoForge/Forge uyarlamalarının çalışması için zorunlu olan temel çekirdek kütüphane.", [], [])
+      ];
+      extraCoreLibs.forEach(lib => {
+        if (!catalogueData.some(m => m.id === lib.id || m.title.toLowerCase() === lib.title.toLowerCase())) {
+          catalogueData.unshift(lib);
+        }
+      });
+
+      // 2. Çoklu platformda (Fabric / Forge / NeoForge) ortak kullanılan kütüphane modları
+      const MULTI_LOADER_LIB_IDS = new Set([
+        "blueprint", "mafglib", "architectury-api", "cloth-config", "geckolib", "curios",
+        "citadel", "balm", "placebo", "puzzles-lib", "bookshelf", "moonlight", "yungs-api",
+        "resourceful-lib", "resourceful-config", "athena", "smartbrainlib", "azurelib",
+        "botarium", "terrablender", "patchouli", "player-animator", "collective", "cristel-lib",
+        "iceberg-lib", "prism-lib", "framework-lib", "supermartijn642-core-lib",
+        "supermartijn642s-config-lib", "fusion-connected-textures", "glitchcore", "corgilib",
+        "lithostitched", "kiwi-lib", "cupboard-lib", "lodestone-lib", "obscure-api",
+        "structure-gel-api", "ftb-library", "ftb-teams", "ftb-quests", "kubejs-core",
+        "rhino-js", "yacl", "malilib", "OctoLib", "octolib", "libx-core", "mantle-lib",
+        "silent-lib", "mutil-lib", "cofh-core", "zerocore", "mcjtylib", "titanium-lib",
+        "shetiphiancore", "cyclops-core", "cucumber", "modonomicon", "codechicken-lib",
+        "brandons-core", "u-team-core", "konkrete-lib", "melody-audio", "autoreglib",
+        "pehkui-lib", "polytone-mod", "tcdcommons"
+      ]);
+
+      // Eşdeğer mod grupları (Farklı loader veya isim varyasyonları aynı bağımlılığı karşılar)
+      const EQUIVALENT_DEP_GROUPS = [
+        ["create", "create-fabric", "create mod", "create fabric"],
+        ["farmers-delight", "farmers-delight-refabricated", "farmer's delight", "farmer's delight refabricated"],
+        ["waystones", "fwaystones", "fabric waystones"],
+        ["iris", "oculus", "oculus-shaders", "iris shaders", "oculus (forge shaders)", "oculus (forge/neoforge shader motoru)"],
+        ["sodium", "embeddium"],
+        ["ferrite-core", "ferritecore-forge", "ferritecore-neoforge", "ferritecore"],
+        ["modernfix", "modernfix-forge"],
+        ["chunky", "chunky-pregenerator", "chunky-forge", "chunky-neoforge", "chunky (world pre-generator)", "chunky (harita ön yükleyici)"],
+        ["clumps", "clumps-neoforge", "clumps-forge"],
+        ["servercore", "servercore-forge", "servercore-neoforge"],
+        ["saturn", "saturn-ram", "saturn-forge"],
+        ["spark", "spark-profiler", "spark-forge-srv"],
+        ["3dskinlayers", "skin-layers-3d-neoforge"],
+        ["continuity", "continuity-neoforge"],
+        ["entityculling", "entityculling-neoforge"],
+        ["immediatelyfast", "ImmediatelyFast-Forge"]
+      ];
+
+      // 3. Katalogdaki kısaltılmış veya farklı yazılmış bağımlılık isimlerini standartlaştır
+      const DEP_NAME_ALIASES = {
+        "yacl": "YetAnotherConfigLib (YACL)",
+        "apothic attributes": "Apothic Attributes (AttributesLib)",
+        "pehkui": "Pehkui (Boyut Değiştirme Motoru)",
+        "titanium library": "Titanium",
+        "ice and fire: dragons": "Ice and Fire: Community Edition",
+        "spell power": "Spell Power Attributes"
+      };
+
+      catalogueData.forEach(item => {
+        if (!Array.isArray(item.deps)) item.deps = [];
+        item.deps = item.deps.map(rawDep => {
+          const dLow = String(rawDep || '').trim().toLowerCase();
+          if (!dLow) return rawDep;
+          if (DEP_NAME_ALIASES[dLow]) return DEP_NAME_ALIASES[dLow];
+          if (dLow === "create") {
+            return item.loader === "fabric" ? "Create Fabric" : "Create Mod";
+          }
+          if (dLow === "farmer's delight" && item.loader === "fabric") {
+            return "Farmer's Delight Refabricated";
+          }
+          return rawDep;
+        });
+      });
+
+      // Herhangi bir bağımlılık adını katalogdaki gerçek mod nesnesine çözümleyen fonksiyon
+      window.resolveDepItem = function(depName, parentItem, preferredLoader) {
+        if (!depName) return null;
+        const targetLoader = preferredLoader || (parentItem && parentItem.loader) || activeLoader || 'fabric';
+        let normalized = String(depName).trim();
+        const low = normalized.toLowerCase();
+
+        if (DEP_NAME_ALIASES[low]) {
+          normalized = DEP_NAME_ALIASES[low];
+        } else if (low === 'create') {
+          normalized = targetLoader === 'fabric' ? 'Create Fabric' : 'Create Mod';
+        } else if (low === "farmer's delight" && targetLoader === 'fabric') {
+          normalized = "Farmer's Delight Refabricated";
+        } else if (low === 'iris shaders' && (targetLoader === 'forge' || targetLoader === 'neoforge')) {
+          normalized = targetLoader === 'neoforge' ? 'Oculus (Forge/NeoForge Shader Motoru)' : 'Oculus (Forge Shaders)';
+        } else if (low === 'sodium' && (targetLoader === 'forge' || targetLoader === 'neoforge')) {
+          normalized = 'Embeddium';
+        }
+
+        const normLow = normalized.toLowerCase();
+
+        // 1) Tam başlık veya ID eşleşmesi (Önce aynı loader tercih edilir)
+        let exactMatches = catalogueData.filter(m =>
+          m.title.toLowerCase() === normLow ||
+          m.id.toLowerCase() === normLow ||
+          m.slug.toLowerCase() === normLow ||
+          m.title.toLowerCase() === low ||
+          m.id.toLowerCase() === low
+        );
+        if (exactMatches.length > 0) {
+          const sameLoader = exactMatches.find(m => m.loader === targetLoader);
+          return sameLoader || exactMatches[0];
+        }
+
+        // 2) Parantez öncesi ana isim eşleşmesi (Örn: "Apothic Attributes" -> "Apothic Attributes (AttributesLib)")
+        let prefixMatches = catalogueData.filter(m => {
+          const baseTitle = m.title.split('(')[0].trim().toLowerCase();
+          return baseTitle === normLow || baseTitle === low;
+        });
+        if (prefixMatches.length > 0) {
+          const sameLoader = prefixMatches.find(m => m.loader === targetLoader);
+          return sameLoader || prefixMatches[0];
+        }
+
+        // 3) Katalogda hiç yoksa bile bağımlılığın asla kaybolmaması için otomatik kütüphane kaydı oluştur
+        const autoId = 'lib-' + low.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const fallbackLib = makeItem(
+          autoId,
+          autoId,
+          normalized,
+          (parentItem && parentItem.edition) || 'java',
+          'mod',
+          targetLoader === 'all' ? 'forge' : targetLoader,
+          'Client & Server',
+          V_ALL,
+          '1.16.5 - 26.3',
+          '#38bdf8',
+          `${normalized} — Modların sorunsuz çalışması için gerekli olan zorunlu çekirdek kütüphane ve API eklentisi.`,
+          [],
+          []
+        );
+        catalogueData.unshift(fallbackLib);
+        MULTI_LOADER_LIB_IDS.add(autoId);
+        return fallbackLib;
+      };
+
+      // Bir bağımlılığın listedeki mevcut modlar tarafından karşılanıp karşılanmadığını kontrol eder
+      window.isDepSatisfiedInList = function(depName, parentItem, itemsList, preferredLoader) {
+        const resolved = window.resolveDepItem(depName, parentItem, preferredLoader);
+        if (!resolved) return true;
+        const resolvedTitleLow = resolved.title.toLowerCase();
+        const rawLow = String(depName).trim().toLowerCase();
+
+        // Doğrudan ID veya başlık listede var mı?
+        if (itemsList.some(i =>
+          i.id === resolved.id ||
+          i.title.toLowerCase() === resolvedTitleLow ||
+          i.title.toLowerCase() === rawLow ||
+          i.title.split('(')[0].trim().toLowerCase() === rawLow
+        )) {
+          return true;
+        }
+
+        // Eşdeğer grup kontrolü (Örn: Create Mod / Create Fabric, Iris / Oculus, Sodium / Embeddium)
+        for (const grp of EQUIVALENT_DEP_GROUPS) {
+          if (grp.includes(resolved.id) || grp.includes(resolvedTitleLow) || grp.includes(rawLow)) {
+            if (itemsList.some(i => grp.includes(i.id) || grp.includes(i.title.toLowerCase()))) {
+              return true;
+            }
+          }
+        }
+        return false;
+      };
+
+      // Başlangıçta tüm katalogdaki bağımlılıkları tarayıp eksik olanları garanti altına al
+      catalogueData.forEach(item => {
+        (item.deps || []).forEach(dName => {
+          window.resolveDepItem(dName, item, item.loader);
+        });
+      });
+
+      // 4. Özel Kombolardaki (combosData) eski/eksik ID'leri ve yan modları tam uyumlu hale getir
+      const COMBO_ID_FIXES = {
+        "l_enders-cataclysm": "cataclysm",
+        "securitycraft": "security-craft",
+        "voicechat": "simple-voice-chat"
+      };
+      combosData.forEach(combo => {
+        const ldrText = (combo.loader || '').toLowerCase();
+        const comboLoader = ldrText.includes('bedrock') ? 'bedrock'
+          : (ldrText.includes('neoforge') ? 'neoforge'
+          : (ldrText.includes('forge') ? 'forge' : 'fabric'));
+
+        combo.mods = combo.mods.map(mId => {
+          if (COMBO_ID_FIXES[mId]) return COMBO_ID_FIXES[mId];
+          if (comboLoader === 'fabric' && mId === 'waystones') return 'fwaystones';
+          if (comboLoader === 'fabric' && mId === 'create') return 'create-fabric';
+          if (comboLoader === 'fabric' && mId === 'farmers-delight') return 'farmers-delight-refabricated';
+          return mId;
+        }).filter(mId => catalogueData.some(m => m.id === mId));
+
+        // Kombonun içindeki modların zorunlu yan modları eksikse komboya otomatik dahil et
+        const currentComboItems = combo.mods.map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+        currentComboItems.forEach(item => {
+          (item.deps || []).forEach(depName => {
+            const depLow = depName.toLowerCase();
+            if ((comboLoader === 'forge' || comboLoader === 'neoforge') && (depLow === 'fabric api' || depLow === 'forge config api port')) {
+              return;
+            }
+            if (!window.isDepSatisfiedInList(depName, item, currentComboItems, comboLoader)) {
+              const depObj = window.resolveDepItem(depName, item, comboLoader);
+              if (depObj && !combo.mods.includes(depObj.id)) {
+                combo.mods.push(depObj.id);
+                currentComboItems.push(depObj);
+              }
+            }
+          });
+        });
+      });
+
+      // Bir modun listedeki başka bir modun zorunlu yan modu (veya çoklu-loader kütüphanesi) olup olmadığını belirler
+      function getPrimaryLoaderOfList(items) {
+        const nonLibJavaMods = items.filter(i => i.edition === 'java' && i.category === 'mod' && !MULTI_LOADER_LIB_IDS.has(i.id));
+        const pool = nonLibJavaMods.length > 0 ? nonLibJavaMods : items.filter(i => i.edition === 'java' && i.category === 'mod');
+        if (pool.length === 0) return 'fabric';
+        const counts = {};
+        pool.forEach(m => { counts[m.loader] = (counts[m.loader] || 0) + 1; });
+        return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0] || 'fabric';
+      }
+
+      function collectRequiredDepIdsForList(items, primaryLoader) {
+        const reqIds = new Set();
+        const queue = [...items];
+        const visited = new Set(items.map(i => i.id));
+        while (queue.length > 0) {
+          const curr = queue.shift();
+          (curr.deps || []).forEach(dName => {
+            const dLow = dName.toLowerCase();
+            if ((primaryLoader === 'forge' || primaryLoader === 'neoforge') && (dLow === 'fabric api' || dLow === 'forge config api port')) {
+              return;
+            }
+            const depObj = window.resolveDepItem(dName, curr, primaryLoader);
+            if (depObj) {
+              reqIds.add(depObj.id);
+              if (!visited.has(depObj.id)) {
+                visited.add(depObj.id);
+                queue.push(depObj);
+              }
+            }
+          });
+        }
+        return reqIds;
+      }
+
+      // 5. GELİŞMİŞ MOD LİSTEM ANALİZ MOTORU (TÜM EKSİK YAN MODLARI VE ZİNCİRLEME BAĞIMLILIKLARI YAKALAR)
+      window.analyzeModList = function(items) {
+        const errors = [];
+        const conflictingIds = new Set();
+        const missingDeps = [];
+        const editionsUsed = [...new Set(items.map(i => i.edition))];
+        const primaryLoader = getPrimaryLoaderOfList(items);
+        const requiredDepIds = collectRequiredDepIdsForList(items, primaryLoader);
+
+        if (editionsUsed.length > 1) {
+          errors.push("Java Edition & Bedrock (MCPE) modları aynı listede bir arada kullanılamaz!");
+          items.forEach(i => conflictingIds.add(i.id));
+        }
+
+        // Sadece çoklu-loader kütüphanesi OLMAYAN ve başka bir modun zorunlu bağımlılığı OLMAYAN ana modlar arasında loader çakışması kontrolü yap
+        const strictLoaderMods = items.filter(i =>
+          i.edition === 'java' &&
+          i.category === 'mod' &&
+          !MULTI_LOADER_LIB_IDS.has(i.id) &&
+          !requiredDepIds.has(i.id)
+        );
+        const javaLoaders = [...new Set(strictLoaderMods.map(i => i.loader))];
+
+        // Eğer listede Fabric API tek başına Forge/NeoForge modlarıyla karıştırılmışsa da uyar
+        const hasFabricApiWithForge = (primaryLoader === 'forge' || primaryLoader === 'neoforge') &&
+          items.some(i => i.id === 'fabric-api') &&
+          !items.some(i => i.id === 'sinytra-connector');
+
+        if (javaLoaders.length > 1 || hasFabricApiWithForge) {
+          const allLoaders = [...new Set(items.filter(i => i.edition === 'java' && i.category === 'mod').map(i => i.loader))];
+          errors.push(`Loader Çakışması: Farklı mod yükleyicileri (${allLoaders.map(l => l.toUpperCase()).join(' + ')}) aynı anda çalışmaz.`);
+          items.filter(i => i.edition === 'java' && i.category === 'mod' && i.loader !== primaryLoader).forEach(i => conflictingIds.add(i.id));
+        }
+
+        // Doğrudan mod çakışmaları
+        for (let i = 0; i < items.length; i++) {
+          const itemA = items[i];
+          (itemA.conflicts || []).forEach(cName => {
+            const cLow = cName.toLowerCase();
+            // Fabric API'nin Forge/NeoForge ile genel uyarısını yukarıda kontrol ettik
+            if (cLow === 'forge' || cLow === 'neoforge' || cLow === 'fabric') return;
+            const itemB = items.find(x =>
+              x.id !== itemA.id && (
+                x.title.toLowerCase() === cLow ||
+                x.id.toLowerCase() === cLow ||
+                x.title.split('(')[0].trim().toLowerCase() === cLow
+              )
+            );
+            if (itemB) {
+              const pairMsg = `Mod Çakışması: "${itemA.title}" ile "${itemB.title}" birbiriyle çakışıyor!`;
+              const revMsg = `Mod Çakışması: "${itemB.title}" ile "${itemA.title}" birbiriyle çakışıyor!`;
+              if (!errors.includes(pairMsg) && !errors.includes(revMsg)) {
+                errors.push(pairMsg);
+              }
+              conflictingIds.add(itemA.id);
+              conflictingIds.add(itemB.id);
+            }
+          });
+        }
+
+        // Eksik yan mod (bağımlılık) kontrolü — Zincirleme (transitive) bağımlılıklar dahil!
+        const virtualList = [...items];
+        const queue = [...items];
+        const queuedIds = new Set(items.map(i => i.id));
+
+        while (queue.length > 0) {
+          const currItem = queue.shift();
+          const itemLoader = MULTI_LOADER_LIB_IDS.has(currItem.id) ? primaryLoader : (currItem.loader || primaryLoader);
+
+          (currItem.deps || []).forEach(depName => {
+            const depLow = depName.toLowerCase();
+            // Forge veya NeoForge kurulumunda çoklu-loader kütüphaneler Fabric API istemez
+            if ((itemLoader === 'forge' || itemLoader === 'neoforge') && (depLow === 'fabric api' || depLow === 'forge config api port')) {
+              return;
+            }
+            if (!window.isDepSatisfiedInList(depName, currItem, items, itemLoader)) {
+              const depObj = window.resolveDepItem(depName, currItem, itemLoader);
+              if (depObj) {
+                const existing = missingDeps.find(d => d.dep.id === depObj.id);
+                if (existing) {
+                  if (!existing.requiredBy.includes(currItem.title)) existing.requiredBy.push(currItem.title);
+                } else {
+                  missingDeps.push({ dep: depObj, requiredBy: [currItem.title] });
+                }
+                if (!queuedIds.has(depObj.id)) {
+                  queuedIds.add(depObj.id);
+                  virtualList.push(depObj);
+                  queue.push(depObj);
+                }
+              }
+            }
+          });
+        }
+
+        return { errors: [...new Set(errors)], conflictingIds, missingDeps };
+      };
+
+      // 6. DETAY MODALI (İNCELEME EKRANI) İÇİN GARANTİLİ YAN MOD EKLEME BUTONU
+      const _origOpenDetailModal = window.openDetailModal;
+      window.openDetailModal = function(id) {
+        window._lastOpenedDetailId = id;
+        _origOpenDetailModal(id);
+        const item = catalogueData.find(m => m.id === id);
+        if (!item) return;
+        const t = i18n[currentLang] || i18n.tr;
+
+        const depsBox = document.getElementById('modalDeps');
+        if (depsBox && item.deps && item.deps.length > 0) {
+          const currentCartItems = modCart.map(cid => catalogueData.find(m => m.id === cid)).filter(Boolean);
+          depsBox.innerHTML = item.deps.map(dName => {
+            const depItem = window.resolveDepItem(dName, item, item.loader);
+            const inList = depItem && (modCart.includes(depItem.id) || window.isDepSatisfiedInList(dName, item, currentCartItems, item.loader));
+            const displayTitle = depItem ? getLocalizedTitle(depItem) : dName;
+            return `
+              <div class="flex items-center justify-between gap-2 bg-modrinth-dark/90 border ${inList ? 'border-modrinth/40' : 'border-orange-500/40'} px-2.5 py-1.5 rounded-lg">
+                <span onclick="${depItem ? `openDetailModal('${depItem.id}')` : ''}" class="font-semibold ${inList ? 'text-modrinth' : 'text-orange-200'} ${depItem ? 'cursor-pointer hover:underline' : ''}">${displayTitle}</span>
+                ${depItem ? `
+                  <button type="button" onclick="toggleCartItem('${depItem.id}'); openDetailModal('${item.id}');" class="text-[10px] font-bold px-2.5 py-1 rounded ${inList ? 'bg-modrinth/20 text-modrinth border border-modrinth/40' : 'bg-orange-500 text-black hover:bg-orange-400'} transition shrink-0">
+                    ${inList ? t.depInList : t.addDepBtn}
+                  </button>
+                ` : ''}
+              </div>
+            `;
+          }).join('');
+        }
+      };
+
+      // 7. UYUM SİMÜLASYONU MOTORUNU DA AYNI AKILLI BAĞIMLILIK ÇÖZÜCÜ İLE GÜNCELLE
+      window.evaluateSimulation = function() {
+        const items = simItems.map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+        const conflicts = [];
+        const badItemIds = new Set();
+        const missingDeps = [];
+        const requiredDepIds = collectRequiredDepIdsForList(items, simLoader);
+
+        items.forEach(item => {
+          if (item.edition !== simEdition) {
+            conflicts.push(`Platform Çakışması: "${item.title}" (${item.edition.toUpperCase()}), seçtiğiniz ${simEdition.toUpperCase()} platformunda çalışmaz!`);
+            badItemIds.add(item.id);
+          } else if (
+            simEdition === 'java' &&
+            item.category === 'mod' &&
+            item.loader !== simLoader &&
+            !MULTI_LOADER_LIB_IDS.has(item.id) &&
+            !requiredDepIds.has(item.id)
+          ) {
+            conflicts.push(`Yapı (Loader) Çakışması: "${item.title}" (${item.loader.toUpperCase()}), seçtiğiniz ${simLoader.toUpperCase()} yapısıyla uyumsuzdur!`);
+            badItemIds.add(item.id);
+          }
+          if (!item.versions.includes(simVersion) && !MULTI_LOADER_LIB_IDS.has(item.id)) {
+            conflicts.push(`Sürüm Uyumsuzluğu: "${item.title}" (${item.verText}), seçtiğiniz ${simVersion} sürümünü desteklemiyor!`);
+            badItemIds.add(item.id);
+          }
+        });
+
+        for (let i = 0; i < items.length; i++) {
+          const itemA = items[i];
+          (itemA.conflicts || []).forEach(cName => {
+            const cLow = cName.toLowerCase();
+            if (cLow === 'forge' || cLow === 'neoforge' || cLow === 'fabric') return;
+            const itemB = items.find(x =>
+              x.id !== itemA.id && (
+                x.title.toLowerCase() === cLow ||
+                x.id.toLowerCase() === cLow ||
+                x.title.split('(')[0].trim().toLowerCase() === cLow
+              )
+            );
+            if (itemB) {
+              const msg1 = `Kritik Mod Çakışması: "${itemA.title}" ile "${itemB.title}" aynı anda kurulamaz!`;
+              const msg2 = `Kritik Mod Çakışması: "${itemB.title}" ile "${itemA.title}" aynı anda kurulamaz!`;
+              if (!conflicts.includes(msg1) && !conflicts.includes(msg2)) {
+                conflicts.push(msg1);
+              }
+              badItemIds.add(itemA.id);
+              badItemIds.add(itemB.id);
+            }
+          });
+        }
+
+        const queue = [...items];
+        const queuedIds = new Set(items.map(i => i.id));
+        while (queue.length > 0) {
+          const currItem = queue.shift();
+          (currItem.deps || []).forEach(depName => {
+            const depLow = depName.toLowerCase();
+            if ((simLoader === 'forge' || simLoader === 'neoforge') && (depLow === 'fabric api' || depLow === 'forge config api port')) {
+              return;
+            }
+            if (!window.isDepSatisfiedInList(depName, currItem, items, simLoader)) {
+              const depObj = window.resolveDepItem(depName, currItem, simLoader);
+              if (depObj) {
+                const existing = missingDeps.find(d => d.dep.id === depObj.id);
+                if (existing) {
+                  if (!existing.requiredBy.includes(currItem.title)) existing.requiredBy.push(currItem.title);
+                } else {
+                  missingDeps.push({ dep: depObj, requiredBy: [currItem.title] });
+                }
+                if (!queuedIds.has(depObj.id)) {
+                  queuedIds.add(depObj.id);
+                  queue.push(depObj);
+                }
+              }
+            }
+          });
+        }
+
+        return { items, conflicts: [...new Set(conflicts)], badItemIds, missingDeps };
+      };
+
+      // =========================================================================
+      // 8. KAZAKÇA -> TÜRKÇE ARAMA ÇUBUĞU VE DOM ÇEVİRİ SIFIRLAMA DÜZELTMESİ
+      // =========================================================================
+      const SEARCH_INPUT_PLACEHOLDERS = {
+        searchInput: {
+          tr: i18n.tr.searchPlaceholder,
+          en: i18n.en.searchPlaceholder,
+          az: i18n.az.searchPlaceholder,
+          kz: i18n.kz.searchPlaceholder,
+          uz: i18n.uz.searchPlaceholder,
+          kg: i18n.kg.searchPlaceholder,
+          tm: i18n.tm.searchPlaceholder
+        },
+        guideSearchInput: {
+          tr: i18n.tr.guideInputPh,
+          en: i18n.en.guideInputPh,
+          az: i18n.az.guideInputPh,
+          kz: i18n.kz.guideInputPh,
+          uz: i18n.uz.guideInputPh,
+          kg: i18n.kg.guideInputPh,
+          tm: i18n.tm.guideInputPh
+        },
+        srvSearchInput: {
+          tr: SIM_I18N.tr.searchPh,
+          en: SIM_I18N.en.searchPh,
+          az: SIM_I18N.az.searchPh,
+          kz: SIM_I18N.kz.searchPh,
+          uz: SIM_I18N.uz.searchPh,
+          kg: SIM_I18N.kg.searchPh,
+          tm: SIM_I18N.tm.searchPh
+        },
+        simSearchInput: {
+          tr: "Seçili altyapıda mod, shader veya kaynak paketi ara (Örn: voxy, sodium, iris, create, mekanism)...",
+          en: "Search mods, shaders, or resource packs in selected loader (e.g. voxy, sodium, iris, create)...",
+          az: "Seçilmiş strukturda mod, şeyder və ya resurs paketi axtar (Məs: voxy, sodium, iris, create)...",
+          kz: "Таңдалған жүктегіште мод, шейдер немесе ресурс пакетін іздеу (Мыс: voxy, sodium, iris, create)...",
+          uz: "Tanlangan yuklovchida mod, sheyder yoki resurs paketini qidiring (Mas: voxy, sodium, iris, create)...",
+          kg: "Тандалган жүктөгүчтө мод, шейдер же ресурс пакетин издөө (Мис: voxy, sodium, iris, create)...",
+          tm: "Saýlanan ýükleýjide mod, şeýder ýa-da resurs paketini gözle (Mysal: voxy, sodium, iris, create)..."
+        },
+        combosHubSearchInput: {
+          tr: "20 özel kombo içinde ara (Örn: voxy, cobblemon, pvp, korku, create, aternos, uzay, bedrock)...",
+          en: "Search within 20 custom combos (e.g. voxy, cobblemon, pvp, horror, create, aternos, space, bedrock)...",
+          az: "20 xüsusi kombo içində axtar (Məs: voxy, cobblemon, pvp, qorxu, create, aternos, kosmos, bedrock)...",
+          kz: "20 арнайы комбо ішінен іздеу (Мыс: voxy, cobblemon, pvp, қорқыныш, create, aternos, ғарыш, bedrock)...",
+          uz: "20 maxsus kombo ichidan qidirish (Mas: voxy, cobblemon, pvp, qo'rqinchli, create, aternos, fazo, bedrock)...",
+          kg: "20 атайын комбо ичинен издөө (Мис: voxy, cobblemon, pvp, коркунуч, create, aternos, космос, bedrock)...",
+          tm: "20 ýörite kombo içinde gözle (Mysal: voxy, cobblemon, pvp, gorky, create, aternos, älem, bedrock)..."
+        }
+      };
+
+      function applyAllSearchPlaceholders(lang) {
+        const l = lang || currentLang || 'tr';
+        Object.keys(SEARCH_INPUT_PLACEHOLDERS).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            const map = SEARCH_INPUT_PLACEHOLDERS[id];
+            el.placeholder = map[l] || map.tr;
+            el._origTrPh = map.tr;
+          }
+        });
+      }
+
+      // Sayfa ilk açıldığında (currentLang === 'tr' iken) tüm orijinal Türkçe metinleri ve placeholderları kaydet
+      function snapshotOriginalTurkishDOM(rootEl) {
+        if (!rootEl) return;
+        const walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while ((node = walker.nextNode())) {
+          const parentTag = node.parentElement ? node.parentElement.tagName : '';
+          if (parentTag === 'SCRIPT' || parentTag === 'STYLE' || parentTag === 'CODE') continue;
+          if (typeof node._origTrText === 'undefined') {
+            node._origTrText = node.nodeValue;
+          }
+        }
+        const inputs = rootEl.querySelectorAll ? rootEl.querySelectorAll('input[placeholder]') : [];
+        inputs.forEach(inp => {
+          if (SEARCH_INPUT_PLACEHOLDERS[inp.id]) {
+            inp._origTrPh = SEARCH_INPUT_PLACEHOLDERS[inp.id].tr;
+          } else if (typeof inp._origTrPh === 'undefined') {
+            inp._origTrPh = inp.placeholder;
+          }
+        });
+      }
+
+      snapshotOriginalTurkishDOM(document.body);
+
+      window.translateEntireDOM = function(rootEl = document.body) {
+        if (!rootEl || _isTranslatingDOM) return;
+        _isTranslatingDOM = true;
+        try {
+          const walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, null, false);
+          let node;
+          while ((node = walker.nextNode())) {
+            const parentTag = node.parentElement ? node.parentElement.tagName : '';
+            if (parentTag === 'SCRIPT' || parentTag === 'STYLE' || parentTag === 'CODE') continue;
+            // Sadece Türkçe moddayken veya henüz çevrilmemişken orijinal Türkçe metni kaydet
+            if (typeof node._origTrText === 'undefined' && currentLang === 'tr') {
+              node._origTrText = node.nodeValue;
+            }
+            if (currentLang === 'tr') {
+              if (typeof node._origTrText !== 'undefined' && node.nodeValue !== node._origTrText) {
+                node.nodeValue = node._origTrText;
+              }
+            } else {
+              if (typeof node._origTrText === 'undefined') {
+                node._origTrText = node.nodeValue;
+              }
+              const sourceText = node._origTrText || node.nodeValue;
+              const translated = translateTextValue(sourceText, currentLang);
+              if (node.nodeValue !== translated) {
+                node.nodeValue = translated;
+              }
+            }
+          }
+          applyAllSearchPlaceholders(currentLang);
+        } finally {
+          _isTranslatingDOM = false;
+        }
+      };
+
+      const _origSelectLang = window.selectLang;
+      window.selectLang = function(lang) {
+        currentLang = lang;
+        // Önce genel DOM ağacını hedef dile (veya Türkçe'ye) çevir
+        window.translateEntireDOM(document.body);
+        // Ardından tüm açık i18n atamalarını ve yeniden çizimleri çalıştır
+        _origSelectLang(lang);
+        // Son olarak tüm arama çubuğu placeholderlarının seçilen dilde (TR dahil) %100 doğru olduğundan emin ol
+        applyAllSearchPlaceholders(lang);
+        // Eğer Mod Listem çekmecesi açıksa yeni dilde anında güncelle
+        const overlay = document.getElementById('cartModalOverlay');
+        if (overlay && !overlay.classList.contains('opacity-0')) {
+          openCartDrawer();
+        }
+        // Eğer Detay Modalı açıksa yeni dilde anında güncelle
+        const detModal = document.getElementById('detailModal');
+        if (detModal && !detModal.classList.contains('hidden') && window._lastOpenedDetailId) {
+          window.openDetailModal(window._lastOpenedDetailId);
+        }
+      };
+    })();
+
+    // ============================================================================
+    // MCPUSULA PRO ENGINE V3:
+    // 1) "İÇERİĞİ İNCELE" FOTOĞRAF & ÇIKIŞ HATASI DÜZELTMESİ + GERÇEK MODRINTH
+    //    PROFİL RESMİ & EKRAN GÖRÜNTÜSÜ MOTORU (JAVA & BEDROCK)
+    // 2) PROFESYONEL "KOMBO PAKETİ ÖZELLEŞTİR" STÜDYOSU (TOPLU TEK KOMBO KARTI,
+    //    PAKET ÖZETİ, İNCELE KISMINDAN İÇERİK ÇIKARMA VE EKLEMEYE DEVAM ET)
+    // ============================================================================
+    (function initMcPusulaProEngineV3() {
+      const failedIconUrls = new Set();
+
+      // Katalogdaki tüm alias, CurseForge ve Bedrock eklentilerini gerçek Modrinth projelerine bağla
+      const SLUG_TO_MODRINTH_MAP = {
+        // Java Ana Slug Eşlemeleri
+        "applied-energistics-2": "ae2",
+        "immersive-engineering": "immersiveengineering",
+        "ice-and-fire-dragons": "ice-and-fire-ce",
+        "ice-and-fire-spellbooks": "ice-and-fire-ce",
+        "twilight-forest": "aether",
+        "the-twilight-forest": "aether",
+        "alexs-caves": "deeperdarker",
+        "alexs-mobs": "naturalist",
+        "makeup-ultra-fast-shaders": "makeup-ultra-fast",
+        "voyager-shader-2.0": "voyager-shader-2",
+        " smarter-farmers": "smarter-farmers",
+        "dawn-of-the-flood": "dawn-of-the-flood",
+        "Dawn-of-the-Flood": "dawn-of-the-flood",
+        "sildurs-vibrant-shaders": "bsl-shaders",
+        "sildurs-enhanced-default": "complementary-reimagined",
+        "sildurs-basic-shaders": "makeup-ultra-fast",
+        "seus-renewed": "complementary-unbound",
+        "chocapic13-shaders": "bliss-shader",
+        "chocapic13-high-performance-shaders": "makeup-ultra-fast",
+        "stay-true": "xalis-bushy-leaves",
+        "faithful-32x": "bare-bones",
+        "faithful-64x": "bare-bones",
+        "bare-bones": "bare-bones",
+        "low-on-fire": "lower-shield",
+        "patrix-32x": "rotrblocks",
+        "tinkers-construct": "hephaestus",
+        "ftb-quests": "bountiful",
+        "thermal-expansion": "modern-industrialization",
+        "mekanism": "oritech",
+        "minecolonies": "towns-and-towers",
+        "ars-nouveau": "wizards",
+        "l_enders-cataclysm": "bosses-of-mass-destruction",
+        "timeless-and-classics-zero": "point-blank",
+        "bocchud": "status-effect-bars",
+        "parcool": "combat-roll",
+        "securitycraft": "laser-bridges-and-doors",
+
+        // Bedrock (MCPE) Eklenti, Shader ve Kaynak Paketleri -> Gerçek Modrinth Proje İkonları
+        "better-on-bedrock": "terralith",
+        "core-craft": "biomes-o-plenty",
+        "effortless-building": "effortless",
+        "blurrys-java-beta": "better-combat",
+        "bedrock-essentials": "veinmining",
+        "create-plus": "create",
+        "origins-merged-bedrock-addon": "origins",
+        "origins-bedrock-addon": "origins",
+        "arborea": "motschen-better-leaves",
+        "dlcraft-addonpack": "when-dungeons-arise",
+        "ultimate-utilities": "supplementaries",
+        "buildbench": "worldedit",
+        "ultimate-kit": "starter-kit",
+        "verity-bedrock-edition": "friends-and-foes",
+        "craftforgenova-system": "axiom",
+        "stalkerhorrorthemod": "the-man-from-the-fog",
+        "venominus-bloodbath": "cave-dweller-reimagined",
+        "a-s-x-kaleidoscope": "farmers-delight",
+        "newb-x-unwind": "complementary-reimagined",
+        "definitive-vibrant-visuals": "complementary-unbound",
+        "bslb-dreamy-visuals": "bsl-shaders",
+        "vulkancore": "vulkanmod",
+        "dark-visuals-resource-pack": "insanity-shader",
+        "sodium-gl-reimagined": "sodium",
+        "flashlight-shader": "lambdynamiclights",
+        "aurora-sky-pe": "solas-shader",
+        "just-3d-sun-and-moon": "dramatic-skys",
+        "naturalmotionblur-bedrock": "iris",
+        "actions-and-stuff": "fresh-animations",
+        "xnova-remastered": "fresh-moves",
+        "faithful-64x-bedrock": "bare-bones",
+        "deesse-ui-pack": "unique-dark",
+        "ui-utils": "mandalas-gui-dark-mode",
+        "max-fps-boost": "immediatelyfast",
+        "bare-bones-be": "bare-bones",
+        "fast-better-grass": "fast-better-grass",
+        "threed-player-skin": "3dskinlayers",
+        "buildmatica": "litematica",
+        "aesthetic-sounds-v1": "ambientsounds",
+        "sepworks-pvp-crosshair": "lower-shield",
+        "full-block-cobweb": "clear-despawn",
+        "old-perspective": "better-third-person",
+        "classic-textures-v1-mc-bedrock-pe-legacy-textures": "classic-3d",
+        "red-spider": "nyfs-spiders",
+        "abelha-skull": "just-mob-heads",
+        "luminous-dreams": "photon-shader",
+        "prizma-visuals": "rethinking-voxels",
+        "multipixel-texture-pack": "whimscape",
+        "better-foliage-bedrock": "xalis-bushy-leaves",
+        "chunk-visualizer-bedrock": "minihud",
+        "redstone-indicator-bedrock": "redstone-tweaks",
+        "crystal-pvp-pack": "lower-shield",
+        "true-survival-zombie-apocalypse": "mutant-monsters",
+        "mutant-creatures-addon": "mutant-monsters",
+        "more-simple-structures": "structory",
+        "dungeon-expanse": "yungs-better-dungeons",
+        "epic-knights-bedrock": "simply-swords",
+        "spartan-weaponry-bedrock": "simply-swords",
+        "elemental-swords-addon": "simply-swords",
+        "tinkers-construct-bedrock": "hephaestus",
+        "industrial-machinery-bedrock": "techreborn",
+        "digital-storage-network": "ae2",
+        "automated-quarry-addon": "modern-industrialization",
+        "item-magnet-addon": "simple-magnets",
+        "player-graves-addon": "gravestone-mod",
+        "custom-teleporters-addon": "waystones",
+        "veinminer-treecapitator-addon": "tree-harvester",
+        "damage-indicators-bedrock": "jade",
+        "one-block-skyblock-addon": "skyblock-builder",
+        "lucky-blocks-ultimate": "artifacts",
+        "morph-plus-addon": "origins",
+        "vampires-werewolves-addon": "blood-magic",
+        "anime-jutsu-addon": "combat-roll",
+        "dragon-mounts-bedrock": "mythic-mounts",
+        "prehistoric-dinosaurs-addon": "naturalist",
+        "advanced-fishing-bedrock": "oceans-delight",
+        "harvestcraft-bedrock": "croptopia",
+        "modern-furniture-bedrock": "refurbished-furniture",
+        "medieval-furniture-bedrock": "handcrafted",
+        "chisel-blocks-bedrock": "chipped",
+        "bridges-roofs-bedrock": "macaws-bridges",
+        "security-cameras-bedrock": "laser-bridges-and-doors",
+        "trains-railways-bedrock": "create-steam-n-rails",
+        "planes-helicopters-bedrock": "immersive-aircraft",
+        "pirate-ships-bedrock": "small-ships",
+        "galactic-space-bedrock": "ad-astra",
+        "sky-paradise-addon": "aether",
+        "warden-dimension-addon": "deeperdarker",
+        "end-expansion-bedrock": "betterend",
+        "nether-overhaul-bedrock": "betternether",
+        "villager-soldiers-addon": "guard-villagers",
+        "more-dogs-addon": "critters-and-companions"
+      };
+
+      if (typeof PRESEEDED_MODRINTH_ASSETS !== 'undefined') {
+        delete PRESEEDED_MODRINTH_ASSETS['miniature-shader'];
+        PRESEEDED_MODRINTH_ASSETS['makeup-ultra-fast-shaders'] = PRESEEDED_MODRINTH_ASSETS['makeup-ultra-fast'];
+      }
+
+      // Kalıcı Galeri Önbelleği (Satır 8815'in sildiği v6 yerine v7 kullanır)
+      const savedGalV7 = safeGetStorage('mcpusula_gallery_v7_official', {});
+      Object.keys(savedGalV7).forEach(k => {
+        if (Array.isArray(savedGalV7[k]) && savedGalV7[k].length > 0) {
+          modGalleryCache[k] = savedGalV7[k];
+        }
+      });
+
+      function getMappedSlug(item) {
+        if (!item) return '';
+        const raw = (item.slug || '').trim();
+        const low = raw.toLowerCase();
+        return (SLUG_TO_MODRINTH_MAP[raw] || SLUG_TO_MODRINTH_MAP[low] || SLUG_TO_MODRINTH_MAP[item.id] || low).toLowerCase();
+      }
+
+      function isSyntheticVariantItem(item) {
+        if (!item || !item.id) return false;
+        return item.id.startsWith('mod-') || item.id.startsWith('mc5320-') || item.id.startsWith('shd-') || item.id.startsWith('rp-');
+      }
+
+      catalogueData.forEach(item => {
+        if (item.slug && typeof item.slug === 'string') {
+          item.slug = item.slug.trim();
+        }
+        // Eğer daha önce data:image atanmışsa temizle ki gerçek Modrinth ikonu öncelik alsın
+        if (item.iconUrl && item.iconUrl.startsWith('data:image/')) {
+          delete item.iconUrl;
+        }
+        delete item._cachedAvatarUri;
+        delete item._cachedScenes;
+      });
+
+      // Görsel Öncelik Sıralaması: Gerçek Modrinth ikonu ve ekran görüntüsü olan ana eklentiler her zaman en üstte!
+      window.getVisualPriorityScore = function(item) {
+        if (!item) return 0;
+        if (item.id === 'voxy') return 20000;
+        const hasRealProfile = Boolean(item.iconUrl && !item.iconUrl.startsWith('data:image/') && !failedIconUrls.has(item.iconUrl));
+        const mapped = getMappedSlug(item);
+        const gal = Array.isArray(item.galleryUrls) && item.galleryUrls.length > 0
+          ? item.galleryUrls
+          : (modGalleryCache[item.slug] || modGalleryCache[mapped] || modGalleryCache[item.id] || []);
+        const galLen = Array.isArray(gal) ? gal.filter(u => u && !u.startsWith('data:image/')).length : 0;
+        const hasRealGallery = galLen > 0;
+        const isBaseCurated = !isSyntheticVariantItem(item);
+
+        let score = 0;
+        if (isBaseCurated) score += 6000;
+        if (hasRealProfile && hasRealGallery) score += 5000 + Math.min(galLen, 4) * 100;
+        else if (hasRealProfile) score += 3000;
+        else if (hasRealGallery) score += 2000;
+        return score;
+      };
+
+      // generateModScenePhotoURI içindeki XML '&' hatasını düzelt (Sonsuz onerror döngüsünü engeller)
+      const _origGenerateModScenePhotoURI = window.generateModScenePhotoURI;
+      window.generateModScenePhotoURI = function(item, idx) {
+        if (!item) return '';
+        item._cachedScenes = item._cachedScenes || {};
+        if (item._cachedScenes[idx]) return item._cachedScenes[idx];
+        const rawUri = _origGenerateModScenePhotoURI ? _origGenerateModScenePhotoURI(item, idx) : '';
+        if (!rawUri) return '';
+        try {
+          const prefix = 'data:image/svg+xml;utf8,';
+          if (rawUri.startsWith(prefix)) {
+            const decoded = decodeURIComponent(rawUri.slice(prefix.length));
+            const fixedXml = decoded.replace(/&(?!amp;|lt;|gt;|quot;|apos;|#)/g, '&amp;');
+            item._cachedScenes[idx] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(fixedXml);
+            return item._cachedScenes[idx];
+          }
+        } catch (e) {}
+        return rawUri;
+      };
+
+      // Yedek Piksel-Art İkon Üretici (Sadece Modrinth'te resmi bulunamayan veya yüklenemeyenler için)
+      window.getModPixelAvatarURI = function(item) {
+        if (!item) return '';
+        if (item._cachedAvatarUri) return item._cachedAvatarUri;
+        const h = hashStr((item.id || '') + ':' + (item.title || 'mc'));
+        const c1 = item.color || '#1bd96a';
+        const c2 = ['#1bd96a', '#38bdf8', '#f59e0b', '#a855f7', '#ec4899', '#10b981', '#f97316', '#eab308', '#06b6d4', '#ef4444'][(h >> 3) % 10];
+        const cleanWords = (item.title || 'MC').replace(/[^a-zA-Z0-9ğüşöçıİĞÜŞÖÇ ]/g, ' ').split(/\s+/).filter(Boolean);
+        const initials = (cleanWords.length >= 2 ? (cleanWords[0][0] + cleanWords[1][0]) : (cleanWords[0] || 'MC').slice(0, 2)).toUpperCase();
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1e2430"/><stop offset="60%" stop-color="#0f131a"/><stop offset="100%" stop-color="${c1}" stop-opacity="0.65"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#g)"/><rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="${c1}" stroke-opacity="0.7" stroke-width="2"/><polygon points="32,10 52,20 32,30 12,20" fill="${c1}"/><polygon points="12,20 32,30 32,50 12,40" fill="${c2}" opacity="0.85"/><polygon points="32,30 52,20 52,40 32,50" fill="${c1}" opacity="0.65"/><rect x="36" y="45" width="24" height="14" rx="4" fill="#090a0d" fill-opacity="0.92" stroke="${c1}" stroke-width="1.2"/><text x="48" y="54.5" text-anchor="middle" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="8.5">${initials}</text></svg>`;
+        item._cachedAvatarUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        return item._cachedAvatarUri;
+      };
+
+      window.getModPixelAvatarById = function(id) {
+        const item = catalogueData.find(m => m.id === id);
+        return item ? window.getModPixelAvatarURI(item) : '';
+      };
+
+      window.handleAvatarError = function(imgEl, itemId) {
+        if (!imgEl) return;
+        imgEl.onerror = null;
+        const item = catalogueData.find(m => m.id === itemId);
+        if (item) {
+          if (item.iconUrl && !item.iconUrl.startsWith('data:image/')) {
+            failedIconUrls.add(item.iconUrl);
+            delete item.iconUrl;
+          }
+          imgEl.src = window.getModPixelAvatarURI(item);
+        }
+      };
+
+      window.getAvatarHTML = function(item, sizeClass = "w-11 h-11") {
+        if (!item) return '';
+        const fallbackAvatar = window.getModPixelAvatarURI(item);
+        const hasValidIcon = item.iconUrl && !item.iconUrl.startsWith('data:image/') && !failedIconUrls.has(item.iconUrl);
+        const primarySrc = hasValidIcon ? item.iconUrl : fallbackAvatar;
+        const safeId = String(item.id || '').replace(/'/g, "\\'");
+        const safeAlt = String(item.title || 'Mod').replace(/"/g, '&quot;');
+        return `
+          <div class="${sizeClass} rounded-xl border border-modrinth-border bg-modrinth-dark flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+            <img src="${primarySrc}" alt="${safeAlt}" loading="lazy" class="w-full h-full object-cover" onerror="window.handleAvatarError(this, '${safeId}')">
+          </div>
+        `;
+      };
+
+      // İNCELE MODALI GALERİ FOTOĞRAFLARI (Gerçek Modrinth Ekran Görüntüleri + Sonsuz Döngü Koruması)
+      window.getItemGalleryPhotos = function(item) {
+        if (!item) return [];
+        const mapped = getMappedSlug(item);
+        const raw = (Array.isArray(item.galleryUrls) && item.galleryUrls.length > 0)
+          ? item.galleryUrls
+          : (modGalleryCache[item.slug] || modGalleryCache[mapped] || modGalleryCache[item.id] || []);
+        const failed = item._failedGalleryUrls || [];
+        const uniqueValid = [];
+        if (Array.isArray(raw)) {
+          raw.forEach(url => {
+            if (url && typeof url === 'string' && !url.startsWith('data:image/') && !failed.includes(url) && !uniqueValid.includes(url)) {
+              uniqueValid.push(url);
+            }
+          });
+        }
+        const word = getGalleryPhotoWord();
+        return uniqueValid.slice(0, 4).map((url, idx, arr) => ({
+          src: url,
+          caption: `${getLocalizedTitle(item)} — ${word} ${idx + 1} / ${arr.length}`
+        }));
+      };
+
+      window.handleGalleryImgError = function(itemId, brokenUrl) {
+        const item = catalogueData.find(m => m.id === itemId);
+        if (!item || !brokenUrl) return;
+        item._failedGalleryUrls = item._failedGalleryUrls || [];
+        if (item._failedGalleryUrls.includes(brokenUrl)) return; // Sonsuz döngü koruması!
+        item._failedGalleryUrls.push(brokenUrl);
+        if (Array.isArray(item.galleryUrls)) {
+          item.galleryUrls = item.galleryUrls.filter(u => u !== brokenUrl);
+        }
+        if (activeModalItemId === item.id) {
+          renderModalGallery(item, 0);
+        }
+      };
+
+      // Tekil Mod/Shader/Paket İncelemesinde Anında Modrinth Fotoğraf & İkon Çekici (Java & Bedrock)
+      window.fetchSingleModGalleryOnDemand = async function(item) {
+        if (!item || item._galleryChecked) return;
+        item._galleryChecked = true;
+        const mapped = getMappedSlug(item);
+        const candidates = [...new Set([item.modrinthProjectId, item.slug, mapped, item.id].filter(Boolean))];
+        for (let cIdx = 0; cIdx < candidates.length; cIdx++) {
+          const slugCand = String(candidates[cIdx]).trim();
+          if (!/^[a-z0-9-_]+$/i.test(slugCand)) continue;
+          try {
+            const res = await fetch(`https://api.modrinth.com/v2/project/${encodeURIComponent(slugCand)}`);
+            if (res.ok) {
+              const p = await res.json();
+              if (p && p.icon_url) {
+                item.iconUrl = p.icon_url;
+                if (activeModalItemId === item.id) {
+                  const iconWrap = document.getElementById('modalIconWrap');
+                  if (iconWrap) iconWrap.innerHTML = window.getAvatarHTML(item, "w-14 h-14");
+                }
+              }
+              if (p && Array.isArray(p.gallery) && p.gallery.length > 0) {
+                const gUrls = p.gallery
+                  .slice()
+                  .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+                  .map(g => g.raw_url || g.url)
+                  .filter(u => u && !u.startsWith('data:image/'))
+                  .slice(0, 4);
+                if (gUrls.length > 0) {
+                  item.galleryUrls = gUrls;
+                  if (item.slug) modGalleryCache[item.slug] = gUrls;
+                  if (mapped) modGalleryCache[mapped] = gUrls;
+                  modGalleryCache[item.id] = gUrls;
+                  safeSetStorage('mcpusula_gallery_v7_official', modGalleryCache);
+                  if (activeModalItemId === item.id) {
+                    renderModalGallery(item, 0);
+                  }
+                  return;
+                }
+              }
+            }
+          } catch (e) {}
+        }
+      };
+
+      // TÜM KATALOG İÇİN HIZLI PARALEL MODRINTH PROFİL RESMİ & GALERİ MOTORU
+      window.fetchRealModrinthIcons = async function() {
+        const cached = safeGetStorage('mcpusula_icons_v6', safeGetStorage('mcpusula_icons_v5', safeGetStorage('mcpusula_icons_v4', {})));
+        delete cached['miniature-shader'];
+
+        Object.keys(PRESEEDED_MODRINTH_ASSETS).forEach(k => {
+          const asset = PRESEEDED_MODRINTH_ASSETS[k];
+          if (asset && asset.icon && !cached[k]) cached[k] = asset.icon;
+          if (asset && asset.gallery && (!modGalleryCache[k] || modGalleryCache[k].length === 0)) {
+            modGalleryCache[k] = asset.gallery;
+          }
+        });
+
+        const applyIconsAndGalleries = () => {
+          catalogueData.forEach(item => {
+            const rawSlug = (item.slug || '').trim();
+            const lowerSlug = rawSlug.toLowerCase();
+            const mapped = getMappedSlug(item);
+            const foundIcon = cached[rawSlug] || cached[lowerSlug] || cached[mapped] || cached[item.id];
+            if (foundIcon && !foundIcon.startsWith('data:image/') && !failedIconUrls.has(foundIcon)) {
+              item.iconUrl = foundIcon;
+            }
+            const foundGal = modGalleryCache[rawSlug] || modGalleryCache[lowerSlug] || modGalleryCache[mapped] || modGalleryCache[item.id];
+            if (Array.isArray(foundGal) && foundGal.length > 0) {
+              item.galleryUrls = foundGal;
+            }
+          });
+        };
+
+        applyIconsAndGalleries();
+        renderCards();
+        renderCombos();
+
+        // Hem ikonu eksik olanları hem de galerisi eksik olanları öncelik sırasıyla topla
+        const prioritySlugs = [];
+        const seen = new Set();
+        const pushSlug = (s) => {
+          if (!s || typeof s !== 'string') return;
+          const clean = s.trim().toLowerCase();
+          if (!/^[a-z0-9-_]+$/i.test(clean) || seen.has(clean)) return;
+          seen.add(clean);
+          if (!cached[clean] || !modGalleryCache[clean]) {
+            prioritySlugs.push(clean);
+          }
+        };
+
+        // 1. Önce ana (curated) öğelerin gerçek ve eşlenmiş slugları
+        catalogueData.forEach(item => {
+          if (!isSyntheticVariantItem(item)) {
+            pushSlug(getMappedSlug(item));
+            pushSlug(item.modrinthProjectId || item.slug);
+          }
+        });
+        // 2. Sonra kalan tüm öğeler
+        catalogueData.forEach(item => {
+          pushSlug(getMappedSlug(item));
+          pushSlug(item.modrinthProjectId || item.slug);
+        });
+
+        if (prioritySlugs.length === 0) return;
+
+        const chunks = [];
+        for (let i = 0; i < prioritySlugs.length; i += 80) {
+          chunks.push(prioritySlugs.slice(i, i + 80));
+        }
+
+        const fetchChunk = async (chunk) => {
+          try {
+            const res = await fetch(`https://api.modrinth.com/v2/projects?ids=${encodeURIComponent(JSON.stringify(chunk))}`);
+            if (!res.ok) return;
+            const projects = await res.json();
+            projects.forEach(p => {
+              if (!p) return;
+              const sLow = (p.slug || '').toLowerCase();
+              if (p.icon_url) {
+                cached[p.slug] = p.icon_url;
+                cached[sLow] = p.icon_url;
+                cached[p.id] = p.icon_url;
+              }
+              if (Array.isArray(p.gallery) && p.gallery.length > 0) {
+                const gUrls = p.gallery
+                  .slice()
+                  .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
+                  .map(g => g.raw_url || g.url)
+                  .filter(u => u && !u.startsWith('data:image/'))
+                  .slice(0, 4);
+                if (gUrls.length > 0) {
+                  modGalleryCache[p.slug] = gUrls;
+                  modGalleryCache[sLow] = gUrls;
+                  modGalleryCache[p.id] = gUrls;
+                }
+              }
+            });
+          } catch (e) {}
+        };
+
+        // İlk 2 paketi hemen çekip ekranı anında güncelle
+        await Promise.all(chunks.slice(0, 2).map(fetchChunk));
+        applyIconsAndGalleries();
+        renderCards();
+        renderCombos();
+
+        // Kalan paketleri 3'erli paralel gruplar halinde hızla tamamla
+        for (let b = 2; b < chunks.length; b += 3) {
+          await Promise.all(chunks.slice(b, b + 3).map(fetchChunk));
+        }
+
+        safeSetStorage('mcpusula_icons_v6', cached);
+        safeSetStorage('mcpusula_gallery_v7_official', modGalleryCache);
+        applyIconsAndGalleries();
+        renderCards();
+        renderCombos();
+        if (typeof renderCustomComboStudioResult === 'function') {
+          renderCustomComboStudioResult();
+        }
+      };
+
+      // İNCELE MODALI AÇMA / KAPATMA VE GERİ DÖNÜŞ YÖNETİMİ (%100 ÇIKIŞ GARANTİLİ)
+      let returnToComboModalState = null; // { type: 'prebuilt', comboId } veya { type: 'custom' }
+
+      const _baseOpenDetailModal = window.openDetailModal;
+      window.openDetailModal = function(id, fromComboState = null) {
+        if (fromComboState) {
+          returnToComboModalState = fromComboState;
+        }
+        _baseOpenDetailModal(id);
+        const item = catalogueData.find(m => m.id === id);
+        if (item) {
+          // Bedrock dahil tüm öğelerde fotoğraf yoksa arka planda Modrinth'ten kontrol et
+          const photos = window.getItemGalleryPhotos(item);
+          if (photos.length === 0 && !item._galleryChecked) {
+            window.fetchSingleModGalleryOnDemand(item);
+          }
+        }
+      };
+
+      window.closeDetailModal = function() {
+        const modal = document.getElementById('detailModal');
+        if (modal) modal.classList.add('hidden');
+        activeModalItemId = null;
+        if (returnToComboModalState) {
+          const st = returnToComboModalState;
+          returnToComboModalState = null;
+          if (st.type === 'custom') {
+            window.openCustomComboInspectModal();
+          } else if (st.type === 'prebuilt' && st.comboId) {
+            window.openComboPreview(st.comboId);
+          }
+        }
+      };
+
+      window.closeComboPreview = function() {
+        returnToComboModalState = null;
+        const modal = document.getElementById('comboPreviewModal');
+        if (modal) modal.classList.add('hidden');
+      };
+
+      // ESC tuşu ile tüm inceleme pencerelerinden anında çıkış
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const detModal = document.getElementById('detailModal');
+          if (detModal && !detModal.classList.contains('hidden')) {
+            window.closeDetailModal();
+            return;
+          }
+          const prevModal = document.getElementById('comboPreviewModal');
+          if (prevModal && !prevModal.classList.contains('hidden')) {
+            window.closeComboPreview();
+            return;
+          }
+          window.closeComboChooserModal();
+        }
+      });
+
+      // Hazır 20 Kombo "İçeriği İncele" penceresinde de istenmeyen modu paketten çıkarma desteği
+      const prebuiltRemovedModsMap = {}; // comboId -> Set of removed item IDs
+      window.removePrebuiltComboItem = function(comboId, itemId) {
+        prebuiltRemovedModsMap[comboId] = prebuiltRemovedModsMap[comboId] || new Set();
+        prebuiltRemovedModsMap[comboId].add(itemId);
+        const item = catalogueData.find(m => m.id === itemId);
+        if (item) showToast(`"${getLocalizedTitle(item)}" kombo paketinden çıkarıldı.`);
+        window.openComboPreview(comboId);
+      };
+
+      window.openComboPreview = function(comboId) {
+        const combo = combosData.find(c => c.id === comboId);
+        if (!combo) return;
+        const t = i18n[currentLang] || i18n.tr;
+        const cLang = combo.i18n[currentLang] || combo.i18n.en || combo.i18n.tr;
+        const removedSet = prebuiltRemovedModsMap[comboId] || new Set();
+        const modObjects = combo.mods
+          .filter(id => !removedSet.has(id))
+          .map(id => catalogueData.find(m => m.id === id))
+          .filter(Boolean);
+
+        document.getElementById('previewModalBadge').innerText = `${cLang.badge} • ${combo.loader}`;
+        document.getElementById('previewModalTitle').innerText = cLang.title;
+        document.getElementById('previewModalDesc').innerText = cLang.desc;
+        document.getElementById('previewModalWarning').innerHTML = `<strong>${t.compatNoteLabel}</strong> ${cLang.warning}`;
+        document.getElementById('previewModalSub').innerText = `Paketteki İçerikler (${modObjects.length}) — İstemeyerek çıkaracağınız modları "Çıkar" butonuyla silebilirsiniz:`;
+        document.getElementById('previewAddBtnText').innerText = `${t.comboAddAll} (${modObjects.length})`;
+
+        const container = document.getElementById('previewItemsContainer');
+        container.innerHTML = modObjects.map(item => {
+          return `
+            <div class="flex items-center justify-between gap-3 bg-modrinth-dark border border-modrinth-border hover:border-amber-400/40 p-3 rounded-xl transition">
+              <div onclick="closeComboPreview(); openDetailModal('${item.id}', { type: 'prebuilt', comboId: '${combo.id}' });" class="flex items-center gap-3 min-w-0 cursor-pointer group flex-1">
+                ${window.getAvatarHTML(item, "w-10 h-10")}
+                <div class="min-w-0 flex-1">
+                  <div class="text-xs font-bold text-white group-hover:text-modrinth transition truncate">${getLocalizedTitle(item)}</div>
+                  <div class="text-[10px] text-modrinth font-semibold">${item.loader.toUpperCase()} • ${item.verText}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" onclick="closeComboPreview(); openDetailModal('${item.id}', { type: 'prebuilt', comboId: '${combo.id}' });" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-gray-200 text-[10px] font-bold transition">${t.btnInspect}</button>
+                <button type="button" onclick="removePrebuiltComboItem('${combo.id}', '${item.id}')" class="px-2.5 py-1.5 rounded-lg bg-red-500/15 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/30 text-[10px] font-extrabold transition" title="Paketten Çıkar">
+                  ✕ Çıkar
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('previewAddBtn').onclick = () => {
+          window.closeComboPreview();
+          modObjects.forEach(item => {
+            if (!modCart.includes(item.id)) modCart.push(item.id);
+          });
+          updateCartUI();
+          renderCards();
+          showToast(`"${cLang.title}" (${modObjects.length} içerik) Mod Listenize eklendi!`);
+          openCartDrawer();
+        };
+        document.getElementById('comboPreviewModal').classList.remove('hidden');
+      };
+
+      // ============================================================================
+      // BÖLÜM 2: PROFESYONEL "KOMBO PAKETİ ÖZELLEŞTİR" STÜDYOSU
+      // (TOPLU 1 KOMBO KARTI + DETAYLI PAKET ÖZETİ + İNCELE KISMINDAN ÇIKARMA)
+      // ============================================================================
+      const navCombosBtn = document.getElementById('navCombos');
+      if (navCombosBtn && navCombosBtn.parentNode) {
+        const wrap = document.createElement('div');
+        wrap.className = 'relative inline-block';
+        wrap.id = 'comboNavDropdownWrap';
+        navCombosBtn.parentNode.insertBefore(wrap, navCombosBtn);
+        wrap.appendChild(navCombosBtn);
+        navCombosBtn.setAttribute('onclick', 'toggleComboChooserMenu(event)');
+        navCombosBtn.insertAdjacentHTML('beforeend', `
+          <svg class="w-3 h-3 text-amber-300 ml-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        `);
+
+        const dd = document.createElement('div');
+        dd.id = 'comboChooserDropdown';
+        dd.className = 'hidden absolute left-0 mt-2.5 w-84 bg-modrinth-card border-2 border-amber-400/60 rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.92)] p-2.5 z-50 space-y-2';
+        dd.innerHTML = `
+          <div class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-amber-300 flex items-center justify-between">
+            <span>Özel Kombo Merkezi</span>
+            <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">2 Mod</span>
+          </div>
+          <button type="button" onclick="openCombosHubView()" class="w-full text-left p-3 rounded-xl bg-modrinth-dark hover:bg-amber-500/15 border border-modrinth-border hover:border-amber-400 transition flex items-start gap-3 group">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 shrink-0 mt-0.5">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            </div>
+            <div>
+              <div class="text-xs font-black text-white group-hover:text-amber-300 transition">1. Hazır Özel Kombo Paketleri (20)</div>
+              <p class="text-[11px] text-gray-400 leading-snug mt-0.5">Önceden test edilmiş 20 hazır mod, shader ve kaynak paketi kombosu.</p>
+            </div>
+          </button>
+          <button type="button" onclick="openCustomComboBuilderView()" class="w-full text-left p-3 rounded-xl bg-modrinth-dark hover:bg-modrinth/15 border border-amber-400/50 hover:border-modrinth transition flex items-start gap-3 group shadow-[0_0_18px_rgba(251,191,36,0.15)]">
+            <div class="w-9 h-9 rounded-xl bg-modrinth/20 border border-modrinth/40 flex items-center justify-center text-modrinth shrink-0 mt-0.5">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-black text-white group-hover:text-modrinth transition">2. Kombo Paketi Özelleştir</span>
+                <span class="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-amber-400 text-black">PRO STÜDYO</span>
+              </div>
+              <p class="text-[11px] text-gray-400 leading-snug mt-0.5">Sürümünüzü seçip istediğiniz oyun temasını yazın; size özel tek parça kombo paketi hazırlayalım.</p>
+            </div>
+          </button>
+        `;
+        wrap.appendChild(dd);
+      }
+
+      const mobCombosBtn = document.getElementById('navCombosMobile');
+      if (mobCombosBtn) {
+        mobCombosBtn.setAttribute('onclick', 'openComboChooserModal()');
+      }
+
+      const hubSec = document.getElementById('combosHubViewSection');
+      if (hubSec) {
+        const topActionContainer = hubSec.querySelector('.flex.items-center.gap-2:last-child');
+        if (topActionContainer) {
+          topActionContainer.insertAdjacentHTML('afterbegin', `
+            <button type="button" onclick="openCustomComboBuilderView()" class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-black text-xs transition shadow-[0_0_18px_rgba(251,191,36,0.4)] flex items-center gap-1.5">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+              <span>Kombo Paketi Özelleştir</span>
+            </button>
+          `);
+        }
+
+        hubSec.insertAdjacentHTML('afterend', `
+          <!-- MOBİL SEÇİM MODALI -->
+          <div id="comboChooserModal" onclick="if(event.target===this)closeComboChooserModal()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-modrinth-card border-2 border-amber-400/60 rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3">
+              <div class="flex items-center justify-between border-b border-modrinth-border pb-3">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                  <h3 class="text-sm font-black text-white">Özel Kombo Merkezi</h3>
+                </div>
+                <button type="button" onclick="closeComboChooserModal()" class="text-gray-400 hover:text-white p-1.5 rounded-lg bg-white/5">✕</button>
+              </div>
+              <button type="button" onclick="closeComboChooserModal(); openCombosHubView();" class="w-full text-left p-3.5 rounded-2xl bg-modrinth-dark hover:bg-amber-500/15 border border-modrinth-border hover:border-amber-400 transition flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                </div>
+                <div>
+                  <div class="text-xs font-black text-white">1. Hazır Özel Kombo Paketleri (20 Paket)</div>
+                  <p class="text-[11px] text-gray-400 mt-0.5">Test edilmiş 20 hazır mod, shader ve kaynak paketi kombosu.</p>
+                </div>
+              </button>
+              <button type="button" onclick="closeComboChooserModal(); openCustomComboBuilderView();" class="w-full text-left p-3.5 rounded-2xl bg-modrinth-dark hover:bg-modrinth/15 border-2 border-amber-400/50 hover:border-modrinth transition flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-modrinth/20 border border-modrinth/40 flex items-center justify-center text-modrinth shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-black text-white">2. Kombo Paketi Özelleştir</span>
+                    <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-400 text-black">PRO</span>
+                  </div>
+                  <p class="text-[11px] text-gray-400 mt-0.5">Platform, yazılım ve sürüm seçip istediğiniz temaya göre tek parça kombo paketi oluşturun.</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- PROFESYONEL TAM EKRAN STÜDYO: KOMBO PAKETİ ÖZELLEŞTİR -->
+          <section id="customComboBuilderSection" class="hidden flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+            <!-- ÜST BAŞLIK BAR -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-modrinth-border">
+              <div class="flex items-center gap-3.5 flex-wrap">
+                <button type="button" onclick="closeCustomComboBuilderView()" class="flex items-center gap-2 bg-modrinth-card hover:bg-modrinth hover:text-black text-white border border-modrinth-border px-4 py-2.5 rounded-xl text-xs font-extrabold transition shadow-lg">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                  <span>Ana Portala Dön</span>
+                </button>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-amber-400/20 text-amber-300 border border-amber-400/40">MCPUSULA AKILLI PAKET MİMARI</span>
+                    <h2 class="text-xl sm:text-2xl font-black text-white">Kombo Paketi Özelleştir</h2>
+                  </div>
+                  <p class="text-xs text-gray-400 mt-0.5">Platformunuzu, yazılımınızı ve sürümünüzü seçip hayalinizdeki oyun temasını yazın; size özel toplu kombo paketini özetleriyle sunalım.</p>
+                </div>
+              </div>
+              <button type="button" onclick="openCombosHubView()" class="px-4 py-2.5 rounded-xl bg-modrinth-card hover:bg-amber-400/15 text-amber-300 border border-amber-400/40 text-xs font-extrabold transition self-start sm:self-auto">
+                20 Hazır Özel Komboyu Gör &rarr;
+              </button>
+            </div>
+
+            <!-- KONTROL PANELİ: ADIM 1, 2, 3 VE TEMA GİRİŞİ TEK PROFESYONEL STÜDYO KARTINDA -->
+            <div class="bg-modrinth-card border border-modrinth-border rounded-3xl p-5 sm:p-7 shadow-2xl mb-6">
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pb-6 mb-6 border-b border-modrinth-border">
+                <!-- 1. ADIM: PLATFORM -->
+                <div class="lg:col-span-4">
+                  <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                      <span class="w-5 h-5 rounded-full bg-modrinth text-black text-[10px] font-black flex items-center justify-center">1</span>
+                      <span>Giriş Platformu</span>
+                    </span>
+                    <span id="ccbStep1Status" class="text-[10px] font-extrabold text-modrinth">Java Edition</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button type="button" id="ccbEdJava" onclick="setCustomComboEdition('java')" class="p-3 rounded-xl border-2 border-modrinth bg-modrinth/15 text-left transition">
+                      <div class="text-xs font-black text-white">🖥️ Java Edition</div>
+                      <div class="text-[10px] text-gray-300 mt-0.5">PC / Mac</div>
+                    </button>
+                    <button type="button" id="ccbEdBedrock" onclick="setCustomComboEdition('bedrock')" class="p-3 rounded-xl border border-modrinth-border bg-modrinth-dark text-left transition">
+                      <div class="text-xs font-black text-gray-200">📱 Bedrock / MCPE</div>
+                      <div class="text-[10px] text-gray-400 mt-0.5">Mobil / Win10</div>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 2. ADIM: YAZILIM (LOADER) -->
+                <div class="lg:col-span-4">
+                  <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                      <span class="w-5 h-5 rounded-full bg-sky-400 text-black text-[10px] font-black flex items-center justify-center">2</span>
+                      <span>Mod Yazılımı (Altyapı)</span>
+                    </span>
+                    <span id="ccbStep2Status" class="text-[10px] font-extrabold text-sky-300">FABRIC</span>
+                  </div>
+                  <div id="ccbLoaderButtonsWrap" class="grid grid-cols-3 gap-2"></div>
+                </div>
+
+                <!-- 3. ADIM: OYUN SÜRÜMÜ -->
+                <div class="lg:col-span-4">
+                  <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                      <span class="w-5 h-5 rounded-full bg-amber-400 text-black text-[10px] font-black flex items-center justify-center">3</span>
+                      <span>Oyun Sürümü</span>
+                    </span>
+                    <span id="ccbStep3Status" class="text-[10px] font-extrabold text-amber-300">1.20.x</span>
+                  </div>
+                  <div id="ccbVersionButtonsWrap" class="grid grid-cols-3 gap-1.5"></div>
+                </div>
+              </div>
+
+              <!-- 4. ADIM: TEMA & ATMOSFER ARAMA KUTUSU -->
+              <div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <label for="ccbThemeInput" class="text-xs sm:text-sm font-black text-white flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-emerald-400 text-black text-[10px] font-black flex items-center justify-center shrink-0">4</span>
+                    <span>Oynamak İstediğiniz Temayı ve Atmosferi Yazın:</span>
+                  </label>
+                  <span id="ccbActiveConfigPill" class="text-[11px] font-black px-3 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-amber-300">
+                    JAVA • FABRIC • 1.20.x
+                  </span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <div class="relative flex-1">
+                    <svg class="w-5 h-5 text-modrinth absolute left-4 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="ccbThemeInput" onkeydown="if(event.key==='Enter')generateCustomComboFromTheme(false)" placeholder="Örn: hayatta kalma zombi salgını temalı oyun gerçekçi, korku, orta çağ rpg ejderha, fabrika otomasyon..." class="w-full bg-modrinth-dark border-2 border-modrinth-border focus:border-modrinth rounded-2xl pl-12 pr-4 py-3.5 text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none transition">
+                  </div>
+                  <button type="button" onclick="generateCustomComboFromTheme(false)" class="bg-modrinth hover:bg-modrinth-hover text-black font-black px-7 py-3.5 rounded-2xl text-xs sm:text-sm transition shadow-[0_0_25px_rgba(27,217,106,0.35)] shrink-0 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span>Kombo Paketi Oluştur</span>
+                  </button>
+                </div>
+
+                <!-- HIZLI TEMA SEÇİM ETİKETLERİ -->
+                <div class="flex flex-wrap items-center gap-1.5 mt-3.5">
+                  <span class="text-[11px] font-bold text-gray-400 mr-1">Hazır Tema Şablonları:</span>
+                  <button type="button" onclick="quickFillCustomComboTheme('hayatta kalma zombi salgını temalı oyun gerçekçi')" class="px-3 py-1.5 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border hover:border-amber-400/60 text-[11px] font-bold text-gray-200 transition">🧟 Hayatta Kalma Zombi Salgını (Gerçekçi)</button>
+                  <button type="button" onclick="quickFillCustomComboTheme('korku sisli mağara takipçi yaratıklar karanlık atmosfer')" class="px-3 py-1.5 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border hover:border-amber-400/60 text-[11px] font-bold text-gray-200 transition">👻 Korku & Sisli Mağara</button>
+                  <button type="button" onclick="quickFillCustomComboTheme('orta çağ rpg ejderha büyü zindan boss savaşları')" class="px-3 py-1.5 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border hover:border-amber-400/60 text-[11px] font-bold text-gray-200 transition">⚔️ Orta Çağ RPG, Boss & Büyü</button>
+                  <button type="button" onclick="quickFillCustomComboTheme('create fabrika teknoloji otomasyon tren mühendislik')" class="px-3 py-1.5 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border hover:border-amber-400/60 text-[11px] font-bold text-gray-200 transition">⚙️ Create Fabrika & Otomasyon</button>
+                  <button type="button" onclick="quickFillCustomComboTheme('uzay roket gezegenler ay mars kolonisi bilim kurgu')" class="px-3 py-1.5 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border hover:border-amber-400/60 text-[11px] font-bold text-gray-200 transition">🚀 Uzay & Gezegen Kolonisi</button>
+                  <button type="button" onclick="quickFillCustomComboTheme('çiftçilik yemek mutfak sıcak ev mobilya dekorasyon')" class="px-3 py-1.5 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border hover:border-amber-400/60 text-[11px] font-bold text-gray-200 transition">🌾 Çiftçilik, Yemek & Dekorasyon</button>
+                  <button type="button" onclick="quickFillCustomComboTheme('maksimum yüksek fps performans optimizasyon gerçekçi shader')" class="px-3 py-1.5 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border hover:border-amber-400/60 text-[11px] font-bold text-gray-200 transition">⚡ Ultra FPS & Gerçekçi Grafik</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- DURUM / TEKRAR EKLEME UYARI BANNERI -->
+            <div id="ccbStatusBanner" class="hidden mb-6 p-4 rounded-2xl border text-xs font-bold flex items-center justify-between gap-3"></div>
+
+            <!-- SONUÇ ALANI: TOPLU 1 KOMBO PAKETİ KARTI + PAKET ÖZETİ + EKLEMEYE DEVAM ET -->
+            <div id="ccbResultsWrapper" class="hidden space-y-6">
+              <!-- TOPLU TEK KOMBO PAKETİ KARTI -->
+              <div id="ccbUnifiedComboCardHost"></div>
+
+              <!-- EKLEMEYE DEVAM ET ARAMA KUTUSU -->
+              <div class="bg-modrinth-card border-2 border-modrinth/40 rounded-3xl p-5 sm:p-6 shadow-xl">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                  <label for="ccbContinueInput" class="text-sm sm:text-base font-black text-modrinth flex items-center gap-2">
+                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    <span>Eklemeye Devam Et</span>
+                  </label>
+                  <span class="text-[11px] font-semibold text-gray-400">Yukarıdaki kombo paketinize yeni mod, shader veya özellik dahil eder</span>
+                </div>
+                <p class="text-xs text-gray-300 mb-3.5">Paketinizde eksik gördüğünüz bir özellik varsa aşağıya yazın; mevcut paketinize otomatik uyumlu şekilde eklensin ve paket özeti güncellensin:</p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <div class="relative flex-1">
+                    <svg class="w-4 h-4 text-modrinth absolute left-4 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <input type="text" id="ccbContinueInput" onkeydown="if(event.key==='Enter')generateCustomComboFromTheme(true)" placeholder="Eklemeye devam et (Örn: sesli konuşma, harita, sırt çantası, gerçekçi su, mezar taşı, silah)..." class="w-full bg-modrinth-dark border-2 border-modrinth-border focus:border-modrinth rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none transition">
+                  </div>
+                  <button type="button" onclick="generateCustomComboFromTheme(true)" class="bg-amber-400 hover:bg-amber-300 text-black font-black px-6 py-3 rounded-2xl text-xs sm:text-sm transition shadow-lg shrink-0 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    <span>Pakete Dahil Et</span>
+                  </button>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5 mt-3">
+                  <span class="text-[10px] font-bold text-gray-400 mr-1">Tek Tıkla Pakete Ekle:</span>
+                  <button type="button" onclick="quickAppendCustomCombo('sesli konuşma voice chat')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ 🎙️ Sesli Konuşma</button>
+                  <button type="button" onclick="quickAppendCustomCombo('harita minimap dünya haritası')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ 🗺️ Mini Harita</button>
+                  <button type="button" onclick="quickAppendCustomCombo('sırt çantası backpack depolama')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ 🎒 Sırt Çantası</button>
+                  <button type="button" onclick="quickAppendCustomCombo('mezar taşı gravestone ceset')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ 🪦 Mezar Taşı</button>
+                  <button type="button" onclick="quickAppendCustomCombo('ışınlanma taşı waystones')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ 🔮 Işınlanma Taşı</button>
+                  <button type="button" onclick="quickAppendCustomCombo('ağaç devirme ve toplu maden kazma veinminer')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ ⛏️ Ağaç Devirme & VeinMiner</button>
+                  <button type="button" onclick="quickAppendCustomCombo('gerçekçi animasyonlar fresh animations')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ 🎬 Gerçekçi Animasyonlar</button>
+                </div>
+              </div>
+            </div>
+          </section>
+        `);
+      }
+
+      window.toggleComboChooserMenu = function(e) {
+        if (e) e.stopPropagation();
+        const dd = document.getElementById('comboChooserDropdown');
+        const simDd = document.getElementById('simChooserDropdown');
+        if (simDd) simDd.classList.add('hidden');
+        if (dd) dd.classList.toggle('hidden');
+      };
+
+      window.openComboChooserModal = function() {
+        const m = document.getElementById('comboChooserModal');
+        if (m) m.classList.remove('hidden');
+      };
+
+      window.closeComboChooserModal = function() {
+        const m = document.getElementById('comboChooserModal');
+        if (m) m.classList.add('hidden');
+      };
+
+      document.addEventListener('click', (e) => {
+        const wrap = document.getElementById('comboNavDropdownWrap');
+        const dd = document.getElementById('comboChooserDropdown');
+        if (dd && wrap && !wrap.contains(e.target)) {
+          dd.classList.add('hidden');
+        }
+      });
+
+      const hideAllSpecialSections = () => {
+        ['simViewSection', 'serverSimViewSection', 'combosHubViewSection', 'shaderSimViewSection', 'customComboBuilderSection'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.add('hidden');
+        });
+        const dd1 = document.getElementById('comboChooserDropdown');
+        if (dd1) dd1.classList.add('hidden');
+        const dd2 = document.getElementById('simChooserDropdown');
+        if (dd2) dd2.classList.add('hidden');
+        window.closeComboChooserModal();
+      };
+
+      const _origOpenCombosHubView = window.openCombosHubView;
+      window.openCombosHubView = function() {
+        hideAllSpecialSections();
+        _origOpenCombosHubView();
+      };
+
+      const _origOpenSimulationView = window.openSimulationView;
+      window.openSimulationView = function() {
+        hideAllSpecialSections();
+        _origOpenSimulationView();
+      };
+
+      const _origOpenServerSimulationView = window.openServerSimulationView;
+      window.openServerSimulationView = function() {
+        hideAllSpecialSections();
+        _origOpenServerSimulationView();
+      };
+
+      const _origOpenShaderSimulationView = window.openShaderSimulationView;
+      window.openShaderSimulationView = function() {
+        hideAllSpecialSections();
+        _origOpenShaderSimulationView();
+      };
+
+      const _origCloseSimulationView = window.closeSimulationView;
+      window.closeSimulationView = function() {
+        const ccb = document.getElementById('customComboBuilderSection');
+        if (ccb) ccb.classList.add('hidden');
+        _origCloseSimulationView();
+      };
+
+      window.scrollToCombos = function() {
+        window.toggleComboChooserMenu();
+      };
+
+      // --- KOMBO PAKETİ ÖZELLEŞTİR DURUMU ---
+      let ccbEdition = 'java';
+      let ccbLoader = 'fabric';
+      let ccbVersion = '1.20';
+      let ccbPackageItems = []; // { item, reason, isDep }
+      let ccbThemePrompts = []; // Kullanıcının girdiği tema başlıkları listesi
+      let ccbLastQuery = '';
+      let ccbExecutedQueries = new Set();
+
+      const CCB_VERSIONS = [
+        { code: '26.3', label: '26.3' },
+        { code: '1.21', label: '1.21.x' },
+        { code: '1.20', label: '1.20.x' },
+        { code: '1.19', label: '1.19.x' },
+        { code: '1.18', label: '1.18.x' },
+        { code: '1.16', label: '1.16.5' }
+      ];
+
+      function renderCustomComboStepControls() {
+        const btnJ = document.getElementById('ccbEdJava');
+        const btnB = document.getElementById('ccbEdBedrock');
+        const st1 = document.getElementById('ccbStep1Status');
+        if (btnJ && btnB) {
+          if (ccbEdition === 'java') {
+            btnJ.className = 'p-3 rounded-xl border-2 border-modrinth bg-modrinth/15 text-left transition shadow-md';
+            btnB.className = 'p-3 rounded-xl border border-modrinth-border bg-modrinth-dark hover:border-emerald-400/50 text-left transition opacity-75 hover:opacity-100';
+            if (st1) st1.innerText = 'Java Edition';
+          } else {
+            btnB.className = 'p-3 rounded-xl border-2 border-emerald-400 bg-emerald-500/15 text-left transition shadow-md';
+            btnJ.className = 'p-3 rounded-xl border border-modrinth-border bg-modrinth-dark hover:border-modrinth/50 text-left transition opacity-75 hover:opacity-100';
+            if (st1) st1.innerText = 'Bedrock / MCPE';
+          }
+        }
+
+        const ldrWrap = document.getElementById('ccbLoaderButtonsWrap');
+        const st2 = document.getElementById('ccbStep2Status');
+        if (ldrWrap) {
+          if (ccbEdition === 'bedrock') {
+            ccbLoader = 'bedrock';
+            if (st2) st2.innerText = 'BEDROCK (MCPE)';
+            ldrWrap.className = 'grid grid-cols-1 gap-2';
+            ldrWrap.innerHTML = `
+              <button type="button" class="p-3 rounded-xl border-2 border-emerald-400 bg-emerald-500/15 text-left flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-black text-white">Bedrock Add-On & Paket</div>
+                  <div class="text-[10px] text-emerald-300 mt-0.5">MCPE / Win10 • RenderDragon</div>
+                </div>
+                <span class="px-2 py-0.5 rounded bg-emerald-400 text-black text-[10px] font-black">SEÇİLİ</span>
+              </button>
+            `;
+          } else {
+            if (ccbLoader === 'bedrock') ccbLoader = 'fabric';
+            if (st2) st2.innerText = ccbLoader.toUpperCase();
+            ldrWrap.className = 'grid grid-cols-3 gap-2';
+            const loaders = [
+              { id: 'fabric', name: 'Fabric', sub: 'FPS & Modern' },
+              { id: 'forge', name: 'Forge', sub: 'Klasik & Silah' },
+              { id: 'neoforge', name: 'NeoForge', sub: 'Sanayi & RPG' }
+            ];
+            ldrWrap.innerHTML = loaders.map(l => {
+              const active = ccbLoader === l.id;
+              return `
+                <button type="button" onclick="setCustomComboLoader('${l.id}')" class="p-2.5 rounded-xl ${active ? 'border-2 border-sky-400 bg-sky-500/15 text-white shadow-md' : 'border border-modrinth-border bg-modrinth-dark text-gray-300 hover:border-white/30'} text-left transition">
+                  <div class="text-xs font-black">${l.name}</div>
+                  <div class="text-[10px] text-gray-400 truncate mt-0.5">${l.sub}</div>
+                </button>
+              `;
+            }).join('');
+          }
+        }
+
+        const verWrap = document.getElementById('ccbVersionButtonsWrap');
+        const st3 = document.getElementById('ccbStep3Status');
+        if (verWrap) {
+          const foundVer = CCB_VERSIONS.find(v => v.code === ccbVersion) || CCB_VERSIONS[2];
+          if (st3) st3.innerText = foundVer.label;
+          verWrap.innerHTML = CCB_VERSIONS.map(v => {
+            const active = ccbVersion === v.code;
+            return `
+              <button type="button" onclick="setCustomComboVersion('${v.code}')" class="px-2 py-2 rounded-xl text-xs font-extrabold transition ${active ? 'bg-amber-400 text-black border-2 border-amber-200 shadow-md' : 'bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-amber-400/50'}">
+                ${v.label}
+              </button>
+            `;
+          }).join('');
+        }
+
+        const pill = document.getElementById('ccbActiveConfigPill');
+        if (pill) {
+          pill.innerText = `${ccbEdition.toUpperCase()} • ${ccbLoader.toUpperCase()} • ${ccbVersion === '26.3' ? '26.3' : ccbVersion + '.x'}`;
+        }
+      }
+
+      window.openCustomComboBuilderView = function() {
+        hideAllSpecialSections();
+        document.getElementById('mainPortalView').classList.add('hidden');
+        const sec = document.getElementById('customComboBuilderSection');
+        if (sec) sec.classList.remove('hidden');
+        renderCustomComboStepControls();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      window.closeCustomComboBuilderView = function() {
+        const sec = document.getElementById('customComboBuilderSection');
+        if (sec) sec.classList.add('hidden');
+        document.getElementById('mainPortalView').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      window.setCustomComboEdition = function(ed) {
+        if (ccbEdition !== ed) {
+          ccbEdition = ed;
+          ccbLoader = ed === 'bedrock' ? 'bedrock' : 'fabric';
+          ccbPackageItems = [];
+          ccbThemePrompts = [];
+          ccbLastQuery = '';
+          ccbExecutedQueries.clear();
+          hideCustomComboStatusBanner();
+          renderCustomComboStepControls();
+          renderCustomComboStudioResult();
+        }
+      };
+
+      window.setCustomComboLoader = function(ldr) {
+        if (ccbLoader !== ldr) {
+          ccbLoader = ldr;
+          ccbPackageItems = [];
+          ccbThemePrompts = [];
+          ccbLastQuery = '';
+          ccbExecutedQueries.clear();
+          hideCustomComboStatusBanner();
+          renderCustomComboStepControls();
+          renderCustomComboStudioResult();
+        }
+      };
+
+      window.setCustomComboVersion = function(ver) {
+        if (ccbVersion !== ver) {
+          ccbVersion = ver;
+          ccbPackageItems = [];
+          ccbThemePrompts = [];
+          ccbLastQuery = '';
+          ccbExecutedQueries.clear();
+          hideCustomComboStatusBanner();
+          renderCustomComboStepControls();
+          renderCustomComboStudioResult();
+        }
+      };
+
+      window.quickFillCustomComboTheme = function(themeText) {
+        const inp = document.getElementById('ccbThemeInput');
+        if (inp) {
+          inp.value = themeText;
+          window.generateCustomComboFromTheme(false);
+        }
+      };
+
+      window.quickAppendCustomCombo = function(appendText) {
+        const inp = document.getElementById('ccbContinueInput');
+        if (inp) {
+          inp.value = appendText;
+          window.generateCustomComboFromTheme(true);
+        }
+      };
+
+      function showCustomComboStatusBanner(msg, type = 'warn') {
+        const banner = document.getElementById('ccbStatusBanner');
+        if (!banner) return;
+        banner.classList.remove('hidden');
+        if (type === 'warn') {
+          banner.className = 'mb-6 p-4 rounded-2xl border-2 border-amber-400 bg-amber-500/15 text-amber-200 text-xs font-extrabold flex items-center justify-between gap-3 shadow-lg';
+        } else {
+          banner.className = 'mb-6 p-4 rounded-2xl border-2 border-modrinth bg-modrinth/15 text-modrinth text-xs font-extrabold flex items-center justify-between gap-3 shadow-lg';
+        }
+        banner.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span>${type === 'warn' ? '⚠️' : '✅'}</span>
+            <span>${msg}</span>
+          </div>
+          <button type="button" onclick="document.getElementById('ccbStatusBanner').classList.add('hidden')" class="text-xs px-2.5 py-1 rounded-lg bg-black/30 hover:bg-black/50 text-white shrink-0">Kapat</button>
+        `;
+      }
+
+      function hideCustomComboStatusBanner() {
+        const banner = document.getElementById('ccbStatusBanner');
+        if (banner) banner.classList.add('hidden');
+      }
+
+      const THEME_CONCEPT_RULES = [
+        {
+          id: 'zombie_apocalypse',
+          label: 'Zombi Salgını & Kıyamet Hayatta Kalma',
+          purposeDesc: 'dünyayı zombi sürüleri, ateşli silahlar, üs savunma sistemleri ve zorlu hayatta kalma mekanikleriyle gerçek bir kıyamet senaryosuna dönüştürür',
+          regex: /zombi|zombie|salg[ıi]n|k[ıi]yamet|apocalypse|enfeksiyon|infection|horde|s[üu]r[üu]|barikat|savunma|tacz|silah|t[üu]fek|gun|warfare/,
+          needsShader: true,
+          needsPack: true,
+          shaderPref: ['spooklementary', 'insanity-shader', 'complementary-reimagined', 'hysteria-shaders', 'newb-x-shader', 'dark-visuals-be'],
+          packPref: ['fresh-animations', 'stay-true', 'patrix-32x', 'actions-and-stuff', 'red-spider-be'],
+          keywords: ['zombi', 'zombie', 'mutant', 'chaos', 'tacz', 'point-blank', 'security', 'first-aid', 'tough-as-nails', 'corpse', 'gravestone', 'parcool', 'sound-physics', 'born-in-chaos'],
+          preferredIds: {
+            fabric: ['mutant-monsters', 'point-blank', 'tough-as-nails', 'serene-seasons', 'sound-physics-remastered', 'presence-footsteps', 'travelers-backpack', 'gravestone'],
+            forge: ['tacz', 'born-in-chaos', 'parcool', 'first-aid', 'security-craft', 'sound-physics-remastered', 'corpse', 'alexs-mobs'],
+            neoforge: ['security-craft', 'corpse', 'sophisticated-backpacks', 'waystones', 'guard-villagers', 'apotheosis'],
+            bedrock: ['br-True-Survival-Zombie', 'br-Mutant-Creatures', 'br-Security-Craft-Bedrock', 'br-GraveStone-Bedrock', 'br-Health-Bar-Indicators']
+          }
+        },
+        {
+          id: 'horror_thriller',
+          label: 'Korku, Sis & Karanlık Gerilim',
+          purposeDesc: 'mağaraları ve geceleri yoğun sis, yankılı ses fiziği, akıl sağlığı sistemi ve pusuda bekleyen takipçi yaratıklarla psikolojik korku atmosferine çevirir',
+          regex: /korku|horror|gerilim|sis|fog|dweller|paranormal|karanl[ıi]k|ürpertici|stalker|knocker|sanity|ak[ıi]l/,
+          needsShader: true,
+          needsPack: true,
+          shaderPref: ['insanity-shader', 'spooklementary', 'hysteria-shaders', 'dark-visuals-be', 'flashlight-shader-be'],
+          packPref: ['fresh-animations', 'ashen-16x', 'excalibur', 'red-spider-be', 'aesthetic-sounds-be'],
+          keywords: ['dweller', 'fog', 'knocker', 'sanity', 'horror', 'korku', 'chaos', 'whisperwoods', 'sound-physics', 'darkness', 'stalker', 'bloodbath'],
+          preferredIds: {
+            fabric: ['whisperwoods', 'true-darkness', 'sound-physics-remastered', 'presence-footsteps', 'ambientsounds', 'mutant-monsters', 'nyfs-spiders'],
+            forge: ['cave-dweller-reimagined', 'the-man-from-the-fog', 'the-knocker', 'sanity-descent', 'born-in-chaos', 'sound-physics-remastered'],
+            neoforge: ['deeper-and-darker', 'the-undergarden', 'evilcraft', 'eidolon-repraised', 'corpse'],
+            bedrock: ['stalker-horror-be', 'bloodbath-horror-be', 'haunted-armor-be', 'creeping-crypt-be', 'br-Deep-Dark-Expansion']
+          }
+        },
+        {
+          id: 'realistic_survival',
+          label: 'Gerçekçi Hayatta Kalma & Doğa Atmosferi',
+          purposeDesc: 'mevsim geçişleri, vücut sıcaklığı/susuzluk, gerçekçi ses yankıları, doğal biyom oluşumu ve sinematik ışıklandırma ile oyunu ultra gerçekçi hale getirir',
+          regex: /ger[çc]ek[çc]i|realist|realistic|atmosfer|do[ğg]a|hayatta kalma|survival|mevsim|season|susuzluk|s[ıi]cakl[ıi]k|fizik|physics|grafik|sinematik|cinematic/,
+          needsShader: true,
+          needsPack: true,
+          shaderPref: ['complementary-reimagined', 'complementary-unbound', 'bsl-shaders', 'bliss-shader', 'photon-shader', 'newb-x-shader', 'definitive-vibrant-visuals'],
+          packPref: ['fresh-animations', 'stay-true', 'patrix-32x', 'better-leaves', 'dramatic-skys', 'actions-and-stuff', 'faithful-64x-be', 'aesthetic-sounds-be'],
+          keywords: ['serene-seasons', 'tough-as-nails', 'terralith', 'tectonic', 'biomes-o-plenty', 'sound-physics', 'ambient', 'footsteps', 'effective', 'carry-on', 'comforts', 'naturalist'],
+          preferredIds: {
+            fabric: ['terralith', 'tectonic', 'serene-seasons', 'tough-as-nails', 'sound-physics-remastered', 'ambientsounds', 'presence-footsteps', 'effective', 'naturalist', 'carry-on', 'comforts'],
+            forge: ['alexs-mobs', 'alexs-caves', 'quark', 'untamed-wilds', 'serene-seasons', 'sound-physics-remastered', 'parcool'],
+            neoforge: ['biomes-o-plenty', 'sophisticated-backpacks', 'waystones', 'farmers-delight', 'guard-villagers', 'corpse'],
+            bedrock: ['better-on-bedrock', 'core-craft-bedrock', 'arborea-be', 'bedrock-essentials-be', 'vissoms-backpack-be']
+          }
+        },
+        {
+          id: 'rpg_fantasy_magic',
+          label: 'Orta Çağ RPG, Boss, Ejderha & Büyü',
+          purposeDesc: 'devasa zindan bossları, ejderhalar, büyü okulları, yetenek ağaçları ve akıcı kılıç animasyonlarıyla dünyayı destansı bir aksiyon-RPG oyununa çevirir',
+          regex: /rpg|b[üu]y[üu]|magic|spell|ejderha|dragon|boss|zindan|dungeon|orta\s*[çc]a[ğg]|medieval|şövalye|knight|k[ıi]l[ıi][çc]|sword|fantes?zi|fantasy|yetenek|skill/,
+          needsShader: true,
+          needsPack: true,
+          shaderPref: ['complementary-unbound', 'solas-shader', 'astralex', 'bsl-shaders', 'bslb-dreamy-visuals'],
+          packPref: ['excalibur', 'whimscape', 'fresh-animations', 'xalis-enchanted-books', 'actions-and-stuff'],
+          keywords: ['spell', 'wizard', 'paladin', 'combat', 'swords', 'cataclysm', 'dragon', 'ice-and-fire', 'dungeon', 'yungs', 'artifacts', 'apotheosis', 'ars-nouveau', 'skill'],
+          preferredIds: {
+            fabric: ['better-combat', 'simply-swords', 'wizards-rpg', 'paladins-and-priests', 'simply-skills', 'bosses-of-mass-destruction', 'mythic-mounts', 'when-dungeons-arise', 'artifacts', 'yungs-better-dungeons'],
+            forge: ['mowzies-mobs', 'aquamirae', 'dungeons-gear', 'dungeons-mobs', 'blue-skies', 'born-in-chaos', 'alexs-mobs'],
+            neoforge: ['cataclysm', 'irons-spells-n-spellbooks', 'ars-nouveau', 'ice-and-fire-ce', 'apotheosis', 'the-twilight-forest', 'the-aether', 'relics-mod'],
+            bedrock: ['dlcraft-addonpack-be', 'br-Dragon-Mounts-Bedrock', 'br-Epic-Knights-Bedrock', 'br-Spartan-Weaponry-Bedrock', 'br-Dungeon-Expanse', 'oberon-boss-be', 'br-Origins-Bedrock']
+          }
+        },
+        {
+          id: 'tech_factory_create',
+          label: 'Fabrika, Teknoloji, Otomasyon & Mühendislik',
+          purposeDesc: 'dişli çarklar, otomatik üretim bantları, maden işleme reaktörleri, tren hatları ve dijital bilgisayar depolama ağlarıyla tam otomasyon kurmanızı sağlar',
+          regex: /fabrika|factory|teknoloji|tech|otomasyon|automation|create|makine|machine|elektrik|enerji|n[üu]kleer|reakt[öo]r|end[üu]stri|sanayi|tren|m[üu]hendis/,
+          needsShader: false,
+          needsPack: false,
+          shaderPref: ['complementary-reimagined', 'bsl-shaders', 'newb-x-shader'],
+          packPref: ['faithful-32x', 'redstone-tweaks', 'faithful-64x-be'],
+          keywords: ['create', 'mekanism', 'ae2', 'refined-storage', 'thermal', 'immersive-engineering', 'techreborn', 'modern-industrialization', 'powah', 'flux', 'pipez'],
+          preferredIds: {
+            fabric: ['create-fabric', 'create-steam-n-rails', 'techreborn', 'modern-industrialization', 'indrev', 'toms-storage', 'chunk-loaders'],
+            forge: ['create', 'create-new-age', 'create-diesel-generators', 'create-ore-excavation', 'create-big-cannons', 'cc-tweaked'],
+            neoforge: ['mekanism', 'ae2', 'immersive-engineering', 'thermal-expansion', 'ender-io', 'powah', 'flux-networks', 'pipez', 'industrial-foregoing'],
+            bedrock: ['create-plus-be', 'br-IndustrialCraft-Bedrock', 'br-Refined-Storage-Bedrock', 'br-Quarry-Miner', 'br-Trains-Railways']
+          }
+        },
+        {
+          id: 'space_scifi',
+          label: 'Uzay, Roket & Gezegenler Arası Koloni',
+          purposeDesc: 'kendi uzay roketinizi ve oksijen sistemlerinizi üreterek Ay, Mars ve yörünge istasyonlarında gezegenler arası endüstriyel üsler kurmanızı sağlar',
+          regex: /uzay|space|roket|rocket|gezegen|planet|mars|ay\b|moon|astronot|bilim\s*kurgu|scifi|galaksi|y[öo]r[üu]nge/,
+          needsShader: true,
+          needsPack: false,
+          shaderPref: ['astralex', 'solas-shader', 'complementary-unbound', 'aurora-sky-be'],
+          packPref: ['dramatic-skys', 'faithful-32x'],
+          keywords: ['ad-astra', 'space', 'uzay', 'roket', 'techreborn', 'eden-ring', 'galactic'],
+          preferredIds: {
+            fabric: ['ad-astra', 'techreborn', 'create-fabric', 'eden-ring', 'oritech'],
+            forge: ['create', 'create-new-age', 'cc-tweaked', 'industrial-upgrade'],
+            neoforge: ['mekanism', 'ae2', 'powah', 'extreme-reactors', 'laser-bridges'],
+            bedrock: ['br-Space-Galactic', 'create-plus-be', 'br-IndustrialCraft-Bedrock', 'aurora-sky-be']
+          }
+        },
+        {
+          id: 'farming_cozy_furniture',
+          label: 'Çiftçilik, Yemek, Gastronomi & Mobilya',
+          purposeDesc: 'yüzlerce yeni yemek ve içecek tarifi, çok bloklu mutfak tezgahları, ekin çeşitleri ve özenli ev mobilyalarıyla huzurlu bir yaşam/çiftlik deneyimi sunar',
+          regex: /[çc]ift[çc]ilik|farm|tar[ıi]m|yemek|mutfak|cooking|restoran|mobilya|furniture|dekorasyon|decor|ev\b|cozy|bah[çc]e|hayvan|köpek|pet/,
+          needsShader: true,
+          needsPack: true,
+          shaderPref: ['bsl-shaders', 'mellow-shader', 'complementary-reimagined', 'bslb-dreamy-visuals'],
+          packPref: ['stay-true', 'whimscape', 'crops-3d', 'fresh-animations', 'actions-and-stuff'],
+          keywords: ['farmers-delight', 'croptopia', 'handcrafted', 'macaws', 'furniture', 'cooking', 'botany-pots', 'supplementaries'],
+          preferredIds: {
+            fabric: ['farmers-delight-refabricated', 'croptopia', 'handcrafted', 'macaws-furniture', 'macaws-roofs', 'macaws-bridges', 'supplementaries', 'botany-pots', 'critters-and-companions'],
+            forge: ['abnormals-delight', 'collectors-reap', 'vintage-delight', 'cuisine-delight', 'quark', 'alexs-mobs'],
+            neoforge: ['farmers-delight', 'cooking-for-blockheads', 'farming-for-blockheads', 'spice-of-life-carrot', 'productive-bees', 'mystical-agriculture'],
+            bedrock: ['kaleidoscope-cookery-be', 'br-Pam-Harvest-Bedrock', 'br-Furniture-Modern-Pro', 'br-Medieval-Furniture', 'br-Pet-Dogs-Expansion']
+          }
+        },
+        {
+          id: 'fps_performance',
+          label: 'Maksimum FPS, Optimizasyon & Akıcılık',
+          purposeDesc: 'render motorunu, ışıklandırmayı ve RAM tüketimini baştan aşağı optimize ederek FPS değerinizi 3-4 katına çıkarır ve anlık takılmaları bitirir',
+          regex: /\bfps\b|performans|optimizasyon|kasma|lag|ak[ıi]c[ıi]|h[ıi]z|boost|patates|d[üu]ş[üu]k\s*sistem|aternos|ram\b/,
+          needsShader: false,
+          needsPack: true,
+          shaderPref: ['makeup-ultra-fast', 'potato-shaders', 'miniature-shader', 'sodium-gl-reimagined-be'],
+          packPref: ['fast-better-grass', 'rodrigos-pack', 'f8thful-pack', 'max-fps-boost-be'],
+          keywords: ['sodium', 'lithium', 'ferrite', 'immediatelyfast', 'entityculling', 'modernfix', 'embeddium', 'radium', 'canary', 'voxy', 'c2me', 'noisium'],
+          preferredIds: {
+            fabric: ['sodium', 'lithium', 'ferrite-core', 'immediatelyfast', 'entityculling', 'modernfix', 'moreculling', 'c2me-fabric', 'noisium', 'voxy'],
+            forge: ['ferritecore-forge', 'modernfix-forge', 'radium', 'saturn', 'clumps-forge', 'chunky-forge'],
+            neoforge: ['embeddium', 'ImmediatelyFast-Forge', 'entityculling-neoforge', 'ferritecore-neoforge', 'canary', 'clumps-neoforge'],
+            bedrock: ['max-fps-boost-be', 'vulkancore-be', 'sodium-gl-reimagined-be', 'fast-better-grass-be']
+          }
+        },
+        {
+          id: 'pvp_combat',
+          label: 'Rekabetçi PvP, Savaş & Hareket',
+          purposeDesc: 'düşük alev efekti, net nişangah, zırh dayanıklılık göstergesi, akıcı vuruş animasyonları ve yüksek FPS ile PvP savaşlarında maksimum avantaj sağlar',
+          regex: /\bpvp\b|bedwars|skywars|crystal|kristal|rekabet|duello|arena|kalkan|shield|crosshair/,
+          needsShader: false,
+          needsPack: true,
+          shaderPref: ['makeup-ultra-fast', 'sildurs-enhanced-default'],
+          packPref: ['low-on-fire', 'vanillatweaks-lower-shield', 'sepworks-crosshair-be', 'br-pvp-crystal-optimizer'],
+          keywords: ['pvp', 'combat', 'shield', 'low-on-fire', 'crosshair', 'sodium', 'zoomify', '3dskinlayers', 'parcool'],
+          preferredIds: {
+            fabric: ['sodium', 'immediatelyfast', 'entityculling', 'better-combat', 'combat-roll', 'zoomify', 'status-effect-bars', 'durability-tooltip'],
+            forge: ['parcool', 'tacz', 'dungeons-gear', 'ferritecore-forge', 'modernfix-forge'],
+            neoforge: ['embeddium', 'skin-layers-3d-neoforge', 'apotheosis', 'simply-swords'],
+            bedrock: ['java-combat-be', 'sweep-n-slash-be', 'sepworks-crosshair-be', 'br-pvp-crystal-optimizer', 'full-cobweb-be']
+          }
+        }
+      ];
+
+      const SPECIFIC_FEATURE_KEYWORDS = [
+        { regex: /sesli\s*konu[şs]ma|voice\s*chat|mikrofon|telsiz/, label: 'Yakınlık Tabanlı Sesli Konuşma', ids: ['simple-voice-chat', 'plasmo-voice'], kw: ['voice'] },
+        { regex: /harita|minimap|map|xaero|journeymap/, label: 'Mini Harita & Dünya Haritası', ids: ['xaeros-minimap', 'xaeros-world-map', 'journeymap'], kw: ['minimap', 'world-map', 'journeymap'] },
+        { regex: /s[ıi]rt\s*[çc]antas[ıi]|backpack|[çc]anta/, label: 'Gelişmiş Sırt Çantası & Envanter', ids: ['travelers-backpack', 'sophisticated-backpacks', 'inmis', 'vissoms-backpack-be'], kw: ['backpack'] },
+        { regex: /mezar|gravestone|ceset|corpse|eşya\s*kaybolma/, label: 'Güvenli Mezar Taşı (Eşya Koruma)', ids: ['gravestone', 'corpse', 'yigd', 'br-GraveStone-Bedrock'], kw: ['gravestone', 'corpse', 'grave'] },
+        { regex: /waystone|[ıi][şs][ıi]nlanma|teleport/, label: 'Waystone Hızlı Işınlanma Taşları', ids: ['fwaystones', 'waystones', 'simple-waystone-be', 'br-Teleporters-Portals'], kw: ['waystone', 'teleport'] },
+        { regex: /a[ğg]a[çc]\s*devir|tree\s*harvester|fallingtree|vein\s*min|toplu\s*maden/, label: 'Tek Vuruşta Ağaç & Cevher Damarı Kazma', ids: ['tree-harvester', 'veinminer', 'bedrock-essentials-be', 'br-Vein-Miner-Ultimine'], kw: ['tree-harvester', 'veinmin'] },
+        { regex: /animasyon|animation|hareket|fresh\s*animations|actions\s*and\s*stuff/, label: 'Akıcı Karakter & Yaratık Animasyonları', ids: ['fresh-animations', 'fresh-moves', 'hold-my-items', 'actions-and-stuff', 'br-actions-and-stuff'], kw: ['animation', 'actions-and-stuff'] },
+        { regex: /uzak\s*g[öo]r[üu][şs]|voxy|distant\s*horizons|128\s*chunk|lod\b/, label: '128+ Chunk Ultra Uzak Görüş (LoD)', ids: ['voxy', 'bobby'], kw: ['voxy', 'distant'] },
+        { regex: /pokemon|cobblemon|pikachu|pok[eé]/, label: 'Cobblemon Pokémon Dünyası & Eğitmenlik', ids: ['cobblemon', 'cobblemon-mega-showdown', 'cobblemounts-mod', 'cobblemon-spawn-notify'], kw: ['cobblemon'] },
+        { regex: /su\b|okyanus|ocean|deniz|dalga|water/, label: 'Gerçekçi Okyanus, Deniz Canlıları & Su Fiziği', ids: ['upgrade-aquatic', 'oceans-delight', 'aquamirae', 'effective', 'small-ships', 'br-Aquaculture-Bedrock', 'complementary-unbound'], kw: ['aquatic', 'ocean', 'water'] },
+        { regex: /araba|u[çc]ak|gemi|tren|helikopter|ara[çc]/, label: 'Sürülebilir Uçak, Gemi ve Kara Araçları', ids: ['immersive-aircraft', 'small-ships', 'automobility', 'br-Planes-Helicopters', 'br-Boats-Ships'], kw: ['aircraft', 'ships', 'automobility'] },
+        { regex: /k[öo]yl[üu]|muhaf[ıi]z|krall[ıi]k|minecolonies/, label: 'Yaşayan Köylüler, Muhafız Ordusu & Krallık', ids: ['minecolonies', 'guard-villagers', 'towns-and-towers', 'br-Villager-Guards-Soldiers'], kw: ['villager', 'minecolonies'] }
+      ];
+
+      function isItemCompatibleWithSelection(item) {
+        if (!item) return false;
+        if (item.edition !== ccbEdition) return false;
+        if (ccbVersion && item.versions && !item.versions.includes(ccbVersion)) return false;
+        if (ccbEdition === 'bedrock') return true;
+        if (item.category === 'shader' || item.category === 'resourcepack') return true;
+        return item.loader === ccbLoader;
+      }
+
+      function wouldConflictWithExisting(candidate, currentList) {
+        if (!candidate) return true;
+        const candConf = (candidate.conflicts || []).map(x => x.toLowerCase());
+        return currentList.some(entry => {
+          const kept = entry.item;
+          if (kept.id === candidate.id) return true;
+          const keptConf = (kept.conflicts || []).map(x => x.toLowerCase());
+          return candConf.includes(kept.title.toLowerCase()) || keptConf.includes(candidate.title.toLowerCase());
+        });
+      }
+
+      window.generateCustomComboFromTheme = function(isAppend = false) {
+        const inputEl = document.getElementById(isAppend ? 'ccbContinueInput' : 'ccbThemeInput');
+        if (!inputEl) return;
+        const rawQuery = (inputEl.value || '').trim();
+        if (!rawQuery) {
+          showToast('Lütfen istediğiniz oyun temasını veya özelliği yazın.');
+          inputEl.focus();
+          return;
+        }
+
+        const normQuery = rawQuery.toLowerCase().replace(/\s+/g, ' ').trim();
+
+        // 2 kere üst üste aynı istek veya önceden eklenmiş tema kontrolü
+        if (normQuery === ccbLastQuery || (ccbExecutedQueries.has(normQuery) && ccbPackageItems.length > 0)) {
+          const msg = `"${rawQuery}" isteğini zaten eklediniz! İlgili mod, shader ve paketler halihazırda kombo paketinizde bulunduğu için tekrar eklenmedi.`;
+          showCustomComboStatusBanner(msg, 'warn');
+          showToast('Bu istek zaten paketinize eklenmiş durumda!');
+          return;
+        }
+
+        const startList = isAppend ? ccbPackageItems.slice() : [];
+        const addedNow = [];
+
+        const tryAddItem = (item, reason, isDep = false) => {
+          if (!item || !isItemCompatibleWithSelection(item)) return false;
+          if (startList.some(e => e.item.id === item.id) || addedNow.some(e => e.item.id === item.id)) return false;
+          const combined = [...startList, ...addedNow];
+          if (wouldConflictWithExisting(item, combined)) return false;
+          addedNow.push({ item, reason, isDep });
+          return true;
+        };
+
+        // 1) Spesifik özellik eşleşmeleri
+        SPECIFIC_FEATURE_KEYWORDS.forEach(feat => {
+          if (feat.regex.test(normQuery)) {
+            feat.ids.forEach(id => {
+              const found = catalogueData.find(m => m.id === id);
+              if (found) tryAddItem(found, `${feat.label} için eklendi`);
+            });
+            feat.kw.forEach(k => {
+              const matches = catalogueData.filter(m =>
+                isItemCompatibleWithSelection(m) &&
+                !isSyntheticVariantItem(m) &&
+                (m.title.toLowerCase().includes(k) || m.slug.toLowerCase().includes(k))
+              ).slice(0, 2);
+              matches.forEach(m => tryAddItem(m, `${feat.label} için eklendi`));
+            });
+          }
+        });
+
+        // 2) Tema ve atmosfer kuralları
+        const matchedRules = THEME_CONCEPT_RULES.filter(r => r.regex.test(normQuery));
+        const wantsShaderExplicit = /shader|g[öo]lge|grafik|ger[çc]ek[çc]i|realist|atmosfer|[ıi][şs][ıi]k|sinematik|su\s*yans[ıi]ma/.test(normQuery);
+        const wantsPackExplicit = /kaynak\s*paket|doku|texture|resource\s*pack|animasyon|ger[çc]ek[çc]i|3d/.test(normQuery);
+
+        matchedRules.forEach(rule => {
+          const prefIds = (rule.preferredIds && rule.preferredIds[ccbLoader]) || [];
+          prefIds.forEach(pid => {
+            const item = catalogueData.find(m => m.id === pid);
+            if (item) tryAddItem(item, `${rule.label} ana modu`);
+          });
+
+          rule.keywords.forEach(kw => {
+            const candidates = catalogueData.filter(m =>
+              m.category === 'mod' &&
+              isItemCompatibleWithSelection(m) &&
+              !isSyntheticVariantItem(m) &&
+              (m.title.toLowerCase().includes(kw) || m.desc.toLowerCase().includes(kw) || m.slug.toLowerCase().includes(kw))
+            );
+            candidates.slice(0, 2).forEach(c => tryAddItem(c, `${rule.label} atmosferi için`));
+          });
+
+          if (rule.needsShader || wantsShaderExplicit) {
+            const hasShaderAlready = [...startList, ...addedNow].some(e => e.item.category === 'shader');
+            if (!hasShaderAlready) {
+              for (const sId of rule.shaderPref) {
+                const shd = catalogueData.find(m => (m.id === sId || m.slug === sId) && m.category === 'shader' && isItemCompatibleWithSelection(m));
+                if (shd && tryAddItem(shd, `${rule.label} atmosferi için Shader`)) {
+                  if (ccbEdition === 'java') {
+                    const engineId = ccbLoader === 'fabric' ? 'iris' : (ccbLoader === 'forge' ? 'oculus' : 'iris-neoforge');
+                    const eng = catalogueData.find(m => m.id === engineId && isItemCompatibleWithSelection(m));
+                    if (eng) tryAddItem(eng, 'Shader çalıştırıcı motor', true);
+                  }
+                  break;
+                }
+              }
+            }
+          }
+
+          if (rule.needsPack || wantsPackExplicit) {
+            const currentPacksCount = [...startList, ...addedNow].filter(e => e.item.category === 'resourcepack').length;
+            if (currentPacksCount < 2) {
+              for (const pId of rule.packPref) {
+                const pk = catalogueData.find(m => (m.id === pId || m.slug === pId) && m.category === 'resourcepack' && isItemCompatibleWithSelection(m));
+                if (pk) {
+                  tryAddItem(pk, `${rule.label} doku & animasyon paketi`);
+                  if ([...startList, ...addedNow].filter(e => e.item.category === 'resourcepack').length >= 2) break;
+                }
+              }
+            }
+          }
+        });
+
+        // 3) Doğrudan katalog araması
+        const queryTokens = normQuery.split(/\s+/).filter(w => w.length >= 3 && !['temalı', 'oyun', 'için', 'olan', 'modu', 'paketi', 'olsun', 'istiyorum'].includes(w));
+        if (queryTokens.length > 0) {
+          const directMatches = catalogueData
+            .filter(m => isItemCompatibleWithSelection(m) && !isSyntheticVariantItem(m))
+            .map(m => {
+              const hay = `${m.title} ${getLocalizedTitle(m)} ${m.desc} ${m.slug}`.toLowerCase();
+              let score = 0;
+              if (hay.includes(normQuery)) score += 50;
+              queryTokens.forEach(tok => {
+                if (m.title.toLowerCase().includes(tok) || m.slug.toLowerCase().includes(tok)) score += 18;
+                else if (hay.includes(tok)) score += 7;
+              });
+              return { item: m, score };
+            })
+            .filter(x => x.score >= 12)
+            .sort((a, b) => b.score - a.score);
+
+          const maxDirect = isAppend ? 3 : (addedNow.length === 0 ? 7 : 3);
+          directMatches.slice(0, maxDirect).forEach(d => {
+            tryAddItem(d.item, `"${rawQuery}" isteğinizle eşleşti`);
+          });
+        }
+
+        // 4) Yeni paket oluşturulurken temel FPS / Performans motorunu da ekle
+        if (!isAppend && addedNow.length > 0) {
+          if (ccbEdition === 'java' && ccbLoader === 'fabric') {
+            ['sodium', 'ferrite-core'].forEach(id => {
+              const pMod = catalogueData.find(m => m.id === id);
+              if (pMod) tryAddItem(pMod, 'Yüksek FPS ve akıcılık optimizasyonu');
+            });
+          } else if (ccbEdition === 'java' && ccbLoader === 'forge') {
+            ['ferritecore-forge', 'modernfix-forge'].forEach(id => {
+              const pMod = catalogueData.find(m => m.id === id);
+              if (pMod) tryAddItem(pMod, 'RAM ve FPS optimizasyonu');
+            });
+          } else if (ccbEdition === 'java' && ccbLoader === 'neoforge') {
+            ['embeddium', 'ferritecore-neoforge'].forEach(id => {
+              const pMod = catalogueData.find(m => m.id === id);
+              if (pMod) tryAddItem(pMod, 'Yüksek FPS ve RAM optimizasyonu');
+            });
+          }
+        }
+
+        if (addedNow.length === 0) {
+          if (startList.length > 0) {
+            showCustomComboStatusBanner(`"${rawQuery}" ile ilgili uyumlu içerikler zaten kombo paketinizde yer alıyor! Halihazırda ekli olduğu için tekrar eklenmedi.`, 'warn');
+            showToast('İstediğiniz içerikler zaten pakette ekli!');
+          } else {
+            showCustomComboStatusBanner(`"${rawQuery}" için seçtiğiniz sürümde (${ccbLoader.toUpperCase()} • ${ccbVersion}) eşleşen içerik bulunamadı. Farklı kelimeler deneyebilirsiniz.`, 'warn');
+          }
+          return;
+        }
+
+        // 5) Zorunlu yan modları (bağımlılıkları) otomatik çöz ve pakete dahil et
+        const combinedItems = [...startList, ...addedNow].map(e => e.item);
+        const analysis = analyzeModList(combinedItems);
+        if (analysis && Array.isArray(analysis.missingDeps)) {
+          analysis.missingDeps.forEach(m => {
+            if (m && m.dep && !combinedItems.some(ci => ci.id === m.dep.id)) {
+              addedNow.push({
+                item: m.dep,
+                reason: `${m.requiredBy.slice(0, 2).join(', ')} için zorunlu yan mod`,
+                isDep: true
+              });
+              combinedItems.push(m.dep);
+            }
+          });
+        }
+
+        if (!isAppend) {
+          ccbThemePrompts = [rawQuery];
+        } else if (!ccbThemePrompts.includes(rawQuery)) {
+          ccbThemePrompts.push(rawQuery);
+        }
+
+        ccbPackageItems = [...startList, ...addedNow];
+        ccbLastQuery = normQuery;
+        ccbExecutedQueries.add(normQuery);
+
+        if (isAppend) {
+          inputEl.value = '';
+          showCustomComboStatusBanner(`"${rawQuery}" isteğiniz doğrultusunda +${addedNow.length} yeni içerik mevcut kombo paketinize eklendi ve paket özeti güncellendi!`, 'ok');
+          showToast(`+${addedNow.length} yeni içerik kombo paketine eklendi!`);
+        } else {
+          showCustomComboStatusBanner(`"${rawQuery}" temasına özel toplu kombo paketiniz (${ccbPackageItems.length} uyumlu içerik) başarıyla oluşturuldu!`, 'ok');
+          showToast(`Özel kombo paketi hazır (${ccbPackageItems.length} içerik)`);
+        }
+
+        renderCustomComboStudioResult();
+      };
+
+      // Paketin Ne İşe Yaradığını Özetleyen Akıllı Özet Üretici
+      function buildCustomComboSummaryData() {
+        const mainMods = ccbPackageItems.filter(e => e.item.category === 'mod' && !e.isDep).map(e => e.item);
+        const shaders = ccbPackageItems.filter(e => e.item.category === 'shader').map(e => e.item);
+        const packs = ccbPackageItems.filter(e => e.item.category === 'resourcepack').map(e => e.item);
+        const deps = ccbPackageItems.filter(e => e.isDep).map(e => e.item);
+
+        const fullPromptText = ccbThemePrompts.join(' + ') || 'Özel Tema';
+        const matchedRules = THEME_CONCEPT_RULES.filter(r => r.regex.test(fullPromptText.toLowerCase()));
+        const badgeText = matchedRules.length > 0
+          ? matchedRules.map(r => r.label.split('&')[0].trim()).slice(0, 2).join(' & ')
+          : 'Özel Tasarım Kombo';
+
+        const titleCapitalized = fullPromptText.charAt(0).toUpperCase() + fullPromptText.slice(1);
+        const packageTitle = `${titleCapitalized} — Özel Kombo Paketi`;
+
+        const purposePhrases = matchedRules.map(r => r.purposeDesc);
+        const mainModNames = mainMods.slice(0, 5).map(m => getLocalizedTitle(m)).join(', ');
+        const shaderNames = shaders.map(s => getLocalizedTitle(s)).join(', ');
+        const packNames = packs.map(p => getLocalizedTitle(p)).join(', ');
+        const depNames = deps.map(d => getLocalizedTitle(d)).join(', ');
+
+        let overviewParagraph = `Bu özel kombo paketi, <strong>${ccbEdition === 'java' ? 'Minecraft Java Edition' : 'Minecraft Bedrock / MCPE'} (${ccbLoader.toUpperCase()} • ${ccbVersion === '26.3' ? '26.3' : ccbVersion + '.x'})</strong> sürümünüz için <strong>"${fullPromptText}"</strong> temasına özel olarak bir araya getirilmiştir. `;
+        if (purposePhrases.length > 0) {
+          overviewParagraph += `Paket bir bütün olarak ${purposePhrases.join('; aynı zamanda ')}. `;
+        } else {
+          overviewParagraph += `Paket içerisindeki ${mainMods.length} ana mod dünyanıza yeni oynanış mekanikleri ve performans iyileştirmeleri kazandırır. `;
+        }
+        if (shaders.length > 0 || packs.length > 0) {
+          overviewParagraph += `Görsel atmosferi tamamlamak için pakete <strong>${[shaderNames, packNames].filter(Boolean).join(' ve ')}</strong> dahil edilmiş olup, oyun içi ışıklandırma, blok dokuları ve animasyonlar temaya uygun hale getirilmiştir. `;
+        }
+        overviewParagraph += `Tüm içerikler birbiriyle <strong>%100 uyumludur (0 çakışma)</strong>${deps.length > 0 ? ` ve modların sorunsuz çalışması için gereken <strong>${depNames}</strong> yan modları pakete otomatik eklenmiştir.` : '.'}`;
+
+        const highlights = [
+          {
+            icon: '🎮',
+            title: `Ana Oynanış & Tema Modları (${mainMods.length} Mod)`,
+            color: 'text-emerald-400',
+            text: mainMods.length > 0
+              ? `${mainModNames}${mainMods.length > 5 ? ` ve +${mainMods.length - 5} mod daha` : ''} ile istediğiniz oyun mekaniklerini ve FPS optimizasyonunu sağlar.`
+              : 'Temaya uygun yardımcı içerikler eklendi.'
+          },
+          {
+            icon: '🌅',
+            title: `Görsel Atmosfer: Shader & Kaynak Paketi (${shaders.length + packs.length} Paket)`,
+            color: 'text-sky-400',
+            text: (shaders.length + packs.length) > 0
+              ? `${[shaderNames, packNames].filter(Boolean).join(' + ')} sayesinde gerçekçi ışıklandırma, gökyüzü, su yansımaları ve animasyonlar sunar.`
+              : 'Vanilya grafik yapısını koruyarak maksimum FPS odaklı çalışır.'
+          },
+          {
+            icon: '🛡️',
+            title: `Çakışma & Yan Mod Garantisi (${deps.length} Zorunlu Kütüphane)`,
+            color: 'text-amber-300',
+            text: deps.length > 0
+              ? `${depNames} çekirdek kütüphaneleri pakete dahil edildiği için "Eksik Yan Mod" veya çökme hatası yaşanmaz.`
+              : 'Ekstra harici kütüphane gerektirmeden doğrudan çalışır.'
+          }
+        ];
+
+        return {
+          badgeText,
+          packageTitle,
+          overviewParagraph,
+          highlights,
+          counts: {
+            total: ccbPackageItems.length,
+            mods: mainMods.length,
+            shaders: shaders.length,
+            packs: packs.length,
+            deps: deps.length
+          }
+        };
+      }
+
+      // TOPLU 1 KOMBO PAKETİ KARTINI ÇİZ (KULLANICININ İSTEDİĞİ PROFESYONEL TEK KART GÖRÜNÜMÜ)
+      function renderCustomComboStudioResult() {
+        const wrap = document.getElementById('ccbResultsWrapper');
+        const host = document.getElementById('ccbUnifiedComboCardHost');
+        if (!wrap || !host) return;
+
+        if (ccbPackageItems.length === 0) {
+          wrap.classList.add('hidden');
+          host.innerHTML = '';
+          return;
+        }
+
+        wrap.classList.remove('hidden');
+        const summary = buildCustomComboSummaryData();
+        const avatarsHTML = ccbPackageItems.slice(0, 8).map(e => window.getAvatarHTML(e.item, "w-9 h-9")).join('');
+        const extraAvatarCount = Math.max(0, ccbPackageItems.length - 8);
+
+        const highlightsHTML = summary.highlights.map(h => `
+          <div class="bg-modrinth-dark/90 border border-modrinth-border rounded-2xl p-3.5 flex items-start gap-3">
+            <span class="text-lg leading-none mt-0.5">${h.icon}</span>
+            <div class="min-w-0">
+              <div class="text-xs font-black ${h.color}">${h.title}</div>
+              <p class="text-[11px] text-gray-300 leading-relaxed mt-0.5">${h.text}</p>
+            </div>
+          </div>
+        `).join('');
+
+        const itemPillsHTML = ccbPackageItems.map(entry => {
+          const item = entry.item;
+          const catColor = item.category === 'shader'
+            ? 'border-purple-400/40 bg-purple-500/10 text-purple-200'
+            : (item.category === 'resourcepack'
+              ? 'border-sky-400/40 bg-sky-500/10 text-sky-200'
+              : (entry.isDep
+                ? 'border-orange-400/40 bg-orange-500/10 text-orange-200'
+                : 'border-modrinth/40 bg-modrinth/10 text-gray-100'));
+          return `
+            <span onclick="openCustomComboInspectModal()" class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border ${catColor} text-[11px] font-bold hover:scale-[1.02] transition">
+              <span>${getLocalizedTitle(item)}</span>
+            </span>
+          `;
+        }).join('');
+
+        host.innerHTML = `
+          <div class="bg-gradient-to-br from-amber-500/10 via-modrinth-card to-modrinth-card border-2 border-amber-400/60 rounded-3xl p-5 sm:p-7 shadow-[0_15px_50px_rgba(0,0,0,0.65)] relative overflow-hidden">
+            <!-- ÜST ROZETLER VE PAKET BAŞLIĞI -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 mb-5 border-b border-white/10">
+              <div>
+                <div class="flex items-center gap-2 flex-wrap mb-2">
+                  <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-amber-400 text-black">${summary.badgeText}</span>
+                  <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-modrinth/20 text-modrinth border border-modrinth/40">%100 UYUMLU • 0 ÇAKIŞMA</span>
+                  <span class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-md bg-white/5 text-gray-200 border border-white/10">${ccbEdition.toUpperCase()} • ${ccbLoader.toUpperCase()} • ${ccbVersion === '26.3' ? '26.3' : ccbVersion + '.x'}</span>
+                  <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-md bg-sky-500/15 text-sky-300 border border-sky-400/30">${summary.counts.total} Toplam İçerik</span>
+                </div>
+                <h3 class="text-lg sm:text-2xl font-black text-white">${summary.packageTitle}</h3>
+              </div>
+
+              <!-- PROFİL RESİMLERİ ŞERİDİ -->
+              <div class="flex items-center gap-1.5 flex-wrap">
+                ${avatarsHTML}
+                ${extraAvatarCount > 0 ? `<span class="w-9 h-9 rounded-xl bg-modrinth-dark border border-amber-400/50 text-amber-300 text-xs font-black flex items-center justify-center">+${extraAvatarCount}</span>` : ''}
+              </div>
+            </div>
+
+            <!-- PAKETİN NE İŞE YARADIĞINI ÖZETLEYEN KUTU -->
+            <div class="bg-modrinth-dark/95 border border-amber-400/35 rounded-2xl p-4 sm:p-5 mb-5">
+              <div class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-amber-300 mb-2">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Paketin Özeti & Ne İşe Yarar?</span>
+              </div>
+              <p class="text-xs sm:text-sm text-gray-200 leading-relaxed mb-4">${summary.overviewParagraph}</p>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                ${highlightsHTML}
+              </div>
+            </div>
+
+            <!-- PAKETTE YER ALAN İÇERİKLERİN HIZLI ETİKET ÖZETİ -->
+            <div class="mb-6">
+              <div class="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-2">
+                <span>PAKETTEKİ İÇERİKLER (${summary.counts.mods} Mod • ${summary.counts.shaders} Shader • ${summary.counts.packs} Kaynak Paketi • ${summary.counts.deps} Yan Mod):</span>
+                <span class="text-amber-300">İstemediklerinizi çıkarmak için "İçeriği İncele" butonuna tıklayın &darr;</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                ${itemPillsHTML}
+              </div>
+            </div>
+
+            <!-- ANA AKSİYON BUTONLARI: 1) İÇERİĞİ İNCELE (VE İÇİNDEN SİL)  2) TÜM PAKETİ MOD LİSTEME EKLE -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-4 border-t border-white/10">
+              <button type="button" onclick="openCustomComboInspectModal()" class="sm:col-span-6 mc-particle-btn text-white font-black py-3.5 px-5 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg">
+                <span class="mc-p mc-p1"></span>
+                <span class="mc-p mc-p2"></span>
+                <span class="mc-p mc-p3"></span>
+                <span class="mc-p mc-p4"></span>
+                <span class="mc-p mc-p5"></span>
+                <svg class="w-4 h-4 text-amber-300 shrink-0 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                <span class="relative z-10">İçeriği İncele & İstenmeyenleri Çıkar (${summary.counts.total} İçerik)</span>
+              </button>
+              <button type="button" onclick="transferCustomComboToCart()" class="sm:col-span-4 bg-modrinth hover:bg-modrinth-hover text-black font-black py-3.5 px-5 rounded-2xl text-xs sm:text-sm transition shadow-[0_0_20px_rgba(27,217,106,0.4)] flex items-center justify-center gap-2">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                <span>Tüm Paketi Mod Listeme Ekle</span>
+              </button>
+              <button type="button" onclick="clearCustomComboPackage()" class="sm:col-span-2 bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 font-extrabold py-3.5 px-4 rounded-2xl text-xs transition flex items-center justify-center">
+                Paketi Sıfırla
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // ÖZEL KOMBO PAKETİNİN "İÇERİĞİ İNCELE" MODALI (İÇİNDEN İSTENMEYEN MOD/SHADER/PAKET ÇIKARILABİLİR!)
+      window.openCustomComboInspectModal = function() {
+        if (ccbPackageItems.length === 0) return;
+        const summary = buildCustomComboSummaryData();
+
+        document.getElementById('previewModalBadge').innerText = `${summary.badgeText} • ${ccbEdition.toUpperCase()} • ${ccbLoader.toUpperCase()} • ${ccbVersion === '26.3' ? '26.3' : ccbVersion + '.x'}`;
+        document.getElementById('previewModalTitle').innerText = summary.packageTitle;
+        document.getElementById('previewModalDesc').innerHTML = summary.overviewParagraph;
+        document.getElementById('previewModalWarning').innerHTML = `<strong>💡 Nasıl Özelleştirilir?</strong> Aşağıdaki listede sevmediğiniz veya istemediğiniz herhangi bir mod, shader ya da kaynak paketi varsa sağındaki <strong>"✕ Paketten Çıkar"</strong> butonuna tıklayarak paketten silebilirsiniz.`;
+        document.getElementById('previewModalSub').innerText = `KOMBO PAKETİ İÇERİĞİ (${ccbPackageItems.length} UYUMLU ÖĞE):`;
+        document.getElementById('previewAddBtnText').innerText = `Bu Kombo Paketini Mod Listeme Ekle (${ccbPackageItems.length})`;
+
+        const container = document.getElementById('previewItemsContainer');
+        container.innerHTML = ccbPackageItems.map(entry => {
+          const item = entry.item;
+          const catBadge = item.category === 'shader'
+            ? '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-400/40">SHADER</span>'
+            : (item.category === 'resourcepack'
+              ? '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/40">KAYNAK PAKETİ</span>'
+              : (entry.isDep
+                ? '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300 border border-orange-400/40">ZORUNLU YAN MOD</span>'
+                : '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-modrinth/20 text-modrinth border border-modrinth/40">ANA MOD</span>'));
+
+          return `
+            <div class="flex items-center justify-between gap-3 bg-modrinth-dark border border-modrinth-border hover:border-amber-400/50 p-3 rounded-xl transition">
+              <div onclick="closeComboPreview(); openDetailModal('${item.id}', { type: 'custom' });" class="flex items-center gap-3 min-w-0 cursor-pointer group flex-1">
+                ${window.getAvatarHTML(item, "w-10 h-10")}
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-xs font-extrabold text-white group-hover:text-modrinth transition truncate">${getLocalizedTitle(item)}</span>
+                    ${catBadge}
+                  </div>
+                  <div class="text-[10px] text-gray-400 truncate mt-0.5">${entry.reason} • <span class="text-modrinth font-semibold">${item.verText}</span></div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" onclick="closeComboPreview(); openDetailModal('${item.id}', { type: 'custom' });" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-gray-200 text-[10px] font-bold transition">
+                  Detay
+                </button>
+                <button type="button" onclick="removeCustomComboItem('${item.id}', true)" class="px-2.5 py-1.5 rounded-lg bg-red-500/15 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/30 text-[10px] font-extrabold transition" title="Bu içeriği kombo paketinden çıkar">
+                  ✕ Paketten Çıkar
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('previewAddBtn').onclick = () => {
+          window.closeComboPreview();
+          window.transferCustomComboToCart();
+        };
+
+        document.getElementById('comboPreviewModal').classList.remove('hidden');
+      };
+
+      window.removeCustomComboItem = function(itemId, reopenModal = false) {
+        const removed = ccbPackageItems.find(e => e.item.id === itemId);
+        ccbPackageItems = ccbPackageItems.filter(e => e.item.id !== itemId);
+        if (removed) {
+          showToast(`"${getLocalizedTitle(removed.item)}" kombo paketinden çıkarıldı.`);
+        }
+        renderCustomComboStudioResult();
+        if (reopenModal) {
+          if (ccbPackageItems.length > 0) {
+            window.openCustomComboInspectModal();
+          } else {
+            window.closeComboPreview();
+          }
+        }
+      };
+
+      window.clearCustomComboPackage = function() {
+        ccbPackageItems = [];
+        ccbThemePrompts = [];
+        ccbLastQuery = '';
+        ccbExecutedQueries.clear();
+        hideCustomComboStatusBanner();
+        renderCustomComboStudioResult();
+        showToast('Özel kombo paketi sıfırlandı.');
+      };
+
+      window.transferCustomComboToCart = function() {
+        if (ccbPackageItems.length === 0) return;
+        ccbPackageItems.forEach(entry => {
+          if (!modCart.includes(entry.item.id)) {
+            modCart.push(entry.item.id);
+          }
+        });
+        updateCartUI();
+        renderCards();
+        showToast(`${ccbPackageItems.length} içerik Mod Listenize aktarıldı!`);
+        openCartDrawer();
+      };
+    })();
+
     // Dinamik eklenen tüm simülasyon, modal ve kart metinlerini seçili dile anında çevirir
     const _i18nObserver = new MutationObserver((mutations) => {
       if (currentLang === 'tr' || _isTranslatingDOM) return;

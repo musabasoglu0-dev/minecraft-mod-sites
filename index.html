@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script>
-    tailwind.config = {
+    if (typeof tailwind !== 'undefined') tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
@@ -41,19 +41,59 @@
     }
   </script>
   <style>
-    html { scroll-behavior: smooth; }
-    body { background-color: #0b0c0e; color: #e5e7eb; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    html { scroll-behavior: smooth; background-color: #07090d; }
+    body { background-color: transparent; color: #e5e7eb; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    #mcLiveBgRoot {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: hidden;
+      background:
+        radial-gradient(120% 70% at 80% 10%, var(--mc-sky-accent, rgba(27, 217, 106, 0.12)), transparent 60%),
+        radial-gradient(110% 55% at 50% 100%, var(--mc-horizon-glow, rgba(27, 217, 106, 0.14)), transparent 65%),
+        linear-gradient(180deg, var(--mc-sky-top, #070a10) 0%, var(--mc-sky-mid, #0a1016) 58%, var(--mc-sky-bot, #080d11) 100%);
+      transition: background 0.85s ease;
+    }
+    #mcLiveBgCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .mc-live-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 42%, rgba(7, 10, 14, 0.10) 35%, rgba(4, 6, 10, 0.54) 100%);
+    }
     @keyframes mcGuideFadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    @keyframes mcTypingBounce {
+      0%, 80%, 100% { transform: scale(0.65); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    .mc-typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 9999px;
+      background-color: #1bd96a;
+      display: inline-block;
+      animation: mcTypingBounce 1.2s infinite ease-in-out;
+    }
+    .mc-typing-dot:nth-child(2) { animation-delay: 0.16s; }
+    .mc-typing-dot:nth-child(3) { animation-delay: 0.32s; }
     .mc-guide-msg-in { animation: mcGuideFadeIn 0.2s ease-out; }
     #mcGuideChatWindow:not(.hidden) {
       display: flex !important;
       flex-direction: column !important;
-      height: min(540px, 78vh) !important;
-      max-height: 78vh !important;
-      background-color: #101318 !important;
+      height: min(600px, 80vh) !important;
+      max-height: 80vh !important;
+      background-color: #0f1319 !important;
       overflow: hidden !important;
     }
     #mcGuideChatWindow svg {
@@ -71,13 +111,10 @@
       overflow-y: auto !important;
       overscroll-behavior: contain;
       padding: 0.875rem !important;
-      background-color: #0d1015 !important;
+      background-color: #0b0e13 !important;
       color: #f3f4f6 !important;
       font-size: 12px !important;
       line-height: 1.5 !important;
-    }
-    #mcGuideMessages > :first-child {
-      margin-top: auto !important;
     }
     #mcGuideMessages * { max-width: 100%; overflow-wrap: break-word; }
     .mc-guide-msg-in {
@@ -91,28 +128,22 @@
     .mc-guide-msg-bot { justify-content: flex-start !important; }
     .mc-guide-bot-bubble {
       width: 100%;
-      max-width: 95%;
-      background-color: #161b22 !important;
-      border: 1px solid #262b35 !important;
-      border-radius: 1rem 1rem 1rem 0.25rem !important;
+      max-width: 96%;
+      background: linear-gradient(180deg, #161b24 0%, #121720 100%) !important;
+      border: 1px solid #262d3a !important;
+      border-radius: 1rem 1rem 1rem 0.3rem !important;
       padding: 0.875rem !important;
       color: #f3f4f6 !important;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
-    }
-    .mc-guide-bot-bubble p,
-    .mc-guide-bot-bubble li,
-    .mc-guide-bot-bubble span,
-    .mc-guide-bot-bubble div {
-      color: inherit;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.42);
     }
     .mc-guide-user-bubble {
       max-width: 85%;
-      background-color: #1bd96a !important;
-      color: #090a0d !important;
-      font-weight: 700 !important;
-      padding: 0.625rem 0.875rem !important;
+      background: linear-gradient(135deg, #1bd96a 0%, #10b981 100%) !important;
+      color: #070a0d !important;
+      font-weight: 800 !important;
+      padding: 0.625rem 0.9rem !important;
       border-radius: 1rem 1rem 0.25rem 1rem !important;
-      box-shadow: 0 4px 12px rgba(27, 217, 106, 0.2);
+      box-shadow: 0 6px 16px rgba(27, 217, 106, 0.25);
     }
     .mc-guide-scroll {
       scrollbar-width: thin;
@@ -127,7 +158,7 @@
     ::-webkit-scrollbar-thumb { background: #262b35; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #1bd96a; }
     .pixelated { image-rendering: pixelated; }
-    .glass { background: rgba(20, 23, 28, 0.92); backdrop-filter: blur(16px); }
+    .glass { background: rgba(16, 19, 25, 0.84); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -223,30 +254,20 @@
     .mc-p4 { left: 32%; bottom: 3px; animation: mcParticleFloat3 2.4s infinite ease-out 1.3s; }
     .mc-p5 { left: 65%; bottom: 3px; animation: mcParticleFloat1 2.2s infinite ease-out 1.6s; }
 
-    /* Arka Planda Kasmayan GPU-Hızlandırmalı Minecraft Piksel Yarasaları */
-    @keyframes batFlyPath1 {
-      0% { transform: translate3d(-40px, 15px, 0) scale(0.85); }
-      50% { transform: translate3d(45vw, -12px, 0) scale(0.95); }
-      100% { transform: translate3d(95vw, 20px, 0) scale(0.85); }
+    /* Üst Kategori Seçenekleri İçin Pürüzsüz Sağ-Sol Kayan Yeşil Seçim Efekti */
+    .mc-nav-glider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 0.5rem;
+      background: rgba(27, 217, 106, 0.22);
+      border: 1px solid rgba(27, 217, 106, 0.45);
+      box-shadow: 0 0 14px rgba(27, 217, 106, 0.16);
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), width 0.34s cubic-bezier(0.22, 1, 0.36, 1), height 0.24s ease;
+      pointer-events: none;
+      z-index: 0;
+      will-change: transform, width;
     }
-    @keyframes batFlyPath2 {
-      0% { transform: translate3d(92vw, 45px, 0) scaleX(-1) scale(0.75); }
-      50% { transform: translate3d(42vw, 10px, 0) scaleX(-1) scale(0.85); }
-      100% { transform: translate3d(-40px, 35px, 0) scaleX(-1) scale(0.75); }
-    }
-    @keyframes batFlyPath3 {
-      0% { transform: translate3d(15vw, 75px, 0) scale(0.7); }
-      50% { transform: translate3d(60vw, 25px, 0) scale(0.8); }
-      100% { transform: translate3d(102vw, 60px, 0) scale(0.7); }
-    }
-    @keyframes batWingFlap {
-      0%, 100% { transform: scaleY(1); }
-      50% { transform: scaleY(0.55); }
-    }
-    .mc-bat-1 { position: absolute; top: 12px; left: 0; animation: batFlyPath1 22s linear infinite; will-change: transform; pointer-events: none; opacity: 0.24; }
-    .mc-bat-2 { position: absolute; top: 48px; left: 0; animation: batFlyPath2 28s linear infinite 4s; will-change: transform; pointer-events: none; opacity: 0.19; }
-    .mc-bat-3 { position: absolute; bottom: 18px; left: 0; animation: batFlyPath3 25s linear infinite 9s; will-change: transform; pointer-events: none; opacity: 0.17; }
-    .mc-bat-wings { animation: batWingFlap 0.35s ease-in-out infinite; transform-origin: center; }
 
     /* MOD LİSTEM ÇAKIŞMA YILDIRIM ANİMASYONU (SADECE ÇAKIŞMA OLUNCA ÇALIŞIR) */
     @keyframes mcBoltFlash1 {
@@ -498,6 +519,12 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-modrinth selection:text-black">
 
+  <!-- REAL-TIME MINECRAFT BIOME & DIMENSION BACKGROUND -->
+  <div id="mcLiveBgRoot" aria-hidden="true">
+    <canvas id="mcLiveBgCanvas"></canvas>
+    <div class="mc-live-vignette"></div>
+  </div>
+
   <!-- TOP BANNER -->
   <div class="relative z-30 bg-modrinth/10 border-b border-modrinth/20 py-2 px-4 text-center text-xs font-medium text-modrinth flex items-center justify-center gap-2 backdrop-blur-sm">
     <span class="w-2 h-2 rounded-full bg-modrinth animate-pulse shrink-0"></span>
@@ -543,14 +570,17 @@
 
       <!-- DESKTOP NAVIGATION -->
       <nav class="hidden xl:flex items-center gap-1.5 bg-modrinth-card p-1.5 rounded-xl border border-modrinth-border text-xs font-semibold">
-        <button type="button" onclick="filterCategory('all', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-white bg-modrinth/20 border border-modrinth/40" id="navAll">Tümü</button>
-        <button type="button" onclick="filterCategory('mod', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navMods">Modlar</button>
-        <button type="button" onclick="filterCategory('shader', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navShaders">Shaderlar</button>
-        <button type="button" onclick="filterCategory('resourcepack', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navPacks">Kaynak Paketleri</button>
-        <button type="button" onclick="filterCategory('plugin', this)" class="nav-btn px-3 py-1.5 rounded-lg transition text-gray-400 hover:text-white" id="navPlugins">Plugins</button>
+        <div id="navCatTrackDesktop" class="relative flex items-center gap-1">
+          <div id="navSlidingPillDesktop" class="mc-nav-glider" aria-hidden="true"></div>
+          <button type="button" onclick="filterCategory('all', this)" class="nav-btn relative z-10 px-3 py-1.5 rounded-lg transition-colors duration-200 text-white font-semibold" id="navAll">Tümü</button>
+          <button type="button" onclick="filterCategory('mod', this)" class="nav-btn relative z-10 px-3 py-1.5 rounded-lg transition-colors duration-200 text-gray-400 hover:text-white" id="navMods">Modlar</button>
+          <button type="button" onclick="filterCategory('shader', this)" class="nav-btn relative z-10 px-3 py-1.5 rounded-lg transition-colors duration-200 text-gray-400 hover:text-white" id="navShaders">Shaderlar</button>
+          <button type="button" onclick="filterCategory('resourcepack', this)" class="nav-btn relative z-10 px-3 py-1.5 rounded-lg transition-colors duration-200 text-gray-400 hover:text-white" id="navPacks">Kaynak Paketleri</button>
+          <button type="button" onclick="filterCategory('plugin', this)" class="nav-btn relative z-10 px-3 py-1.5 rounded-lg transition-colors duration-200 text-gray-400 hover:text-white" id="navPlugins">Plugins</button>
+        </div>
         <button type="button" onclick="scrollToCombos(this)" class="px-3.5 py-1.5 rounded-lg border transition flex items-center gap-1.5 font-bold combo-nav-glow" id="navCombos">
           <svg class="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          <span id="navCombosText">Özel Kombolar</span>
+          <span id="navCombosText">Kombolar</span>
         </button>
         <button type="button" onclick="openErrorModal()" class="px-3 py-1.5 rounded-lg transition text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-1.5" id="navErrors">
           <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -642,14 +672,17 @@
 
     <!-- MOBILE SUB-NAV -->
     <div class="flex xl:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-2.5 mt-2.5 border-t border-modrinth-border/60 text-xs font-semibold">
-      <button type="button" onclick="filterCategory('all', this)" id="mobNavAll" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-white bg-modrinth/20 border border-modrinth/40">Tümü</button>
-      <button type="button" onclick="filterCategory('mod', this)" id="mobNavMods" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-gray-400">Modlar</button>
-      <button type="button" onclick="filterCategory('shader', this)" id="mobNavShaders" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-gray-400">Shaderlar</button>
-      <button type="button" onclick="filterCategory('resourcepack', this)" id="mobNavPacks" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-gray-400">Kaynak Paketleri</button>
-      <button type="button" onclick="filterCategory('plugin', this)" id="mobNavPlugins" class="nav-btn shrink-0 px-3 py-1.5 rounded-lg transition text-gray-400">Plugins</button>
+      <div id="navCatTrackMobile" class="relative flex items-center gap-1 shrink-0">
+        <div id="navSlidingPillMobile" class="mc-nav-glider" aria-hidden="true"></div>
+        <button type="button" onclick="filterCategory('all', this)" id="mobNavAll" class="nav-btn relative z-10 shrink-0 px-3 py-1.5 rounded-lg transition-colors duration-200 text-white font-semibold">Tümü</button>
+        <button type="button" onclick="filterCategory('mod', this)" id="mobNavMods" class="nav-btn relative z-10 shrink-0 px-3 py-1.5 rounded-lg transition-colors duration-200 text-gray-400">Modlar</button>
+        <button type="button" onclick="filterCategory('shader', this)" id="mobNavShaders" class="nav-btn relative z-10 shrink-0 px-3 py-1.5 rounded-lg transition-colors duration-200 text-gray-400">Shaderlar</button>
+        <button type="button" onclick="filterCategory('resourcepack', this)" id="mobNavPacks" class="nav-btn relative z-10 shrink-0 px-3 py-1.5 rounded-lg transition-colors duration-200 text-gray-400">Kaynak Paketleri</button>
+        <button type="button" onclick="filterCategory('plugin', this)" id="mobNavPlugins" class="nav-btn relative z-10 shrink-0 px-3 py-1.5 rounded-lg transition-colors duration-200 text-gray-400">Plugins</button>
+      </div>
       <button type="button" onclick="scrollToCombos(this)" id="navCombosMobile" class="shrink-0 px-3 py-1.5 rounded-lg border transition flex items-center gap-1 font-bold combo-nav-glow">
         <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        <span id="mobNavCombosText">Özel Kombolar</span>
+        <span id="mobNavCombosText">Kombolar</span>
       </button>
       <button type="button" onclick="openErrorModal()" id="mobNavErrors" class="shrink-0 px-3 py-1.5 rounded-lg transition text-gray-300 bg-white/5">Hata Çözücü</button>
       <button type="button" onclick="openSimChooserModal()" id="mobNavSim" class="shrink-0 px-3.5 py-1.5 rounded-lg border transition flex items-center gap-1.5 font-extrabold sim-nav-special ml-1">
@@ -658,6 +691,25 @@
       </button>
     </div>
   </header>
+
+  <!-- ARAMA AKTİFKEN AŞAĞI İNİLDİĞİNDE SOL ALTTA ÇIKAN "ARAMAYA DÖN / SİL" YUKARI OK BUTONU -->
+  <div id="mcSearchFloatingReturnPill" class="hidden fixed left-4 bottom-5 z-40 flex items-center gap-1.5 bg-[#11161f]/95 backdrop-blur-md border-2 border-modrinth/70 rounded-2xl p-1.5 shadow-[0_12px_32px_rgba(0,0,0,0.85),0_0_18px_rgba(27,217,106,0.22)] transition-all duration-200">
+    <button type="button" onclick="returnToSearchBarAndFocus()" class="flex items-center gap-2.5 pl-2.5 pr-3 py-1.5 rounded-xl hover:bg-modrinth/15 text-left transition group" title="Arama çubuğuna çık ve aramaya devam et">
+      <span class="w-7 h-7 rounded-xl bg-modrinth text-black flex items-center justify-center font-black shadow-md group-hover:scale-105 transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+      </span>
+      <div class="min-w-0">
+        <div class="text-[11px] font-black text-white flex items-center gap-1">
+          <span>Arama Filtresi:</span>
+          <span id="mcSearchFloatingQueryText" class="text-modrinth max-w-[130px] sm:max-w-[180px] truncate">"..."</span>
+        </div>
+        <div class="text-[10px] text-gray-300 font-semibold">↑ Aramaya devam et veya değiştir</div>
+      </div>
+    </button>
+    <button type="button" onclick="clearSearchFromFloatingPill(event)" class="px-2.5 py-2 rounded-xl bg-red-500/15 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/30 text-[10px] font-extrabold transition shrink-0" title="Aramayı temizle ve tüm 5.500 içeriği göster">
+      ✕ Sil
+    </button>
+  </div>
 
   <div id="mainPortalView" class="flex-1 flex flex-col">
   <!-- HERO SECTION -->
@@ -713,70 +765,47 @@
     </div>
   </section>
 
-  <!-- CURATED MOD COMBOS SECTION (SORUN 2: SADELEŞTİRİLMİŞ RENKLİ ÖZET + PARTİKÜLLÜ BUTON + HAFİF PİKSEL YARASALAR) -->
-  <section id="combosSection" class="max-w-7xl mx-auto px-4 lg:px-8 py-6 w-full scroll-mt-20">
-    <div class="relative overflow-hidden bg-gradient-to-b from-amber-500/[0.07] via-modrinth-card/60 to-modrinth-card/30 border border-amber-500/30 rounded-3xl p-5 sm:p-6 shadow-[0_0_30px_rgba(245,158,11,0.07)]">
-      
-      <!-- ARKA PLANDA GEZEN KASMAMA GARANTİLİ PİKSEL YARASALAR -->
-      <div class="mc-bat-1" aria-hidden="true">
-        <svg class="w-8 h-6 pixelated mc-bat-wings" viewBox="0 0 16 12" fill="none">
-          <rect x="6" y="4" width="4" height="5" fill="#374151"/>
-          <rect x="6" y="3" width="1" height="1" fill="#4B5563"/>
-          <rect x="9" y="3" width="1" height="1" fill="#4B5563"/>
-          <rect x="1" y="2" width="5" height="4" fill="#1F2937"/>
-          <rect x="10" y="2" width="5" height="4" fill="#1F2937"/>
-          <rect x="0" y="4" width="3" height="3" fill="#111827"/>
-          <rect x="13" y="4" width="3" height="3" fill="#111827"/>
-          <rect x="7" y="5" width="1" height="1" fill="#F59E0B"/>
-          <rect x="8" y="5" width="1" height="1" fill="#F59E0B"/>
-        </svg>
-      </div>
-      <div class="mc-bat-2" aria-hidden="true">
-        <svg class="w-7 h-5 pixelated mc-bat-wings" viewBox="0 0 16 12" fill="none">
-          <rect x="6" y="4" width="4" height="5" fill="#374151"/>
-          <rect x="1" y="2" width="5" height="4" fill="#1F2937"/>
-          <rect x="10" y="2" width="5" height="4" fill="#1F2937"/>
-          <rect x="0" y="4" width="3" height="3" fill="#111827"/>
-          <rect x="13" y="4" width="3" height="3" fill="#111827"/>
-        </svg>
-      </div>
-      <div class="mc-bat-3" aria-hidden="true">
-        <svg class="w-6 h-5 pixelated mc-bat-wings" viewBox="0 0 16 12" fill="none">
-          <rect x="6" y="4" width="4" height="5" fill="#374151"/>
-          <rect x="1" y="2" width="5" height="4" fill="#1F2937"/>
-          <rect x="10" y="2" width="5" height="4" fill="#1F2937"/>
-        </svg>
-      </div>
+  <!-- CURATED MOD COMBOS SECTION (ANA PORTALDA SADECE "KOMBOLAR" YAZAR, TIKLAYINCA AÇILIR) -->
+  <section id="combosSection" class="max-w-7xl mx-auto px-4 lg:px-8 py-3 w-full scroll-mt-20">
+    <div class="relative overflow-hidden bg-gradient-to-b from-amber-500/[0.06] via-modrinth-card/75 to-modrinth-card/45 border border-amber-500/35 rounded-2xl p-3.5 sm:p-4 shadow-[0_0_24px_rgba(245,158,11,0.06)]">
+      <!-- TIKLAYINCA AÇILAN KOMPAKT "KOMBOLAR" BAŞLIK BUTONU -->
+      <button type="button" onclick="togglePortalCombosBody()" id="btnTogglePortalCombos" class="w-full flex items-center justify-between gap-3 text-left group">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span class="px-3 py-1.5 text-xs font-black uppercase tracking-wider bg-amber-500/15 group-hover:bg-amber-400 group-hover:text-black text-amber-300 border border-amber-400/45 rounded-xl transition flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span id="comboSpecialBadge">Kombolar</span>
+          </span>
+          <span class="text-xs sm:text-sm font-bold text-gray-300 group-hover:text-white transition" id="comboSecTitle">20 Hazır Mod Kombosu &amp; Özel Kombo Paketi Oluşturucu</span>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <span id="portalCombosToggleLabel" class="text-[11px] font-extrabold text-amber-300 bg-amber-500/10 border border-amber-400/30 px-2.5 py-1 rounded-lg group-hover:bg-amber-400 group-hover:text-black transition">Tıkla &amp; Aç</span>
+          <svg id="portalCombosChevron" class="w-4 h-4 text-amber-300 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+      </button>
 
-      <div class="relative z-20 flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-5">
-        <div>
-          <div class="flex items-center gap-2.5 flex-wrap">
-            <span class="px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-400/40 rounded-lg shadow-[0_0_12px_rgba(251,191,36,0.25)] flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              <span id="comboSpecialBadge">Özel Kombolar</span>
-            </span>
-            <h2 class="text-lg sm:text-xl font-extrabold text-white" id="comboSecTitle">Hazır Mod Komboları (Uyumlu Paketler)</h2>
+      <!-- SADECE TIKLAYINCA AÇILAN İÇERİK GÖVDESİ -->
+      <div id="combosPortalCollapseBody" class="hidden pt-4 mt-4 border-t border-modrinth-border/80">
+        <div class="relative z-20 flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-4">
+          <p class="text-xs text-gray-400" id="comboSecSub">Özet avantajlara göz atın; paketin içindeki tüm modları görmek için İçeriği İncele butonuna tıklayın veya kendi kombonuzu özelleştirin.</p>
+
+          <!-- COMBO TAG PILLS -->
+          <div class="flex flex-wrap items-center gap-1.5 text-xs font-semibold relative z-20">
+            <button type="button" onclick="filterComboTag('all', this)" id="comboTagAll" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-amber-400 text-black font-bold transition shrink-0">Tümü</button>
+            <button type="button" onclick="filterComboTag('pvp', this)" id="comboTagPvp" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Rekabetçi PvP</button>
+            <button type="button" onclick="filterComboTag('survival', this)" id="comboTagSurvival" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Hayatta Kalma</button>
+            <button type="button" onclick="filterComboTag('engineering', this)" id="comboTagEng" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Mühendislik &amp; Otomasyon</button>
+            <button type="button" onclick="filterComboTag('graphics', this)" id="comboTagGraphics" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Grafik &amp; Shader</button>
+            <button type="button" onclick="filterComboTag('fps', this)" id="comboTagFps" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Maksimum FPS</button>
+            <button type="button" onclick="filterComboTag('bedrock', this)" id="comboTagBedrock" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Bedrock (MCPE)</button>
           </div>
-          <p class="text-xs text-gray-400 mt-1" id="comboSecSub">Özet avantajlara göz atın; paketin içindeki tüm modları ve detayları görmek için İçeriği İncele butonuna tıklayın.</p>
         </div>
 
-        <!-- COMBO TAG PILLS (ORİJİNAL KOMPAKT GÖRÜNÜM + FLEX-WRAP İLE SAĞDAKİLER TAM GÖRÜNÜR) -->
-        <div class="flex flex-wrap items-center gap-1.5 text-xs font-semibold relative z-20">
-          <button type="button" onclick="filterComboTag('all', this)" id="comboTagAll" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-amber-400 text-black font-bold transition shrink-0">Tümü</button>
-          <button type="button" onclick="filterComboTag('pvp', this)" id="comboTagPvp" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Rekabetçi PvP</button>
-          <button type="button" onclick="filterComboTag('survival', this)" id="comboTagSurvival" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Hayatta Kalma</button>
-          <button type="button" onclick="filterComboTag('engineering', this)" id="comboTagEng" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Mühendislik & Otomasyon</button>
-          <button type="button" onclick="filterComboTag('graphics', this)" id="comboTagGraphics" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Grafik & Shader</button>
-          <button type="button" onclick="filterComboTag('fps', this)" id="comboTagFps" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Maksimum FPS</button>
-          <button type="button" onclick="filterComboTag('bedrock', this)" id="comboTagBedrock" class="combo-tag-btn px-3 py-1.5 rounded-lg bg-modrinth-card border border-modrinth-border text-gray-300 hover:border-amber-400/50 transition shrink-0">Bedrock (MCPE)</button>
+        <div id="combosGrid" class="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        <div class="mt-4 pt-3 border-t border-modrinth-border/60 flex flex-wrap items-center justify-between gap-2">
+          <button type="button" onclick="openCombosHubView()" id="btnOpenAllCombosTop" class="px-3.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-amber-400/40 text-amber-300 text-xs font-extrabold transition">Tüm 20 Hazır Komboyu Gör &rarr;</button>
+          <span id="combosPortalFooterNote" class="hidden"></span>
+          <button type="button" onclick="openCustomComboBuilderView()" id="btnOpenAllCombosBottom" class="px-3.5 py-2 rounded-xl bg-modrinth hover:bg-modrinth-hover text-black text-xs font-black transition">⚡ Kombo Paketi Özelleştir &rarr;</button>
         </div>
-      </div>
-
-      <div id="combosGrid" class="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-      <div class="hidden" aria-hidden="true">
-        <button type="button" id="btnOpenAllCombosTop">Tüm 20 Özel Komboyu Gör</button>
-        <span id="combosPortalFooterNote"></span>
-        <button type="button" id="btnOpenAllCombosBottom">Özel Kombolar Sayfasını Aç (20 Paket) &rarr;</button>
       </div>
     </div>
   </section>
@@ -1925,28 +1954,32 @@
   <!-- TOAST -->
   <div id="toastBox" class="fixed bottom-24 right-5 z-[75] bg-modrinth text-black font-bold text-xs px-4 py-3 rounded-xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none"></div>
 
-  <!-- SAĞ ALT CANLI REHBER MESAJ BALONCUĞU (MCPUSULA REHBERİ) -->
-  <div id="mcGuideChatRoot" class="fixed bottom-5 right-5 z-[60] flex flex-col items-end">
+  <!-- SAĞ ALT CANLI REHBER MESAJ BALONCUĞU (MCPUSULA PRO REHBER ASİSTANI) -->
+  <div id="mcGuideChatRoot" class="fixed bottom-5 right-5 z-40 flex flex-col items-end">
     <!-- SOHBET PENCERESİ -->
-    <div id="mcGuideChatWindow" class="hidden mb-3 w-[350px] sm:w-[400px] max-w-[calc(100vw-2rem)] h-[540px] max-h-[78vh] bg-[#101318] border-2 border-modrinth/55 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden">
+    <div id="mcGuideChatWindow" class="hidden mb-3 w-[365px] sm:w-[420px] max-w-[calc(100vw-1.5rem)] h-[600px] max-h-[80vh] bg-[#0f1319] border-2 border-modrinth/60 rounded-3xl shadow-[0_24px_70px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden">
       <!-- BAŞLIK -->
-      <div class="px-4 py-3 bg-gradient-to-r from-modrinth/20 via-emerald-950/50 to-modrinth-card border-b border-modrinth-border flex items-center justify-between gap-2 shrink-0">
+      <div class="px-4 py-3 bg-gradient-to-r from-modrinth/20 via-emerald-950/60 to-[#141922] border-b border-modrinth-border flex items-center justify-between gap-2 shrink-0">
         <div class="flex items-center gap-2.5 min-w-0">
-          <div class="relative w-9 h-9 rounded-xl bg-modrinth-dark border border-modrinth/50 flex items-center justify-center shrink-0">
+          <div class="relative w-10 h-10 rounded-xl bg-modrinth-dark border border-modrinth/60 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(27,217,106,0.2)]">
             <svg class="w-6 h-6 pixelated" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="9" fill="#1e293b" stroke="#1bd96a" stroke-width="1.5"/>
               <polygon points="12,5 14,12 12,10.5 10,12" fill="#ef4444"/>
               <polygon points="12,19 14,12 12,13.5 10,12" fill="#e5e7eb"/>
               <circle cx="12" cy="12" r="1.5" fill="#1bd96a"/>
             </svg>
-            <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-modrinth border-2 border-[#101318]"></span>
+            <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-modrinth border-2 border-[#0f1319]"></span>
           </div>
           <div class="min-w-0">
-            <div class="text-xs sm:text-sm font-black text-white truncate">McPusula Rehberi</div>
-            <div class="text-[10px] text-modrinth font-semibold truncate">Canlı Site Asistanı &amp; Hızlı Gezinti</div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs sm:text-sm font-black text-white truncate">McPusula Rehber</span>
+              <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-modrinth/20 text-modrinth border border-modrinth/40">PRO</span>
+            </div>
+            <div class="text-[10px] text-gray-300 font-medium truncate">Mod Arama • Liste Teşhisi • Kurulum &amp; Hata</div>
           </div>
         </div>
         <div class="flex items-center gap-1 shrink-0">
+          <button type="button" onclick="switchMcGuideTab('list')" class="px-2 py-1 rounded-lg bg-modrinth/15 hover:bg-modrinth/25 border border-modrinth/40 text-[10px] font-extrabold text-modrinth transition" title="Mod Listemi Analiz Et">Listem</button>
           <button type="button" onclick="resetMcGuideChat()" class="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[10px] font-bold text-gray-300 hover:text-white transition" title="Sohbeti Temizle">Sıfırla</button>
           <button type="button" onclick="toggleMcGuideChat(false)" class="p-1.5 rounded-lg bg-white/5 hover:bg-red-500/20 text-gray-300 hover:text-white transition" title="Kapat">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1954,32 +1987,39 @@
         </div>
       </div>
 
+      <!-- 3'LÜ HIZLI MOD SEKMELERİ -->
+      <div class="grid grid-cols-3 gap-1 p-1.5 bg-[#0b0e13] border-b border-modrinth-border/80 text-[10px] font-extrabold shrink-0">
+        <button type="button" id="mcGuideTabExplore" onclick="switchMcGuideTab('explore')" class="py-1.5 px-2 rounded-xl bg-modrinth text-black transition text-center truncate">1. Keşfet &amp; Ara</button>
+        <button type="button" id="mcGuideTabList" onclick="switchMcGuideTab('list')" class="py-1.5 px-2 rounded-xl bg-white/5 text-gray-300 hover:text-white transition text-center truncate">2. Listemi Analiz Et</button>
+        <button type="button" id="mcGuideTabHelp" onclick="switchMcGuideTab('help')" class="py-1.5 px-2 rounded-xl bg-white/5 text-gray-300 hover:text-white transition text-center truncate">3. Kurulum &amp; Hata</button>
+      </div>
+
       <!-- MESAJ GEÇMİŞİ -->
-      <div id="mcGuideMessages" class="flex-1 min-h-0 overflow-y-auto overscroll-contain mc-guide-scroll p-3.5 space-y-3 text-xs bg-[#0d1015]"></div>
+      <div id="mcGuideMessages" class="flex-1 min-h-0 overflow-y-auto overscroll-contain mc-guide-scroll p-3.5 space-y-3 text-xs bg-[#0b0e13]"></div>
 
       <!-- HIZLI KOMUT ETİKETLERİ -->
-      <div class="px-3 py-2 border-t border-modrinth-border/80 bg-black/25 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
-        <button type="button" onclick="sendMcGuidePreset('Site ne işe yarar?')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border hover:border-modrinth/50 text-[10px] font-bold text-gray-200 transition">Site ne işe yarar?</button>
+      <div class="px-3 py-2 border-t border-modrinth-border/80 bg-[#0d1117] flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+        <button type="button" onclick="sendMcGuidePreset('Mod nasıl kurulur?')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border hover:border-modrinth/50 text-[10px] font-bold text-emerald-300 transition">Mod Kurulumu</button>
+        <button type="button" onclick="sendMcGuidePreset('Shader nasıl kurulur?')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-purple-500/20 border border-modrinth-border hover:border-purple-400/50 text-[10px] font-bold text-purple-300 transition">Shader Kurulumu</button>
+        <button type="button" onclick="sendMcGuidePreset('Bedrock mcaddon kurulumu')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-teal-500/20 border border-modrinth-border hover:border-teal-400/50 text-[10px] font-bold text-teal-300 transition">Bedrock / MCPE</button>
+        <button type="button" onclick="sendMcGuidePreset('En iyi FPS modları')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border hover:border-modrinth/50 text-[10px] font-bold text-gray-200 transition">En İyi FPS</button>
         <button type="button" onclick="sendMcGuidePreset('Özel kombo oluştur')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-amber-400/20 border border-modrinth-border hover:border-amber-400/50 text-[10px] font-bold text-amber-300 transition">Özel Kombo</button>
-        <button type="button" onclick="sendMcGuidePreset('Uyum simülasyonuna git')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-sky-400/20 border border-modrinth-border hover:border-sky-400/50 text-[10px] font-bold text-sky-300 transition">Uyum Testi</button>
-        <button type="button" onclick="sendMcGuidePreset('Aternos sunucu testi aç')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border hover:border-modrinth/50 text-[10px] font-bold text-gray-200 transition">Sunucu Testi</button>
-        <button type="button" onclick="sendMcGuidePreset('Pluginler')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-cyan-400/20 border border-modrinth-border hover:border-cyan-400/50 text-[10px] font-bold text-cyan-300 transition">Plugins</button>
-        <button type="button" onclick="sendMcGuidePreset('En iyi fps modları')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border hover:border-modrinth/50 text-[10px] font-bold text-gray-200 transition">FPS Modları</button>
+        <button type="button" onclick="sendMcGuidePreset('Exit Code 1 hatası çözümü')" class="shrink-0 px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-red-500/20 border border-modrinth-border hover:border-red-400/50 text-[10px] font-bold text-red-300 transition">Çökme / Exit Code</button>
       </div>
 
       <!-- MESAJ YAZMA ALANI -->
-      <div class="p-2.5 border-t border-modrinth-border bg-modrinth-card flex items-center gap-2 shrink-0">
-        <input type="text" id="mcGuideInput" onkeydown="if(event.key==='Enter')submitMcGuideMessage()" placeholder="Soru sor, mod ara veya gitmek istediğin yeri yaz..." class="flex-1 bg-modrinth-dark border border-modrinth-border focus:border-modrinth rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-400 focus:outline-none transition">
-        <button type="button" onclick="submitMcGuideMessage()" class="bg-modrinth hover:bg-modrinth-hover text-black font-black px-3.5 py-2.5 rounded-xl text-xs transition shrink-0 flex items-center justify-center" title="Gönder">
+      <div class="p-2.5 border-t border-modrinth-border bg-[#141820] flex items-center gap-2 shrink-0">
+        <input type="text" id="mcGuideInput" onkeydown="if(event.key==='Enter')submitMcGuideMessage()" placeholder="Mod/shader ara veya sor (Örn: sodium, sesli konuşma, shader kurma)..." class="flex-1 bg-modrinth-dark border border-modrinth-border focus:border-modrinth rounded-xl px-3 py-2.5 text-xs text-white placeholder-gray-400 focus:outline-none transition">
+        <button type="button" onclick="submitMcGuideMessage()" class="bg-modrinth hover:bg-modrinth-hover text-black font-black px-3.5 py-2.5 rounded-xl text-xs transition shrink-0 flex items-center justify-center shadow-[0_0_12px_rgba(27,217,106,0.3)]" title="Gönder">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </div>
     </div>
 
     <!-- YÜZEN BALONCUK BUTONU -->
-    <button type="button" id="mcGuideTriggerBtn" onclick="toggleMcGuideChat()" class="group relative flex items-center gap-2.5 bg-gradient-to-r from-modrinth to-emerald-400 hover:from-emerald-400 hover:to-modrinth text-black font-black pl-3 pr-4 py-3 rounded-full shadow-[0_10px_32px_rgba(27,217,106,0.45)] border-2 border-white/25 transition-transform hover:scale-105 active:scale-95">
-      <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-      <span class="text-xs sm:text-sm font-black tracking-tight">Rehber</span>
+    <button type="button" id="mcGuideTriggerBtn" onclick="toggleMcGuideChat()" class="group relative flex items-center gap-2.5 bg-gradient-to-r from-modrinth to-emerald-400 hover:from-emerald-400 hover:to-modrinth text-black font-black pl-3.5 pr-4 py-3 rounded-full shadow-[0_10px_32px_rgba(27,217,106,0.45)] border-2 border-white/25 transition-transform hover:scale-105 active:scale-95">
+      <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      <span class="text-xs sm:text-sm font-black tracking-tight">Canlı Rehber</span>
       <span id="mcGuideUnreadDot" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-400 text-black text-[10px] font-black flex items-center justify-center border-2 border-[#0b0c0e] shadow">1</span>
     </button>
   </div>
@@ -2084,7 +2124,7 @@
       tr: {
         banner: "Bu platform Minecraft Türkiye topluluğu için hazırlanmış, ticari amacı bulunmayan bağımsız bir mod, kombo ve teknik rehber projesidir.",
         subLogo: "Mod, Kombo & Uyumluluk Merkezi",
-        all: "Tümü", mods: "Modlar", shaders: "Shaderlar", packs: "Kaynak Paketleri", plugins: "Plugins", combos: "Özel Kombolar", errors: "Hata Çözücü",
+        all: "Tümü", mods: "Modlar", shaders: "Shaderlar", packs: "Kaynak Paketleri", plugins: "Plugins", combos: "Kombolar", errors: "Hata Çözücü",
         myList: "Mod Listem",
         heroBadge: "5.500 Doğrulanmış Mod, Shader, Kaynak Paketi & Plugin • 1.12.2 - 26.3",
         hero1: "Minecraft Türkiye", hero2: "Mod & Rehber Portalı",
@@ -2097,8 +2137,8 @@
         instantHint: "Aradığınız içeriği doğrudan buradan inceleyebilir veya Mod Listenize ekleyebilirsiniz.",
         instantScrollBtn: "Katalogda Tümünü Gör ↓",
         instantNoResult: "Aramanızla eşleşen içerik bulunamadı.",
-        comboBadge: "Özel Kombolar",
-        comboTitle: "Hazır Mod Komboları (Uyumlu Paketler)",
+        comboBadge: "Kombolar",
+        comboTitle: "20 Hazır Mod Kombosu & Özel Kombo Paketi Oluşturucu",
         resolveConflictBoxText: "İsterseniz listedeki çakışan modları tek tıkla otomatik temizleyip uyumlu hale getirebilirsiniz:",
         resolveConflictBtn: "Çakışmaları Tek Tıkla Çöz",
         noGuideVideoFound: "Aradığınız kritere uygun destek & rehber videosu bulunamadı.",
@@ -4892,8 +4932,47 @@
       document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    function ensureMainPortalVisibleWithoutScrollTop() {
+      ['simViewSection', 'serverSimViewSection', 'combosHubViewSection', 'shaderSimViewSection', 'customComboBuilderSection'].forEach(id => {
+        const sec = document.getElementById(id);
+        if (sec) sec.classList.add('hidden');
+      });
+      const dd1 = document.getElementById('comboChooserDropdown');
+      if (dd1) dd1.classList.add('hidden');
+      const dd2 = document.getElementById('simChooserDropdown');
+      if (dd2) dd2.classList.add('hidden');
+      const mainV = document.getElementById('mainPortalView');
+      if (mainV) mainV.classList.remove('hidden');
+    }
+
+    function syncNavCategoryGlider(cat) {
+      const targetCat = cat || activeCategory || 'all';
+      const deskMap = { all: 'navAll', mod: 'navMods', shader: 'navShaders', resourcepack: 'navPacks', plugin: 'navPlugins' };
+      const mobMap = { all: 'mobNavAll', mod: 'mobNavMods', shader: 'mobNavShaders', resourcepack: 'mobNavPacks', plugin: 'mobNavPlugins' };
+
+      const pairs = [
+        { btnId: deskMap[targetCat], pillId: 'navSlidingPillDesktop' },
+        { btnId: mobMap[targetCat], pillId: 'navSlidingPillMobile' }
+      ];
+      pairs.forEach(({ btnId, pillId }) => {
+        const btn = document.getElementById(btnId);
+        const pill = document.getElementById(pillId);
+        if (!btn || !pill) return;
+        const w = btn.offsetWidth;
+        const h = btn.offsetHeight;
+        if (w > 0 && h > 0) {
+          pill.style.width = `${w}px`;
+          pill.style.height = `${h}px`;
+          pill.style.transform = `translate3d(${btn.offsetLeft}px, ${btn.offsetTop}px, 0)`;
+          pill.style.opacity = '1';
+        }
+      });
+    }
+    window.syncNavCategoryGlider = syncNavCategoryGlider;
+    window.addEventListener('resize', () => syncNavCategoryGlider(activeCategory), { passive: true });
+
     function filterCategory(cat, el) {
-      closeSimulationView();
+      ensureMainPortalVisibleWithoutScrollTop();
       activeCategory = cat;
       visibleCount = 24;
       if (cat === 'plugin') {
@@ -4917,11 +4996,18 @@
         btn.classList.add('text-gray-400');
       });
       [el, document.getElementById(deskMap[cat]), document.getElementById(mobMap[cat])].filter(Boolean).forEach(btn => {
-        btn.classList.add('bg-modrinth/20', 'text-white', 'font-semibold', 'border', 'border-modrinth/40');
+        btn.classList.add('text-white', 'font-semibold');
         btn.classList.remove('text-gray-400');
       });
+      syncNavCategoryGlider(cat);
       renderCards();
-      document.getElementById('catalogSection').scrollIntoView({ behavior: 'smooth' });
+      const catSec = document.getElementById('catalogSection');
+      if (catSec) {
+        const rect = catSec.getBoundingClientRect();
+        const headerOffset = 84;
+        const targetTop = Math.max(0, (window.scrollY || window.pageYOffset || 0) + rect.top - headerOffset);
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      }
     }
 
     let hubComboTag = 'all';
@@ -5098,22 +5184,88 @@
       renderCards();
     }
 
+    function updateFloatingSearchReturnPill() {
+      const pill = document.getElementById('mcSearchFloatingReturnPill');
+      const qSpan = document.getElementById('mcSearchFloatingQueryText');
+      const inp = document.getElementById('searchInput');
+      if (!pill || !inp) return;
+
+      const rawQ = (inp.value || '').trim();
+      const mainV = document.getElementById('mainPortalView');
+      const isMainVisible = mainV && !mainV.classList.contains('hidden');
+      const sw = document.getElementById('searchWrapper');
+      const passedSearch = sw ? (sw.getBoundingClientRect().bottom < 72) : ((window.scrollY || 0) > 260);
+
+      if (rawQ.length > 0 && isMainVisible && passedSearch) {
+        if (qSpan) qSpan.innerText = `"${rawQ}"`;
+        pill.classList.remove('hidden');
+      } else {
+        pill.classList.add('hidden');
+      }
+    }
+    window.updateFloatingSearchReturnPill = updateFloatingSearchReturnPill;
+    window.addEventListener('scroll', updateFloatingSearchReturnPill, { passive: true });
+
+    window.returnToSearchBarAndFocus = function() {
+      const sw = document.getElementById('searchWrapper');
+      const inp = document.getElementById('searchInput');
+      if (sw) {
+        const rect = sw.getBoundingClientRect();
+        const targetTop = Math.max(0, (window.scrollY || window.pageYOffset || 0) + rect.top - 110);
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      if (inp) {
+        setTimeout(() => {
+          inp.focus();
+          const len = inp.value.length;
+          if (typeof inp.setSelectionRange === 'function') inp.setSelectionRange(len, len);
+          handleSearch();
+        }, 260);
+      }
+    };
+
+    window.clearSearchFromFloatingPill = function(ev) {
+      if (ev) ev.stopPropagation();
+      const inp = document.getElementById('searchInput');
+      if (inp) inp.value = '';
+      closeInstantSearch();
+      visibleCount = 24;
+      renderCards();
+      updateFloatingSearchReturnPill();
+      if (typeof showToast === 'function') {
+        showToast('Arama filtresi temizlendi — tüm içerikler gösteriliyor.');
+      }
+    };
+
     function handleSearch() {
       visibleCount = 24;
       const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
       renderInstantSearchDropdown(q);
       renderCards();
+      updateFloatingSearchReturnPill();
     }
 
     function resetAllFilters() {
-      closeSimulationView();
+      ensureMainPortalVisibleWithoutScrollTop();
       activeCategory = 'all';
       activeLoader = 'all';
       activeVersion = 'all';
       visibleCount = 24;
       document.getElementById('searchInput').value = '';
       closeInstantSearch();
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-modrinth/20', 'text-white', 'font-semibold', 'border', 'border-modrinth/40');
+        btn.classList.add('text-gray-400');
+      });
+      ['navAll', 'mobNavAll'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) { b.classList.add('text-white', 'font-semibold'); b.classList.remove('text-gray-400'); }
+      });
+      syncNavCategoryGlider('all');
       renderCards();
+      updateFloatingSearchReturnPill();
     }
 
     window.applyModalDownloadButtonsState = function(item) {
@@ -10361,17 +10513,19 @@
 
         const dd = document.createElement('div');
         dd.id = 'comboChooserDropdown';
-        dd.className = 'hidden absolute left-0 mt-2.5 w-84 bg-modrinth-card border-2 border-amber-400/60 rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.92)] p-2.5 z-50 space-y-2';
+        dd.className = 'hidden absolute left-0 mt-2.5 w-80 bg-modrinth-card border-2 border-amber-400/60 rounded-2xl shadow-[0_18px_45px_rgba(0,0,0,0.92)] p-2.5 z-50 space-y-2';
+        dd.style.width = '340px';
+        dd.style.minWidth = '320px';
         dd.innerHTML = `
           <div class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-amber-300 flex items-center justify-between">
-            <span>Özel Kombo Merkezi</span>
-            <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">2 Mod</span>
+            <span>Kombolar</span>
+            <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">2 Seçenek</span>
           </div>
           <button type="button" onclick="openCombosHubView()" class="w-full text-left p-3 rounded-xl bg-modrinth-dark hover:bg-amber-500/15 border border-modrinth-border hover:border-amber-400 transition flex items-start gap-3 group">
             <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300 shrink-0 mt-0.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             </div>
-            <div>
+            <div class="min-w-0 flex-1">
               <div class="text-xs font-black text-white group-hover:text-amber-300 transition">1. Hazır Özel Kombo Paketleri (20)</div>
               <p class="text-[11px] text-gray-400 leading-snug mt-0.5">Önceden test edilmiş 20 hazır mod, shader ve kaynak paketi kombosu.</p>
             </div>
@@ -10380,17 +10534,25 @@
             <div class="w-9 h-9 rounded-xl bg-modrinth/20 border border-modrinth/40 flex items-center justify-center text-modrinth shrink-0 mt-0.5">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
             </div>
-            <div>
-              <div class="flex items-center gap-1.5">
-                <span class="text-xs font-black text-white group-hover:text-modrinth transition">2. Kombo Paketi Özelleştir</span>
-                <span class="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-amber-400 text-black">PRO STÜDYO</span>
-              </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-black text-white group-hover:text-modrinth transition">2. Kombo Paketi Özelleştir</div>
               <p class="text-[11px] text-gray-400 leading-snug mt-0.5">Sürümünüzü seçip istediğiniz oyun temasını yazın; size özel tek parça kombo paketi hazırlayalım.</p>
             </div>
           </button>
         `;
         wrap.appendChild(dd);
       }
+
+      window.togglePortalCombosBody = function(forceOpen) {
+        const body = document.getElementById('combosPortalCollapseBody');
+        const lbl = document.getElementById('portalCombosToggleLabel');
+        const chev = document.getElementById('portalCombosChevron');
+        if (!body) return;
+        const willOpen = typeof forceOpen === 'boolean' ? forceOpen : body.classList.contains('hidden');
+        body.classList.toggle('hidden', !willOpen);
+        if (lbl) lbl.innerText = willOpen ? 'Kapat' : 'Tıkla & Aç';
+        if (chev) chev.style.transform = willOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+      };
 
       const mobCombosBtn = document.getElementById('navCombosMobile');
       if (mobCombosBtn) {
@@ -10436,7 +10598,6 @@
                 <div>
                   <div class="flex items-center gap-1.5">
                     <span class="text-xs font-black text-white">2. Kombo Paketi Özelleştir</span>
-                    <span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-400 text-black">PRO</span>
                   </div>
                   <p class="text-[11px] text-gray-400 mt-0.5">Platform, yazılım ve sürüm seçip istediğiniz temaya göre tek parça kombo paketi oluşturun.</p>
                 </div>
@@ -10444,7 +10605,7 @@
             </div>
           </div>
 
-          <!-- PROFESYONEL STÜDYO: KOMBO PAKETİ ÖZELLEŞTİR -->
+          <!-- KOMBO PAKETİ ÖZELLEŞTİR -->
           <section id="customComboBuilderSection" class="hidden relative z-10 flex-1 max-w-6xl w-full mx-auto px-4 py-6">
             <!-- ÜST BAŞLIK BAR -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-modrinth-border">
@@ -10453,10 +10614,15 @@
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                   <span>Ana Portala Dön</span>
                 </button>
-                <h2 class="text-xl sm:text-2xl font-black text-white">Kombo Paketi Özelleştir</h2>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-xl sm:text-2xl font-black text-white">Kombo Paketi Özelleştir</h2>
+                  </div>
+                  <p class="text-[11px] text-gray-400 mt-0.5">Platform, sürüm ve sistem profilinize göre %100 uyumlu, yan modları çözülmüş özel mod paketi mimarisi oluşturun.</p>
+                </div>
               </div>
               <button type="button" onclick="openCombosHubView()" class="px-3.5 py-2 rounded-xl bg-modrinth-card hover:bg-amber-400/15 text-amber-300 border border-amber-400/40 text-xs font-extrabold transition self-start sm:self-auto">
-                Hazır Kombolar &rarr;
+                20 Hazır Kombo Paketi &rarr;
               </button>
             </div>
 
@@ -10466,15 +10632,17 @@
                 <!-- 1. PLATFORM -->
                 <div class="lg:col-span-4">
                   <div class="flex items-center justify-between mb-2">
-                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">1. Platform</span>
+                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">1. Platform Seçimi</span>
                     <span id="ccbStep1Status" class="text-[10px] font-extrabold text-modrinth">Java Edition</span>
                   </div>
                   <div class="grid grid-cols-2 gap-2">
                     <button type="button" id="ccbEdJava" onclick="setCustomComboEdition('java')" class="p-3 rounded-xl border-2 border-modrinth bg-modrinth/15 text-left transition">
                       <div class="text-xs font-black text-white">Java Edition</div>
+                      <div class="text-[10px] text-gray-400 mt-0.5">PC • .jar Mod &amp; Shader</div>
                     </button>
                     <button type="button" id="ccbEdBedrock" onclick="setCustomComboEdition('bedrock')" class="p-3 rounded-xl border border-modrinth-border bg-modrinth-dark text-left transition">
                       <div class="text-xs font-black text-gray-200">Bedrock / MCPE</div>
+                      <div class="text-[10px] text-gray-400 mt-0.5">Mobil &amp; Win10 • .mcaddon</div>
                     </button>
                   </div>
                 </div>
@@ -10482,7 +10650,7 @@
                 <!-- 2. YAZILIM -->
                 <div class="lg:col-span-4">
                   <div class="flex items-center justify-between mb-2">
-                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">2. Mod Yazılımı</span>
+                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">2. Mod Yükleyici</span>
                     <span id="ccbStep2Status" class="text-[10px] font-extrabold text-sky-300">FABRIC</span>
                   </div>
                   <div id="ccbLoaderButtonsWrap" class="grid grid-cols-3 gap-2"></div>
@@ -10491,18 +10659,36 @@
                 <!-- 3. SÜRÜM -->
                 <div class="lg:col-span-4">
                   <div class="flex items-center justify-between mb-2">
-                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">3. Sürüm</span>
+                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">3. Oyun Sürümü</span>
                     <span id="ccbStep3Status" class="text-[10px] font-extrabold text-amber-300">1.20.x</span>
                   </div>
                   <div id="ccbVersionButtonsWrap" class="grid grid-cols-3 gap-1.5"></div>
                 </div>
               </div>
 
-              <!-- 4. TEMA ARAMA -->
+              <!-- 4. DONANIM PROFİLİ VE PAKET KATMAN TERCIHLERİ -->
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 pb-5 mb-5 border-b border-modrinth-border">
+                <div class="lg:col-span-5">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">4. Sistem &amp; Donanım Profili</span>
+                    <span id="ccbHardwareStatus" class="text-[10px] font-extrabold text-emerald-300">Dengeli (6-8 GB RAM)</span>
+                  </div>
+                  <div id="ccbHardwareProfileWrap" class="grid grid-cols-3 gap-2"></div>
+                </div>
+                <div class="lg:col-span-7">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-black uppercase tracking-wider text-gray-300">5. Otomatik Paket Katmanları</span>
+                    <span class="text-[10px] font-bold text-gray-400">Dahil edilecek bileşenleri seçin</span>
+                  </div>
+                  <div id="ccbLayerTogglesWrap" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+                </div>
+              </div>
+
+              <!-- 6. TEMA ARAMA VE HIZLI ŞABLONLAR -->
               <div>
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                  <label for="ccbThemeInput" class="text-xs sm:text-sm font-black text-white">4. İstediğiniz Tema veya Özelliği Yazın</label>
-                  <span id="ccbActiveConfigPill" class="text-[11px] font-black px-2.5 py-0.5 rounded-lg bg-modrinth-dark border border-modrinth-border text-amber-300">
+                  <label for="ccbThemeInput" class="text-xs sm:text-sm font-black text-white">6. İstediğiniz Oyun Temasını veya Özellikleri Yazın</label>
+                  <span id="ccbActiveConfigPill" class="text-[11px] font-black px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-amber-300">
                     JAVA • FABRIC • 1.20.x
                   </span>
                 </div>
@@ -10510,23 +10696,26 @@
                 <div class="flex flex-col sm:flex-row gap-2.5">
                   <div class="relative flex-1">
                     <svg class="w-4 h-4 text-modrinth absolute left-4 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="ccbThemeInput" onkeydown="if(event.key==='Enter')generateCustomComboFromTheme(false)" placeholder="Örn: zombi salgını hayatta kalma gerçekçi, korku, rpg, shader..." class="w-full bg-modrinth-dark border-2 border-modrinth-border focus:border-modrinth rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none transition">
+                    <input type="text" id="ccbThemeInput" onkeydown="if(event.key==='Enter')generateCustomComboFromTheme(false)" placeholder="Örn: zombi salgını silahlı hayatta kalma, korku dweller sis, orta çağ rpg ejderha, create fabrika..." class="w-full bg-modrinth-dark border-2 border-modrinth-border focus:border-modrinth rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none transition">
                   </div>
-                  <button type="button" onclick="generateCustomComboFromTheme(false)" class="bg-modrinth hover:bg-modrinth-hover text-black font-black px-6 py-3 rounded-2xl text-xs sm:text-sm transition shadow-[0_0_20px_rgba(27,217,106,0.3)] shrink-0 flex items-center justify-center gap-2">
+                  <button type="button" onclick="generateCustomComboFromTheme(false)" class="bg-modrinth hover:bg-modrinth-hover text-black font-black px-6 py-3 rounded-2xl text-xs sm:text-sm transition shadow-[0_0_20px_rgba(27,217,106,0.25)] shrink-0 flex items-center justify-center gap-2">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    <span>Kombo Oluştur</span>
+                    <span>Kombo Paketi Üret</span>
                   </button>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-1.5 mt-3">
-                  <span class="text-[10px] font-bold text-gray-400 mr-1">Temalar:</span>
-                  <button type="button" onclick="quickFillCustomComboTheme('hayatta kalma zombi salgını gerçekçi')" class="px-2.5 py-1 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">Zombi Salgını</button>
-                  <button type="button" onclick="quickFillCustomComboTheme('korku sis karanlık')" class="px-2.5 py-1 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">Korku &amp; Sis</button>
-                  <button type="button" onclick="quickFillCustomComboTheme('orta çağ rpg büyü boss')" class="px-2.5 py-1 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">RPG &amp; Boss</button>
-                  <button type="button" onclick="quickFillCustomComboTheme('create fabrika otomasyon')" class="px-2.5 py-1 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">Fabrika</button>
-                  <button type="button" onclick="quickFillCustomComboTheme('uzay roket gezegenler')" class="px-2.5 py-1 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">Uzay</button>
-                  <button type="button" onclick="quickFillCustomComboTheme('çiftçilik yemek mobilya')" class="px-2.5 py-1 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">Çiftçilik &amp; Ev</button>
-                  <button type="button" onclick="quickFillCustomComboTheme('yüksek fps performans gerçekçi shader')" class="px-2.5 py-1 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">Ultra FPS &amp; Shader</button>
+                <div class="mt-3.5">
+                  <div class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 mb-2">Hazır Stüdyo Tema Şablonları (Tek Tıkla Üret):</div>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5">
+                    <button type="button" onclick="quickFillCustomComboTheme('hayatta kalma zombi salgını gerçekçi')" class="px-2.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 hover:border-amber-400/50 border border-modrinth-border text-[11px] font-extrabold text-gray-200 transition text-left truncate">🧟 Zombi Salgını</button>
+                    <button type="button" onclick="quickFillCustomComboTheme('korku sis karanlık')" class="px-2.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 hover:border-amber-400/50 border border-modrinth-border text-[11px] font-extrabold text-gray-200 transition text-left truncate">🌫️ Korku &amp; Sis</button>
+                    <button type="button" onclick="quickFillCustomComboTheme('orta çağ rpg büyü boss')" class="px-2.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 hover:border-amber-400/50 border border-modrinth-border text-[11px] font-extrabold text-gray-200 transition text-left truncate">⚔️ RPG &amp; Boss</button>
+                    <button type="button" onclick="quickFillCustomComboTheme('create fabrika otomasyon')" class="px-2.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 hover:border-amber-400/50 border border-modrinth-border text-[11px] font-extrabold text-gray-200 transition text-left truncate">⚙️ Create Fabrika</button>
+                    <button type="button" onclick="quickFillCustomComboTheme('uzay roket gezegenler')" class="px-2.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 hover:border-amber-400/50 border border-modrinth-border text-[11px] font-extrabold text-gray-200 transition text-left truncate">🚀 Uzay &amp; Roket</button>
+                    <button type="button" onclick="quickFillCustomComboTheme('çiftçilik yemek mobilya')" class="px-2.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 hover:border-amber-400/50 border border-modrinth-border text-[11px] font-extrabold text-gray-200 transition text-left truncate">🌾 Çiftlik &amp; Ev</button>
+                    <button type="button" onclick="quickFillCustomComboTheme('yüksek fps performans gerçekçi shader')" class="px-2.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 hover:border-amber-400/50 border border-modrinth-border text-[11px] font-extrabold text-gray-200 transition text-left truncate">⚡ Ultra FPS</button>
+                    <button type="button" onclick="quickFillCustomComboTheme('pvp savaş kalkan kristal')" class="px-2.5 py-2 rounded-xl bg-modrinth-dark hover:bg-amber-400/15 hover:border-amber-400/50 border border-modrinth-border text-[11px] font-extrabold text-gray-200 transition text-left truncate">🎯 Rekabetçi PvP</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -10538,28 +10727,34 @@
             <div id="ccbResultsWrapper" class="hidden space-y-5">
               <div id="ccbUnifiedComboCardHost"></div>
 
-              <!-- EKLEMEYE DEVAM ET -->
+              <!-- EKLEMEYE DEVAM ET (MODÜLER Yükseltme Alanı) -->
               <div class="bg-modrinth-card border-2 border-modrinth/40 rounded-3xl p-5 shadow-xl">
-                <label for="ccbContinueInput" class="text-sm font-black text-modrinth flex items-center gap-2 mb-3">
-                  <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                  <span>Eklemeye Devam Et</span>
-                </label>
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <label for="ccbContinueInput" class="text-sm font-black text-modrinth flex items-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    <span>Pakete Modüler Özellik veya Mod Ekle</span>
+                  </label>
+                  <span class="text-[10px] font-bold text-gray-400">Mevcut paketi bozmadan çakışma kontrolüyle yeni özellik ekler</span>
+                </div>
                 <div class="flex flex-col sm:flex-row gap-2.5">
                   <div class="relative flex-1">
                     <svg class="w-4 h-4 text-modrinth absolute left-4 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="ccbContinueInput" onkeydown="if(event.key==='Enter')generateCustomComboFromTheme(true)" placeholder="Eklemek istediğiniz özelliği veya modu yazın (örn: sesli konuşma, harita, sırt çantası, mezar taşı)..." class="w-full bg-modrinth-dark border-2 border-modrinth-border focus:border-modrinth rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none transition">
+                    <input type="text" id="ccbContinueInput" onkeydown="if(event.key==='Enter')generateCustomComboFromTheme(true)" placeholder="Eklemek istediğiniz özelliği veya modu yazın (örn: sesli konuşma, harita, sırt çantası, mezar taşı, cobblemon)..." class="w-full bg-modrinth-dark border-2 border-modrinth-border focus:border-modrinth rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-white placeholder-gray-400 focus:outline-none transition">
                   </div>
                   <button type="button" onclick="generateCustomComboFromTheme(true)" class="bg-amber-400 hover:bg-amber-300 text-black font-black px-6 py-3 rounded-2xl text-xs sm:text-sm transition shadow-lg shrink-0 flex items-center justify-center gap-2">
-                    <span>İlgili Sonuçları Bul</span>
+                    <span>Uyumlu Modları Bul</span>
                   </button>
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
+                  <span class="text-[10px] font-bold text-gray-400 mr-1">Hızlı Modül Ekle:</span>
                   <button type="button" onclick="quickAppendCustomCombo('sesli konuşma')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ Sesli Konuşma</button>
                   <button type="button" onclick="quickAppendCustomCombo('mini harita')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ Mini Harita</button>
                   <button type="button" onclick="quickAppendCustomCombo('sırt çantası')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ Sırt Çantası</button>
                   <button type="button" onclick="quickAppendCustomCombo('mezar taşı')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ Mezar Taşı</button>
                   <button type="button" onclick="quickAppendCustomCombo('ışınlanma taşı')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ Waystone</button>
                   <button type="button" onclick="quickAppendCustomCombo('ağaç devirme veinminer')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ Ağaç &amp; Maden</button>
+                  <button type="button" onclick="quickAppendCustomCombo('güvenlik kamera lazer')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ Üs Güvenliği</button>
+                  <button type="button" onclick="quickAppendCustomCombo('uçak gemi araba')" class="px-2.5 py-1 rounded-lg bg-modrinth-dark hover:bg-modrinth/20 border border-modrinth-border text-[11px] font-bold text-gray-200 transition">+ Araç &amp; Uçak</button>
                 </div>
 
                 <!-- İLGİLİ SONUÇLAR BULUNDU (ONAY ÖNCESİ İNCELEME & ÇIKARMA ALANI) -->
@@ -10647,6 +10842,9 @@
       let ccbEdition = 'java';
       let ccbLoader = 'fabric';
       let ccbVersion = '1.20';
+      let ccbHardwareProfile = 'balanced'; // 'low' | 'balanced' | 'ultra'
+      let ccbLayerOpts = { fps: true, shader: true, pack: true, deps: true };
+      let ccbViewFilter = 'all'; // 'all' | 'mod' | 'visual' | 'dep'
       let ccbPackageItems = []; // { item, reason, isDep, addedLater }
       let ccbPendingAppend = []; // { item, reason, isDep }
       let ccbPendingQuery = '';
@@ -10662,6 +10860,12 @@
         { code: '1.19', label: '1.19.x' },
         { code: '1.18', label: '1.18.x' },
         { code: '1.16', label: '1.16.5' }
+      ];
+
+      const CCB_HARDWARE_PROFILES = [
+        { id: 'low', name: 'Düşük Sistem', sub: '2-4 GB RAM • Max FPS', status: 'Düşük Sistem (2-4 GB RAM)' },
+        { id: 'balanced', name: 'Dengeli', sub: '6-8 GB RAM • Önerilen', status: 'Dengeli (6-8 GB RAM)' },
+        { id: 'ultra', name: 'Ultra Sistem', sub: '10+ GB RAM • Sinematik', status: 'Ultra (10+ GB RAM)' }
       ];
 
       function renderCustomComboStepControls() {
@@ -10690,7 +10894,7 @@
             ldrWrap.innerHTML = `
               <button type="button" class="p-3 rounded-xl border-2 border-emerald-400 bg-emerald-500/15 text-left flex items-center justify-between">
                 <div>
-                  <div class="text-xs font-black text-white">Bedrock Add-On & Paket</div>
+                  <div class="text-xs font-black text-white">Bedrock Add-On &amp; Paket</div>
                   <div class="text-[10px] text-emerald-300 mt-0.5">MCPE / Win10 • RenderDragon</div>
                 </div>
                 <span class="px-2 py-0.5 rounded bg-emerald-400 text-black text-[10px] font-black">SEÇİLİ</span>
@@ -10732,11 +10936,88 @@
           }).join('');
         }
 
+        // 4. Donanım Profili Butonları
+        const hwWrap = document.getElementById('ccbHardwareProfileWrap');
+        const hwSt = document.getElementById('ccbHardwareStatus');
+        if (hwWrap) {
+          const foundHw = CCB_HARDWARE_PROFILES.find(h => h.id === ccbHardwareProfile) || CCB_HARDWARE_PROFILES[1];
+          if (hwSt) hwSt.innerText = foundHw.status;
+          hwWrap.innerHTML = CCB_HARDWARE_PROFILES.map(h => {
+            const active = ccbHardwareProfile === h.id;
+            return `
+              <button type="button" onclick="setCustomComboHardwareProfile('${h.id}')" class="p-2.5 rounded-xl text-left transition ${active ? 'border-2 border-emerald-400 bg-emerald-500/15 text-white shadow-md' : 'border border-modrinth-border bg-modrinth-dark text-gray-300 hover:border-white/30'}">
+                <div class="text-xs font-black">${h.name}</div>
+                <div class="text-[10px] text-gray-400 truncate mt-0.5">${h.sub}</div>
+              </button>
+            `;
+          }).join('');
+        }
+
+        // 5. Otomatik Paket Katmanları
+        const layerWrap = document.getElementById('ccbLayerTogglesWrap');
+        if (layerWrap) {
+          const layers = [
+            { key: 'fps', label: 'FPS Motoru', sub: 'Sodium / Ferrite', color: 'border-modrinth bg-modrinth/15 text-modrinth' },
+            { key: 'shader', label: 'Shader Paketi', sub: 'Iris / Oculus + Işık', color: 'border-purple-400 bg-purple-500/15 text-purple-300' },
+            { key: 'pack', label: 'Doku & Animasyon', sub: 'Kaynak Paketleri', color: 'border-sky-400 bg-sky-500/15 text-sky-300' },
+            { key: 'deps', label: 'Zorunlu Yan Mod', sub: 'Otomatik API Çözücü', color: 'border-amber-400 bg-amber-500/15 text-amber-300' }
+          ];
+          layerWrap.innerHTML = layers.map(ly => {
+            const on = !!ccbLayerOpts[ly.key];
+            return `
+              <button type="button" onclick="toggleCustomComboLayerOpt('${ly.key}')" class="p-2.5 rounded-xl border text-left transition flex items-start justify-between gap-1.5 ${on ? ly.color : 'border-modrinth-border bg-modrinth-dark text-gray-400 opacity-65 hover:opacity-100'}">
+                <div class="min-w-0">
+                  <div class="text-[11px] font-black text-white truncate">${ly.label}</div>
+                  <div class="text-[9px] text-gray-400 truncate mt-0.5">${ly.sub}</div>
+                </div>
+                <span class="text-[10px] font-black px-1.5 py-0.5 rounded ${on ? 'bg-black/40 text-white' : 'bg-white/5 text-gray-500'}">${on ? 'AÇIK' : 'KAPALI'}</span>
+              </button>
+            `;
+          }).join('');
+        }
+
         const pill = document.getElementById('ccbActiveConfigPill');
         if (pill) {
-          pill.innerText = `${ccbEdition.toUpperCase()} • ${ccbLoader.toUpperCase()} • ${ccbVersion === '26.3' ? '26.3' : ccbVersion + '.x'}`;
+          const hwObj = CCB_HARDWARE_PROFILES.find(h => h.id === ccbHardwareProfile) || CCB_HARDWARE_PROFILES[1];
+          pill.innerText = `${ccbEdition.toUpperCase()} • ${ccbLoader.toUpperCase()} • ${ccbVersion === '26.3' ? '26.3' : ccbVersion + '.x'} • ${hwObj.name.toUpperCase()}`;
         }
       }
+
+      window.setCustomComboHardwareProfile = function(profileId) {
+        ccbHardwareProfile = profileId;
+        if (profileId === 'low') {
+          ccbLayerOpts.fps = true;
+          ccbLayerOpts.shader = false;
+        } else if (profileId === 'ultra') {
+          ccbLayerOpts.shader = true;
+          ccbLayerOpts.pack = true;
+        } else {
+          ccbLayerOpts.fps = true;
+          ccbLayerOpts.shader = true;
+          ccbLayerOpts.pack = true;
+        }
+        ccbExecutedQueries.clear();
+        ccbLastQuery = '';
+        renderCustomComboStepControls();
+        if (ccbThemePrompts.length > 0) {
+          window.generateCustomComboFromTheme(false);
+        }
+      };
+
+      window.toggleCustomComboLayerOpt = function(key) {
+        ccbLayerOpts[key] = !ccbLayerOpts[key];
+        ccbExecutedQueries.clear();
+        ccbLastQuery = '';
+        renderCustomComboStepControls();
+        if (ccbThemePrompts.length > 0) {
+          window.generateCustomComboFromTheme(false);
+        }
+      };
+
+      window.setCustomComboViewFilter = function(filterKey) {
+        ccbViewFilter = filterKey;
+        renderCustomComboStudioResult();
+      };
 
       window.openCustomComboBuilderView = function() {
         hideAllSpecialSections();
@@ -11106,7 +11387,7 @@
             candidates.slice(0, 2).forEach(c => tryAddItem(c, `${rule.label}`));
           });
 
-          if (rule.needsShader || wantsShaderExplicit) {
+          if (ccbLayerOpts.shader && ccbHardwareProfile !== 'low' && (rule.needsShader || wantsShaderExplicit || ccbHardwareProfile === 'ultra')) {
             const hasShaderAlready = [...startList, ...addedNow].some(e => e.item.category === 'shader');
             if (!hasShaderAlready) {
               for (const sId of rule.shaderPref) {
@@ -11123,14 +11404,15 @@
             }
           }
 
-          if (rule.needsPack || wantsPackExplicit) {
+          if (ccbLayerOpts.pack && (rule.needsPack || wantsPackExplicit || ccbHardwareProfile === 'ultra')) {
             const currentPacksCount = [...startList, ...addedNow].filter(e => e.item.category === 'resourcepack').length;
-            if (currentPacksCount < 2) {
+            const maxPacks = ccbHardwareProfile === 'ultra' ? 2 : 1;
+            if (currentPacksCount < maxPacks) {
               for (const pId of rule.packPref) {
                 const pk = catalogueData.find(m => (m.id === pId || m.slug === pId) && m.category === 'resourcepack' && isItemCompatibleWithSelection(m));
                 if (pk) {
                   tryAddItem(pk, 'Doku / animasyon paketi');
-                  if ([...startList, ...addedNow].filter(e => e.item.category === 'resourcepack').length >= 2) break;
+                  if ([...startList, ...addedNow].filter(e => e.item.category === 'resourcepack').length >= maxPacks) break;
                 }
               }
             }
@@ -11162,19 +11444,29 @@
         }
 
         // 4) Yeni paket oluşturulurken temel FPS / Performans motorunu da ekle
-        if (!isAppend && addedNow.length > 0) {
+        if (!isAppend && addedNow.length > 0 && ccbLayerOpts.fps) {
+          const isLowProfile = ccbHardwareProfile === 'low';
           if (ccbEdition === 'java' && ccbLoader === 'fabric') {
-            ['sodium', 'ferrite-core'].forEach(id => {
+            const fpsList = isLowProfile
+              ? ['sodium', 'lithium', 'ferrite-core', 'immediatelyfast', 'entityculling']
+              : ['sodium', 'ferrite-core'];
+            fpsList.forEach(id => {
               const pMod = catalogueData.find(m => m.id === id);
               if (pMod) tryAddItem(pMod, 'FPS ve bellek optimizasyonu');
             });
           } else if (ccbEdition === 'java' && ccbLoader === 'forge') {
-            ['ferritecore-forge', 'modernfix-forge'].forEach(id => {
+            const fpsList = isLowProfile
+              ? ['ferritecore-forge', 'modernfix-forge', 'radium', 'saturn']
+              : ['ferritecore-forge', 'modernfix-forge'];
+            fpsList.forEach(id => {
               const pMod = catalogueData.find(m => m.id === id);
               if (pMod) tryAddItem(pMod, 'RAM ve FPS optimizasyonu');
             });
           } else if (ccbEdition === 'java' && ccbLoader === 'neoforge') {
-            ['embeddium', 'ferritecore-neoforge'].forEach(id => {
+            const fpsList = isLowProfile
+              ? ['embeddium', 'ferritecore-neoforge', 'ImmediatelyFast-Forge', 'entityculling-neoforge']
+              : ['embeddium', 'ferritecore-neoforge'];
+            fpsList.forEach(id => {
               const pMod = catalogueData.find(m => m.id === id);
               if (pMod) tryAddItem(pMod, 'FPS ve RAM optimizasyonu');
             });
@@ -11199,19 +11491,21 @@
 
         // 5) Zorunlu yan modları (bağımlılıkları) çöz
         const combinedItems = [...startList, ...addedNow].map(e => e.item);
-        const analysis = analyzeModList(combinedItems);
-        if (analysis && Array.isArray(analysis.missingDeps)) {
-          analysis.missingDeps.forEach(m => {
-            if (m && m.dep && !combinedItems.some(ci => ci.id === m.dep.id) && hasAnyWorkingDownloadLink(m.dep)) {
-              addedNow.push({
-                item: m.dep,
-                reason: `${m.requiredBy.slice(0, 2).join(', ')} için gerekli`,
-                isDep: true,
-                addedLater: isAppend
-              });
-              combinedItems.push(m.dep);
-            }
-          });
+        if (ccbLayerOpts.deps) {
+          const analysis = analyzeModList(combinedItems);
+          if (analysis && Array.isArray(analysis.missingDeps)) {
+            analysis.missingDeps.forEach(m => {
+              if (m && m.dep && !combinedItems.some(ci => ci.id === m.dep.id) && hasAnyWorkingDownloadLink(m.dep)) {
+                addedNow.push({
+                  item: m.dep,
+                  reason: `${m.requiredBy.slice(0, 2).join(', ')} için gerekli`,
+                  isDep: true,
+                  addedLater: isAppend
+                });
+                combinedItems.push(m.dep);
+              }
+            });
+          }
         }
 
         if (isAppend) {
@@ -11232,10 +11526,11 @@
         ccbPendingNormQuery = '';
         ccbThemePrompts = [rawQuery];
         ccbPackageItems = [...addedNow];
+        ccbViewFilter = 'all';
         ccbLastQuery = normQuery;
         ccbExecutedQueries.add(normQuery);
 
-        showCustomComboStatusBanner(`"${rawQuery}" için ${ccbPackageItems.length} içerikli kombo paketi oluşturuldu.`, 'ok');
+        showCustomComboStatusBanner(`"${rawQuery}" için ${ccbPackageItems.length} içerikli profesyonel kombo paketi oluşturuldu.`, 'ok');
         showToast(`Kombo paketi hazır (${ccbPackageItems.length} içerik)`);
         renderCustomComboStudioResult();
         renderCustomComboStagingPanel();
@@ -11319,18 +11614,20 @@
         const nextItems = [...ccbPackageItems, ...toCommit];
 
         // Onaylananlar arasında eksik zorunlu yan mod kaldıysa onu da Sonradan Eklendi olarak ekle
-        const analysis = analyzeModList(nextItems.map(e => e.item));
-        if (analysis && Array.isArray(analysis.missingDeps)) {
-          analysis.missingDeps.forEach(m => {
-            if (m && m.dep && !nextItems.some(e => e.item.id === m.dep.id) && hasAnyWorkingDownloadLink(m.dep)) {
-              nextItems.push({
-                item: m.dep,
-                reason: `${m.requiredBy.slice(0, 2).join(', ')} için gerekli`,
-                isDep: true,
-                addedLater: true
-              });
-            }
-          });
+        if (ccbLayerOpts.deps) {
+          const analysis = analyzeModList(nextItems.map(e => e.item));
+          if (analysis && Array.isArray(analysis.missingDeps)) {
+            analysis.missingDeps.forEach(m => {
+              if (m && m.dep && !nextItems.some(e => e.item.id === m.dep.id) && hasAnyWorkingDownloadLink(m.dep)) {
+                nextItems.push({
+                  item: m.dep,
+                  reason: `${m.requiredBy.slice(0, 2).join(', ')} için gerekli`,
+                  isDep: true,
+                  addedLater: true
+                });
+              }
+            });
+          }
         }
 
         ccbPackageItems = nextItems;
@@ -11354,7 +11651,7 @@
         showToast(`+${addedCount} içerik kombo paketine eklendi!`);
       };
 
-      // Paketin Ne İşe Yaradığını Özetleyen Kısa & Net Özet
+      // Paketin Ne İşe Yaradığını ve Teknik Telemetrisini Özetleyen Motor
       function buildCustomComboSummaryData() {
         const mainMods = ccbPackageItems.filter(e => e.item.category === 'mod' && !e.isDep).map(e => e.item);
         const shaders = ccbPackageItems.filter(e => e.item.category === 'shader').map(e => e.item);
@@ -11379,13 +11676,31 @@
           overviewParagraph += `Görseller ve atmosfer için <strong>${[shaderNames, packNames].filter(Boolean).join(', ')}</strong> eklendi. `;
         }
         if (deps.length > 0) {
-          overviewParagraph += `Gerekli yan modlar (${depNames}) dahildir.`;
+          overviewParagraph += `Zorunlu yan modlar (${depNames}) otomatik çözülmüştür.`;
         }
+
+        // Tahmini RAM & FPS Telemetrisi
+        const baseRamGb = ccbEdition === 'bedrock' ? 1.5 : 2.2;
+        const estRamNum = Math.min(10, Math.max(2, baseRamGb + mainMods.length * 0.22 + shaders.length * 1.1 + packs.length * 0.35));
+        const estRamMin = Math.max(2, Math.floor(estRamNum));
+        const estRamMax = Math.ceil(estRamNum + 1.2);
+        const estRamText = ccbEdition === 'bedrock' ? `${estRamMin}-${estRamMax} GB Cihaz RAM` : `${estRamMin} - ${estRamMax} GB JVM RAM`;
+
+        const hasFpsEngine = ccbPackageItems.some(e => ['sodium', 'embeddium', 'ferrite-core', 'ferritecore-forge', 'ferritecore-neoforge', 'modernfix', 'modernfix-forge'].includes(e.item.id));
+        const estFpsText = shaders.length > 0
+          ? (hasFpsEngine ? 'Shader Aktif • Dengeli 75-140 FPS' : 'Sinematik Görsel • 60-90 FPS')
+          : (hasFpsEngine ? '+160% FPS Boost • Ultra Akıcı' : 'Standart Akıcı • 120+ FPS');
+
+        const analysis = analyzeModList(ccbPackageItems.map(e => e.item));
+        const isClean = (!analysis || (analysis.errors.length === 0 && analysis.missingDeps.length === 0));
+        const compatText = isClean
+          ? `%100 Uyumlu • 0 Çakışma`
+          : `${analysis.errors.length} Çakışma / ${analysis.missingDeps.length} Eksik Yan Mod`;
 
         const highlights = [
           {
             icon: '🎮',
-            title: `Oynanış (${mainMods.length} Mod)`,
+            title: `Oynanış (${mainMods.length} Ana Mod)`,
             color: 'text-emerald-400',
             text: mainMods.length > 0
               ? `${mainModNames}${mainMods.length > 4 ? ` ve +${mainMods.length - 4} mod` : ''}`
@@ -11401,7 +11716,7 @@
           },
           {
             icon: '🛡️',
-            title: `Yan Modlar (${deps.length})`,
+            title: `Zorunlu Yan Modlar (${deps.length})`,
             color: 'text-amber-300',
             text: deps.length > 0
               ? depNames
@@ -11413,17 +11728,24 @@
           packageTitle,
           overviewParagraph,
           highlights,
+          telemetry: {
+            estRamText,
+            estFpsText,
+            compatText,
+            isClean
+          },
           counts: {
             total: ccbPackageItems.length,
             mods: mainMods.length,
             shaders: shaders.length,
             packs: packs.length,
+            visuals: shaders.length + packs.length,
             deps: deps.length
           }
         };
       }
 
-      // TOPLU 1 KOMBO PAKETİ KARTI
+      // PROFESYONEL KOMBO PAKETİ STÜDYO KARTI VE DOĞRUDAN SAYFA İÇİ YÖNETİM
       function renderCustomComboStudioResult() {
         const wrap = document.getElementById('ccbResultsWrapper');
         const host = document.getElementById('ccbUnifiedComboCardHost');
@@ -11450,33 +11772,76 @@
           </div>
         `).join('');
 
-        const itemPillsHTML = ccbPackageItems.map(entry => {
-          const item = entry.item;
-          const catColor = item.category === 'shader'
-            ? 'border-purple-400/40 bg-purple-500/10 text-purple-200'
-            : (item.category === 'resourcepack'
-              ? 'border-sky-400/40 bg-sky-500/10 text-sky-200'
-              : (entry.isDep
-                ? 'border-orange-400/40 bg-orange-500/10 text-orange-200'
-                : 'border-modrinth/40 bg-modrinth/10 text-gray-100'));
-          const laterPill = entry.addedLater
-            ? `<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-400 text-black">Sonradan Eklendi</span>`
-            : '';
+        // Kategori Filtreleme Sekmeleri
+        const filterTabs = [
+          { id: 'all', label: `Tümü (${summary.counts.total})` },
+          { id: 'mod', label: `Ana Modlar (${summary.counts.mods})` },
+          { id: 'visual', label: `Shader & Doku (${summary.counts.visuals})` },
+          { id: 'dep', label: `Zorunlu Yan Mod (${summary.counts.deps})` }
+        ];
+        const filterTabsHTML = filterTabs.map(t => {
+          const active = ccbViewFilter === t.id;
           return `
-            <span onclick="openCustomComboInspectModal()" class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl border ${catColor} text-[11px] font-bold hover:border-amber-400 transition">
-              <span>${getLocalizedTitle(item)}</span>
-              ${laterPill}
-            </span>
+            <button type="button" onclick="setCustomComboViewFilter('${t.id}')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold transition ${active ? 'bg-amber-400 text-black shadow' : 'bg-modrinth-dark border border-modrinth-border text-gray-300 hover:text-white'}">
+              ${t.label}
+            </button>
+          `;
+        }).join('');
+
+        const filteredEntries = ccbPackageItems.filter(entry => {
+          if (ccbViewFilter === 'mod') return entry.item.category === 'mod' && !entry.isDep;
+          if (ccbViewFilter === 'visual') return entry.item.category === 'shader' || entry.item.category === 'resourcepack';
+          if (ccbViewFilter === 'dep') return !!entry.isDep;
+          return true;
+        });
+
+        // Doğrudan Sayfa İçi Görsel İçerik Kartları
+        const inPageCardsHTML = filteredEntries.map(entry => {
+          const item = entry.item;
+          const catBadge = item.category === 'shader'
+            ? '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-400/40">SHADER</span>'
+            : (item.category === 'resourcepack'
+              ? '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/40">KAYNAK PAKETİ</span>'
+              : (entry.isDep
+                ? '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-300 border border-orange-400/40">ZORUNLU YAN MOD</span>'
+                : '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-modrinth/20 text-modrinth border border-modrinth/40">MOD</span>'));
+          const laterBadge = entry.addedLater
+            ? '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-amber-400 text-black">Sonradan Eklendi</span>'
+            : '';
+          const dlUrl = item.edition === 'bedrock' ? (item.curse || item.modrinth || '') : (item.modrinth || item.curse || '');
+          const dlLabel = (dlUrl && dlUrl.includes('modrinth.com')) ? 'Modrinth' : 'CurseForge';
+
+          return `
+            <div class="flex items-center justify-between gap-3 bg-modrinth-dark/95 border border-modrinth-border hover:border-amber-400/50 p-3 rounded-2xl transition">
+              <div onclick="openDetailModal('${item.id}', { type: 'custom' })" class="flex items-start gap-3 min-w-0 cursor-pointer group flex-1">
+                ${window.getAvatarHTML(item, "w-11 h-11 shrink-0")}
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-xs sm:text-sm font-extrabold text-white group-hover:text-modrinth transition truncate">${getLocalizedTitle(item)}</span>
+                    ${catBadge}
+                    ${laterBadge}
+                  </div>
+                  <div class="text-[11px] text-gray-400 truncate mt-0.5">${getLocalizedDesc(item)}</div>
+                  <div class="text-[10px] text-amber-300/90 font-semibold mt-1 truncate">${entry.reason} • ${item.loader.toUpperCase()} • ${item.verText}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                ${dlUrl ? `<a href="${dlUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg bg-modrinth/15 hover:bg-modrinth hover:text-black border border-modrinth/35 text-modrinth text-[10px] font-extrabold transition" title="${dlLabel} sayfasında aç">${dlLabel} ↗</a>` : ''}
+                <button type="button" onclick="openDetailModal('${item.id}', { type: 'custom' })" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/15 text-gray-200 text-[10px] font-bold transition">İncele</button>
+                <button type="button" onclick="removeCustomComboItem('${item.id}', false)" class="px-2.5 py-1.5 rounded-lg bg-red-500/15 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/30 text-[10px] font-extrabold transition" title="Paketten Çıkar">✕</button>
+              </div>
+            </div>
           `;
         }).join('');
 
         host.innerHTML = `
           <div class="bg-gradient-to-br from-amber-500/10 via-modrinth-card to-modrinth-card border-2 border-amber-400/60 rounded-3xl p-5 sm:p-6 shadow-2xl">
+            <!-- ÜST PAKET BAŞLIĞI & AVATAR DİZİSİ -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 mb-4 border-b border-white/10">
               <div>
                 <div class="flex items-center gap-2 flex-wrap mb-1.5">
                   <span class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-md bg-white/10 text-gray-200">${ccbEdition.toUpperCase()} • ${ccbLoader.toUpperCase()} • ${ccbVersion === '26.3' ? '26.3' : ccbVersion + '.x'}</span>
-                  <span class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-modrinth/20 text-modrinth">${summary.counts.total} İçerik • Uyumlu</span>
+                  <span class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-modrinth/20 text-modrinth border border-modrinth/40">✓ ${summary.telemetry.compatText}</span>
                 </div>
                 <h3 class="text-lg sm:text-xl font-black text-white">${summary.packageTitle}</h3>
               </div>
@@ -11487,39 +11852,119 @@
               </div>
             </div>
 
-            <div class="bg-modrinth-dark/90 border border-modrinth-border rounded-2xl p-4 mb-4">
-              <div class="text-[11px] font-black uppercase tracking-wider text-amber-300 mb-1">Ne İşe Yarar?</div>
+            <!-- CANLI TEKNİK TELEMETRİ GÖSTERGE PANELİ -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 mb-4">
+              <div class="bg-modrinth-dark/90 border border-modrinth-border rounded-2xl p-3">
+                <div class="text-[10px] font-bold uppercase text-gray-400">Önerilen RAM</div>
+                <div class="text-xs sm:text-sm font-black text-amber-300 mt-0.5">${summary.telemetry.estRamText}</div>
+              </div>
+              <div class="bg-modrinth-dark/90 border border-modrinth-border rounded-2xl p-3">
+                <div class="text-[10px] font-bold uppercase text-gray-400">Performans &amp; FPS</div>
+                <div class="text-xs sm:text-sm font-black text-modrinth mt-0.5">${summary.telemetry.estFpsText}</div>
+              </div>
+              <div class="bg-modrinth-dark/90 border border-modrinth-border rounded-2xl p-3">
+                <div class="text-[10px] font-bold uppercase text-gray-400">Çakışma &amp; API Testi</div>
+                <div class="text-xs sm:text-sm font-black text-sky-300 mt-0.5">${summary.telemetry.compatText}</div>
+              </div>
+              <div class="bg-modrinth-dark/90 border border-modrinth-border rounded-2xl p-3">
+                <div class="text-[10px] font-bold uppercase text-gray-400">Mimari Dağılım</div>
+                <div class="text-xs sm:text-sm font-black text-white mt-0.5">${summary.counts.mods} Mod • ${summary.counts.visuals} Görsel • ${summary.counts.deps} API</div>
+              </div>
+            </div>
+
+            <!-- PAKET ÖZETİ & ÖNE ÇIKANLAR -->
+            <div class="bg-modrinth-dark/90 border border-modrinth-border rounded-2xl p-4 mb-5">
+              <div class="text-[11px] font-black uppercase tracking-wider text-amber-300 mb-1">Paket Mimarisi &amp; Ne İşe Yarar?</div>
               <p class="text-xs sm:text-sm text-gray-200 leading-relaxed mb-3">${summary.overviewParagraph}</p>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
                 ${highlightsHTML}
               </div>
             </div>
 
+            <!-- DOĞRUDAN SAYFA İÇİ KATEGORİLİ PAKET İÇERİĞİ VE DÜZENLEME -->
             <div class="mb-5">
-              <div class="flex flex-wrap gap-1.5">
-                ${itemPillsHTML}
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  ${filterTabsHTML}
+                </div>
+                <span class="text-[11px] font-bold text-gray-400">İstemediğiniz içeriği <strong>✕</strong> ile anında paketten çıkarabilirsiniz</span>
+              </div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+                ${inPageCardsHTML}
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-4 border-t border-white/10">
-              <button type="button" onclick="openCustomComboInspectModal()" class="sm:col-span-5 mc-particle-btn text-white font-black py-3 px-4 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2">
-                <span class="mc-p mc-p1"></span>
-                <span class="mc-p mc-p2"></span>
-                <span class="mc-p mc-p3"></span>
-                <span class="mc-p mc-p4"></span>
-                <span class="mc-p mc-p5"></span>
-                <span class="relative z-10">İçeriği İncele (${summary.counts.total})</span>
+            <!-- PRO AKSİYON VE SİMÜLATÖR ENTEGRASYON ÇUBUĞU -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5 pt-4 border-t border-white/10">
+              <button type="button" onclick="transferCustomComboToCart()" class="lg:col-span-4 bg-modrinth hover:bg-modrinth-hover text-black font-black py-3 px-4 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg">
+                <span>+ Tümünü Mod Listeme Aktar (${summary.counts.total})</span>
               </button>
-              <button type="button" onclick="transferCustomComboToCart()" class="sm:col-span-5 bg-modrinth hover:bg-modrinth-hover text-black font-black py-3 px-4 rounded-2xl text-xs sm:text-sm transition flex items-center justify-center gap-2">
-                <span>+ Mod Listeme Ekle</span>
+              <button type="button" onclick="testCustomComboInCompatSim()" class="lg:col-span-3 bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-400/40 font-black py-3 px-3 rounded-2xl text-xs transition flex items-center justify-center gap-1.5">
+                <span>🧪 Uyum Simülatöründe Test Et</span>
               </button>
-              <button type="button" onclick="clearCustomComboPackage()" class="sm:col-span-2 bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 font-extrabold py-3 px-4 rounded-2xl text-xs transition flex items-center justify-center">
+              <button type="button" onclick="testCustomComboInServerSim()" class="lg:col-span-3 bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-400/40 font-black py-3 px-3 rounded-2xl text-xs transition flex items-center justify-center gap-1.5">
+                <span>🖥️ Aternos Sunucu Testi</span>
+              </button>
+              <button type="button" onclick="exportCustomComboManifest()" class="lg:col-span-1 bg-white/10 hover:bg-white/20 text-white font-extrabold py-3 px-3 rounded-2xl text-xs transition flex items-center justify-center" title="Paket listesini ve indirme linklerini panoya kopyala">
+                📋 Kopyala
+              </button>
+              <button type="button" onclick="clearCustomComboPackage()" class="lg:col-span-1 bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 font-extrabold py-3 px-3 rounded-2xl text-xs transition flex items-center justify-center">
                 Sıfırla
               </button>
             </div>
           </div>
         `;
       }
+
+      window.testCustomComboInCompatSim = function() {
+        if (ccbPackageItems.length === 0) return;
+        ccbPackageItems.forEach(entry => {
+          if (!modCart.includes(entry.item.id)) modCart.push(entry.item.id);
+        });
+        updateCartUI();
+        renderCards();
+        window.openSimulationView();
+        showToast('Özel kombo paketiniz Uyum Simülatörüne yüklendi!');
+      };
+
+      window.testCustomComboInServerSim = function() {
+        if (ccbPackageItems.length === 0) return;
+        ccbPackageItems.forEach(entry => {
+          if (!modCart.includes(entry.item.id)) modCart.push(entry.item.id);
+        });
+        updateCartUI();
+        renderCards();
+        window.openServerSimulationView();
+        showToast('Özel kombo paketiniz Aternos Sunucu Simülatörüne yüklendi!');
+      };
+
+      window.exportCustomComboManifest = function() {
+        if (ccbPackageItems.length === 0) return;
+        const summary = buildCustomComboSummaryData();
+        const lines = [
+          `=== MCPUSULA ÖZEL KOMBO PAKETİ ===`,
+          `Paket: ${summary.packageTitle}`,
+          `Yapılandırma: ${ccbEdition.toUpperCase()} • ${ccbLoader.toUpperCase()} • ${ccbVersion === '26.3' ? '26.3' : ccbVersion + '.x'}`,
+          `Önerilen RAM: ${summary.telemetry.estRamText} | Durum: ${summary.telemetry.compatText}`,
+          `Toplam İçerik: ${ccbPackageItems.length}`,
+          ``,
+          ...ccbPackageItems.map((e, i) => {
+            const it = e.item;
+            const link = it.edition === 'bedrock' ? (it.curse || it.modrinth || '') : (it.modrinth || it.curse || '');
+            return `${i + 1}. ${getLocalizedTitle(it)} [${it.category.toUpperCase()}${e.isDep ? ' - YAN MOD' : ''}] (${e.reason})\n   İndir: ${link}`;
+          })
+        ];
+        const text = lines.join('\n');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            showToast('Kombo paketi listesi ve indirme linkleri panoya kopyalandı!');
+          }).catch(() => {
+            showToast('Paket özeti hazırlandı!');
+          });
+        } else {
+          showToast('Paket özeti hazırlandı!');
+        }
+      };
 
       // ÖZEL KOMBO PAKETİNİN GENİŞ "İÇERİĞİ İNCELE" MODALI
       window.openCustomComboInspectModal = function() {
@@ -11639,11 +12084,12 @@
     _i18nObserver.observe(document.body, { childList: true, subtree: true });
 
     // ============================================================================
-    // SAĞ ALT CANLI REHBER ASİSTANI (MCPUSULA REHBERİ)
+    // SAĞ ALT CANLI REHBER ASİSTANI (MCPUSULA PRO REHBER & TEŞHİS MERKEZİ)
     // ============================================================================
     (function initMcPusulaGuideChat() {
       let guideChatOpen = false;
       let guideWelcomed = false;
+      let activeGuideTab = 'explore';
       const guideMessagesEl = () => document.getElementById('mcGuideMessages');
 
       function normalizeTr(str) {
@@ -11668,46 +12114,284 @@
           .replace(/'/g, '&#39;');
       }
 
+      function updateGuideTabUI(tab) {
+        activeGuideTab = tab;
+        const map = { explore: 'mcGuideTabExplore', list: 'mcGuideTabList', help: 'mcGuideTabHelp' };
+        Object.keys(map).forEach(k => {
+          const btn = document.getElementById(map[k]);
+          if (!btn) return;
+          if (k === tab) {
+            btn.className = 'py-1.5 px-2 rounded-xl bg-modrinth text-black font-black transition text-center truncate shadow';
+          } else {
+            btn.className = 'py-1.5 px-2 rounded-xl bg-white/5 text-gray-300 hover:text-white font-extrabold transition text-center truncate';
+          }
+        });
+      }
+
       function appendGuideBubble(role, htmlBody) {
         const box = guideMessagesEl();
         if (!box) return;
+        const oldTyping = document.getElementById('mcGuideTypingRow');
+        if (oldTyping) oldTyping.remove();
+
         const wrap = document.createElement('div');
         wrap.className = role === 'user'
           ? 'flex justify-end mc-guide-msg-in mc-guide-msg-user'
           : 'flex justify-start mc-guide-msg-in mc-guide-msg-bot';
         if (role === 'user') {
-          wrap.innerHTML = `<div class="mc-guide-user-bubble max-w-[85%] bg-modrinth text-black font-bold px-3.5 py-2.5 rounded-2xl rounded-br-sm shadow leading-relaxed">${escapeHtmlStr(htmlBody)}</div>`;
+          wrap.innerHTML = `<div class="mc-guide-user-bubble">${escapeHtmlStr(htmlBody)}</div>`;
         } else {
-          wrap.innerHTML = `<div class="mc-guide-bot-bubble w-full max-w-[95%] bg-[#161b22] border border-modrinth-border rounded-2xl rounded-bl-sm p-3.5 text-gray-100 leading-relaxed space-y-2.5 shadow-lg">${htmlBody}</div>`;
+          wrap.innerHTML = `<div class="mc-guide-bot-bubble space-y-2.5">${htmlBody}</div>`;
         }
         box.appendChild(wrap);
         requestAnimationFrame(() => {
-          if (role === 'bot' && box.clientHeight > 0 && wrap.offsetHeight > box.clientHeight * 0.55) {
-            const relTop = wrap.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop;
-            box.scrollTop = Math.max(0, relTop - 8);
+          if (role === 'bot' && box.clientHeight > 0 && wrap.offsetHeight > box.clientHeight * 0.65) {
+            wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           } else {
             box.scrollTop = box.scrollHeight;
           }
         });
       }
 
+      function showGuideTypingAndReply(replyHtml, delayMs = 150) {
+        const box = guideMessagesEl();
+        if (!box) return;
+        const oldTyping = document.getElementById('mcGuideTypingRow');
+        if (oldTyping) oldTyping.remove();
+
+        const typingRow = document.createElement('div');
+        typingRow.id = 'mcGuideTypingRow';
+        typingRow.className = 'flex justify-start mc-guide-msg-in mc-guide-msg-bot';
+        typingRow.innerHTML = `
+          <div class="px-3.5 py-2.5 rounded-2xl bg-[#161b24] border border-[#262d3a] flex items-center gap-1.5">
+            <span class="mc-typing-dot"></span>
+            <span class="mc-typing-dot"></span>
+            <span class="mc-typing-dot"></span>
+            <span class="text-[10px] text-gray-400 font-bold ml-1">McPusula yanıtlıyor...</span>
+          </div>
+        `;
+        box.appendChild(typingRow);
+        box.scrollTop = box.scrollHeight;
+
+        setTimeout(() => {
+          appendGuideBubble('bot', replyHtml);
+        }, delayMs);
+      }
+
+      function navBtnHtml(label, onclickCode, accent = 'default') {
+        const cls = accent === 'amber'
+          ? 'bg-amber-400/15 hover:bg-amber-400/30 border-amber-400/40 text-amber-300'
+          : (accent === 'sky'
+            ? 'bg-sky-500/15 hover:bg-sky-500/30 border-sky-400/40 text-sky-300'
+            : (accent === 'red'
+              ? 'bg-red-500/15 hover:bg-red-500/30 border-red-400/40 text-red-300'
+              : (accent === 'purple'
+                ? 'bg-purple-500/15 hover:bg-purple-500/30 border-purple-400/40 text-purple-300'
+                : 'bg-modrinth/15 hover:bg-modrinth hover:text-black border-modrinth/40 text-modrinth')));
+        return `<button type="button" onclick="${onclickCode}" class="px-2.5 py-1.5 rounded-xl border text-[10px] font-extrabold transition ${cls}">${label}</button>`;
+      }
+
+      function renderChatModCardsHtml(items) {
+        return `<div class="space-y-2">` + items.map(it => {
+          const inList = modCart.includes(it.id);
+          const avatarHtml = typeof window.getAvatarHTML === 'function' ? window.getAvatarHTML(it, 'w-9 h-9 shrink-0') : '';
+          const dlUrl = it.edition === 'bedrock' ? (it.curse || it.modrinth || '') : (it.modrinth || it.curse || '');
+          const dlLabel = (dlUrl && dlUrl.includes('modrinth.com')) ? 'Modrinth' : 'CurseForge';
+          return `
+            <div class="flex items-center justify-between gap-2.5 bg-[#0c1017] border border-white/10 hover:border-modrinth/50 p-2.5 rounded-xl transition">
+              <div onclick="openDetailModal('${it.id}')" class="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer group">
+                ${avatarHtml}
+                <div class="min-w-0 flex-1">
+                  <div class="text-[11px] font-extrabold text-white group-hover:text-modrinth truncate transition">${escapeHtmlStr(getLocalizedTitle(it))}</div>
+                  <div class="text-[9px] text-gray-400 font-semibold uppercase truncate">${escapeHtmlStr(it.edition)} • ${escapeHtmlStr(it.loader)} • ${escapeHtmlStr(it.verText)}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" onclick="openDetailModal('${it.id}')" class="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[10px] font-bold text-white transition" title="Detay ve Görseller">İncele</button>
+                <button type="button" onclick="guideToggleCartItem('${it.id}', this, event)" class="px-2 py-1 rounded-lg text-[10px] font-extrabold transition ${inList ? 'bg-modrinth text-black' : 'bg-modrinth/20 hover:bg-modrinth hover:text-black text-modrinth border border-modrinth/40'}">${inList ? '✓ Listede' : '+ Ekle'}</button>
+                ${dlUrl ? `<a href="${dlUrl}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 rounded-lg bg-amber-400/15 hover:bg-amber-400/30 border border-amber-400/35 text-[10px] font-extrabold text-amber-300 transition" title="${dlLabel} sayfasında aç">↗</a>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('') + `</div>`;
+      }
+
+      window.guideToggleCartItem = function(itemId, btnEl, ev) {
+        if (ev) ev.stopPropagation();
+        if (typeof toggleCartItem === 'function') {
+          toggleCartItem(itemId, ev);
+        }
+        const nowIn = modCart.includes(itemId);
+        if (btnEl) {
+          btnEl.innerText = nowIn ? '✓ Listede' : '+ Ekle';
+          btnEl.className = `px-2 py-1 rounded-lg text-[10px] font-extrabold transition ${nowIn ? 'bg-modrinth text-black' : 'bg-modrinth/20 hover:bg-modrinth hover:text-black text-modrinth border border-modrinth/40'}`;
+        }
+        if (typeof showToast === 'function') {
+          showToast(nowIn ? 'Mod Listenize eklendi!' : 'Mod Listenizden çıkarıldı.');
+        }
+      };
+
+      window.guideFixMissingDeps = function() {
+        if (typeof addAllMissingDeps === 'function') {
+          addAllMissingDeps();
+          showGuideTypingAndReply(buildLiveCartAnalysisHtml(), 120);
+        }
+      };
+
+      window.guideFixConflicts = function() {
+        if (typeof resolveAllConflicts === 'function') {
+          resolveAllConflicts();
+          showGuideTypingAndReply(buildLiveCartAnalysisHtml(), 120);
+        }
+      };
+
+      function buildLiveCartAnalysisHtml() {
+        const items = modCart.map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+        if (items.length === 0) {
+          return `
+            <div class="flex items-center gap-2 text-amber-300 font-extrabold">
+              <span>📋 Mod Listeniz Şu An Boş</span>
+            </div>
+            <p class="text-[11px] text-gray-300">Katalogdan veya hazır kombolardan içerik eklediğinizde burada <strong>canlı çakışma</strong> ve <strong>eksik yan mod (Fabric API, Cloth Config vb.)</strong> analizini otomatik yaparım.</p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${navBtnHtml('20 Hazır Kombo Paketi', "guideNavigateTo('combos')", 'amber')}
+              ${navBtnHtml('Özel Kombo Oluştur', "guideNavigateTo('custom-combo')", 'amber')}
+              ${navBtnHtml('Popüler FPS Modları', "sendMcGuidePreset('En iyi FPS modları')")}
+            </div>
+          `;
+        }
+
+        const analysis = typeof analyzeModList === 'function'
+          ? analyzeModList(items)
+          : { errors: [], missingDeps: [], conflictingIds: new Set() };
+
+        let statusHeader = '';
+        if (analysis.errors.length > 0) {
+          statusHeader = `
+            <div class="p-2.5 rounded-xl bg-red-500/15 border border-red-500/50 text-red-200 space-y-1.5">
+              <div class="font-black text-red-400 flex items-center justify-between">
+                <span>⚠️ ${analysis.errors.length} Çakışma Tespit Edildi!</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-red-500 text-black font-black">${items.length} İçerik</span>
+              </div>
+              <ul class="text-[10px] list-disc pl-4 space-y-0.5">${analysis.errors.map(e => `<li>${escapeHtmlStr(e)}</li>`).join('')}</ul>
+              <button type="button" onclick="guideFixConflicts()" class="w-full mt-1 py-1.5 px-3 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-black font-black text-[10px] transition">✓ Çakışmaları Tek Tıkla Otomatik Çöz</button>
+            </div>
+          `;
+        } else if (analysis.missingDeps.length > 0) {
+          statusHeader = `
+            <div class="p-2.5 rounded-xl bg-orange-500/15 border border-orange-500/50 text-orange-200 space-y-1.5">
+              <div class="font-black text-orange-400 flex items-center justify-between">
+                <span>⚡ ${analysis.missingDeps.length} Zorunlu Yan Mod Eksik</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-orange-400 text-black font-black">${items.length} İçerik</span>
+              </div>
+              <ul class="text-[10px] list-disc pl-4 space-y-0.5">
+                ${analysis.missingDeps.map(m => `<li><strong>${escapeHtmlStr(m.requiredBy.join(', '))}</strong> için &rarr; <strong class="text-white">${escapeHtmlStr(m.dep.title)}</strong> gerekli</li>`).join('')}
+              </ul>
+              <button type="button" onclick="guideFixMissingDeps()" class="w-full mt-1 py-1.5 px-3 rounded-lg bg-orange-400 hover:bg-orange-300 text-black font-black text-[10px] transition">+ Tüm Eksik Yan Modları Otomatik Ekle (${analysis.missingDeps.length})</button>
+            </div>
+          `;
+        } else {
+          statusHeader = `
+            <div class="p-2.5 rounded-xl bg-modrinth/15 border border-modrinth/50 text-emerald-200">
+              <div class="font-black text-modrinth flex items-center justify-between">
+                <span>✓ Tüm Liste %100 Uyumlu!</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-modrinth text-black font-black">${items.length} İçerik</span>
+              </div>
+              <p class="text-[10px] text-gray-300 mt-1">Listenizdeki içerikler arasında hiçbir çakışma veya eksik yan mod bulunmuyor.</p>
+            </div>
+          `;
+        }
+
+        return `
+          ${statusHeader}
+          <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider pt-1">Listenizdeki İçerikler (${items.length}):</div>
+          ${renderChatModCardsHtml(items.slice(0, 6))}
+          ${items.length > 6 ? `<div class="text-[10px] text-gray-400 text-center">+${items.length - 6} içerik daha mevcut</div>` : ''}
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            ${navBtnHtml('Mod Listem Çekmecesini Aç →', "guideNavigateTo('cart')")}
+            ${navBtnHtml('Uyum Simülatöründe Gör', "guideNavigateTo('sim-compat')", 'sky')}
+          </div>
+        `;
+      }
+
+      function buildHelpCenterHtml() {
+        return `
+          <div class="font-extrabold text-white flex items-center gap-1.5">
+            <span>🛠️ Adım Adım Kurulum &amp; Hata Çözüm Merkezi</span>
+          </div>
+          <p class="text-[11px] text-gray-300">Öğrenmek istediğiniz konuyu seçin, size adım adım kurulum ve kesin çözümü göstereyim:</p>
+          <div class="grid grid-cols-1 gap-1.5">
+            <button type="button" onclick="sendMcGuidePreset('Mod nasıl kurulur?')" class="p-2.5 rounded-xl bg-[#0c1017] hover:bg-modrinth/15 border border-white/10 hover:border-modrinth/50 text-left transition flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-extrabold text-modrinth">1. Java Mod Kurulumu (Fabric / Forge / NeoForge)</div>
+                <div class="text-[10px] text-gray-400">.jar dosyaları nereye atılır, yan modlar nasıl kurulur?</div>
+              </div>
+              <span class="text-modrinth font-black">&rarr;</span>
+            </button>
+            <button type="button" onclick="sendMcGuidePreset('Shader nasıl kurulur?')" class="p-2.5 rounded-xl bg-[#0c1017] hover:bg-purple-500/15 border border-white/10 hover:border-purple-400/50 text-left transition flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-extrabold text-purple-300">2. Shader Paketi Kurulumu (Iris &amp; Oculus)</div>
+                <div class="text-[10px] text-gray-400">Yüksek FPS ile shader açmak için gereken modlar</div>
+              </div>
+              <span class="text-purple-300 font-black">&rarr;</span>
+            </button>
+            <button type="button" onclick="sendMcGuidePreset('Bedrock mcaddon kurulumu')" class="p-2.5 rounded-xl bg-[#0c1017] hover:bg-teal-500/15 border border-white/10 hover:border-teal-400/50 text-left transition flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-extrabold text-teal-300">3. Bedrock / MCPE (.mcaddon &amp; .mcpack) Kurulumu</div>
+                <div class="text-[10px] text-gray-400">Telefon (Android/iOS) ve Windows 10/11 kurulum adımları</div>
+              </div>
+              <span class="text-teal-300 font-black">&rarr;</span>
+            </button>
+            <button type="button" onclick="sendMcGuidePreset('Exit Code 1 hatası çözümü')" class="p-2.5 rounded-xl bg-[#0c1017] hover:bg-red-500/15 border border-white/10 hover:border-red-400/50 text-left transition flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-extrabold text-red-300">4. Oyun Çökmesi &amp; Exit Code (1, -1, -805306369)</div>
+                <div class="text-[10px] text-gray-400">Launcher çökme kodları, Java 17/21 ve RAM çözümleri</div>
+              </div>
+              <span class="text-red-300 font-black">&rarr;</span>
+            </button>
+          </div>
+        `;
+      }
+
       function renderWelcomeGuideMsg() {
         const box = guideMessagesEl();
         if (guideWelcomed && box && box.children.length > 0) return;
         guideWelcomed = true;
+        updateGuideTabUI('explore');
         appendGuideBubble('bot', `
-          <div class="font-extrabold text-white">Merhaba! Ben McPusula Destek &amp; Rehber Asistanı.</div>
-          <p class="text-[11px] text-gray-300">Sitede kaybolmadan istediğin mod, shader, kaynak paketi veya plugini arayabilir, indirme &amp; kurulum adımlarını öğrenebilir veya aşağıdaki kısayollara basabilirsin:</p>
-          <div class="grid grid-cols-2 gap-1.5 pt-1">
-            <button type="button" onclick="sendMcGuidePreset('Site ne işe yarar?')" class="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-modrinth/20 border border-white/10 hover:border-modrinth/50 text-[10px] font-bold text-left text-gray-100 transition">Site Ne İşe Yarar?</button>
-            <button type="button" onclick="guideNavigateTo('custom-combo')" class="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-amber-400/20 border border-white/10 hover:border-amber-400/50 text-[10px] font-bold text-left text-amber-300 transition">Özel Kombo Kur</button>
-            <button type="button" onclick="guideNavigateTo('sim-compat')" class="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-sky-400/20 border border-white/10 hover:border-sky-400/50 text-[10px] font-bold text-left text-sky-300 transition">Uyum Simülasyonu</button>
-            <button type="button" onclick="guideNavigateTo('sim-server')" class="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-modrinth/20 border border-white/10 hover:border-modrinth/50 text-[10px] font-bold text-left text-modrinth transition">Sunucu / Aternos Test</button>
+          <div class="flex items-center justify-between">
+            <span class="font-black text-white text-xs sm:text-sm">Merhaba! Ben McPusula Pro Rehber.</span>
+            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-modrinth/15 text-modrinth border border-modrinth/30">5.500 İçerik</span>
+          </div>
+          <p class="text-[11px] text-gray-300 leading-relaxed">Aradığınız mod, shader, kaynak paketi veya sunucu pluginini anında bulabilir, <strong>Mod Listenizdeki çakışmaları</strong> çözebilir veya <strong>kurulum rehberlerini</strong> açabilirim:</p>
+          <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+            <button type="button" onclick="switchMcGuideTab('list')" class="p-2 rounded-xl bg-modrinth/10 hover:bg-modrinth/20 border border-modrinth/40 text-[10px] font-extrabold text-left text-modrinth transition">📋 Mod Listemi Analiz Et</button>
+            <button type="button" onclick="switchMcGuideTab('help')" class="p-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-400/40 text-[10px] font-extrabold text-left text-sky-300 transition">🛠️ Kurulum &amp; Hata Çözüm</button>
+            <button type="button" onclick="guideNavigateTo('custom-combo')" class="p-2 rounded-xl bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/40 text-[10px] font-extrabold text-left text-amber-300 transition">⚡ Özel Kombo Stüdyosu</button>
+            <button type="button" onclick="guideNavigateTo('sim-server')" class="p-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-400/40 text-[10px] font-extrabold text-left text-purple-300 transition">🖥️ Aternos Çökme Testi</button>
           </div>
         `);
       }
 
-      // Açılışta sohbet kutusunu önceden doldur ki açıldığı anda yazılar anında görünsün
+      window.switchMcGuideTab = function(tab) {
+        updateGuideTabUI(tab);
+        const win = document.getElementById('mcGuideChatWindow');
+        if (win && win.classList.contains('hidden')) {
+          window.toggleMcGuideChat(true);
+        }
+        if (tab === 'list') {
+          showGuideTypingAndReply(buildLiveCartAnalysisHtml(), 120);
+        } else if (tab === 'help') {
+          showGuideTypingAndReply(buildHelpCenterHtml(), 120);
+        } else {
+          const box = guideMessagesEl();
+          if (box) box.innerHTML = '';
+          guideWelcomed = false;
+          renderWelcomeGuideMsg();
+        }
+      };
+
+      // Açılışta sohbet kutusunu önceden doldur
       renderWelcomeGuideMsg();
 
       window.toggleMcGuideChat = function(forceState) {
@@ -11817,27 +12501,32 @@
       };
 
       const GUIDE_SYNONYMS = {
-        canta: ['backpack', 'bag', 'sirt cantasi'],
+        canta: ['backpack', 'bag', 'sirt cantasi', 'travelers backpack', 'sophisticated backpacks'],
         harita: ['minimap', 'world map', 'xaero', 'journeymap'],
         isinlanma: ['waystone', 'teleport'],
-        silah: ['tacz', 'gun', 'timeless', 'point blank'],
-        ses: ['voice chat', 'sesli konusma', 'sound physics'],
-        mezar: ['gravestone', 'corpse', 'gravekeeper'],
-        zombi: ['zombie', 'true survival', 'infected'],
-        korku: ['horror', 'dweller', 'fog', 'knocker', 'sanity'],
-        fps: ['sodium', 'lithium', 'ferrite', 'embeddium', 'immediatelyfast', 'fps'],
+        silah: ['tacz', 'gun', 'timeless', 'point blank', 'aplok'],
+        ses: ['voice chat', 'sesli konusma', 'sound physics', 'ambient'],
+        mezar: ['gravestone', 'corpse', 'gravekeeper', 'yigd'],
+        zombi: ['zombie', 'true survival', 'infected', 'mutation'],
+        korku: ['horror', 'dweller', 'fog', 'knocker', 'sanity', 'from the fog'],
+        fps: ['sodium', 'lithium', 'ferrite', 'embeddium', 'immediatelyfast', 'entityculling'],
         gercekci: ['complementary', 'iris', 'fresh animations', 'sound physics', 'actions'],
-        su: ['shader', 'water', 'effective', 'aquatic'],
+        su: ['shader', 'water', 'effective', 'aquatic', 'wakes'],
         antichat: ['anticheat', 'grim', 'themis', 'lightanticheat', 'anti-hile'],
         anticheat: ['grim', 'themis', 'lightanticheat', 'anti hile'],
         plugin: ['plugin', 'luckperms', 'essentialsx', 'worldedit', 'grim', 'coreprotect'],
         yetki: ['luckperms', 'vault', 'essentialsx'],
-        koruma: ['worldguard', 'coreprotect', 'grief-prevention', 'towny']
+        koruma: ['worldguard', 'coreprotect', 'grief-prevention', 'towny'],
+        agac: ['tree harvester', 'fallingtree', 'tree feller'],
+        maden: ['veinmining', 'veinminer', 'ore'],
+        mobilya: ['handcrafted', 'macaw', 'furniture', 'paladin'],
+        tarif: ['jei', 'rei', 'emi', 'just enough items'],
+        shader: ['complementary', 'bsl', 'bliss', 'makeup', 'iris']
       };
 
       function searchGuideCatalogAndCombos(rawQuery) {
         const normQ = normalizeTr(rawQuery)
-          .replace(/\b(bul|ara|nerede|goster|git|ac|modu|modlari|mod|shaderi|shader|paketi|paket|istiyorum|var mi|hangisi|en iyi|nasil)\b/g, ' ')
+          .replace(/\b(bul|ara|nerede|goster|git|ac|modu|modlari|mod|paketi|paket|istiyorum|var mi|hangisi|en iyi|nasil|kurulur|indir)\b/g, ' ')
           .replace(/\s+/g, ' ')
           .trim();
         const terms = [];
@@ -11855,11 +12544,12 @@
             const hay = normalizeTr(`${m.title} ${getLocalizedTitle(m)} ${m.slug} ${m.desc}`);
             const titleN = normalizeTr(`${m.title} ${getLocalizedTitle(m)} ${m.slug}`);
             let score = 0;
-            if (normQ && titleN === normQ) score += 100;
-            else if (normQ && titleN.includes(normQ)) score += 55;
+            if (normQ && titleN === normQ) score += 120;
+            else if (normQ && titleN.includes(normQ)) score += 65;
             uniqueTerms.forEach(t => {
-              if (titleN.includes(t)) score += 20;
-              else if (hay.includes(t)) score += 8;
+              if (titleN === t) score += 45;
+              else if (titleN.includes(t)) score += 22;
+              else if (hay.includes(t)) score += 9;
             });
             return { item: m, score };
           })
@@ -11877,232 +12567,224 @@
         return { items: scoredItems, combos: matchedCombos, searchTerm: baseToks[0] || rawQuery };
       }
 
-      function navBtnHtml(label, onclickCode, accent = 'default') {
-        const cls = accent === 'amber'
-          ? 'bg-amber-400/15 hover:bg-amber-400/30 border-amber-400/40 text-amber-300'
-          : (accent === 'sky'
-            ? 'bg-sky-500/15 hover:bg-sky-500/30 border-sky-400/40 text-sky-300'
-            : (accent === 'red'
-              ? 'bg-red-500/15 hover:bg-red-500/30 border-red-400/40 text-red-300'
-              : 'bg-modrinth/15 hover:bg-modrinth hover:text-black border-modrinth/40 text-modrinth'));
-        return `<button type="button" onclick="${onclickCode}" class="px-2.5 py-1.5 rounded-xl border text-[10px] font-extrabold transition ${cls}">${label}</button>`;
-      }
-
       function buildGuideResponseHtml(rawText) {
         const norm = normalizeTr(rawText);
-        const wantsActionNav = /\b(git|ac|gotur|nerede|baslat|goster)\b/.test(norm);
+        const wantsActionNav = /\b(git|ac|gotur|baslat)\b/.test(norm);
 
         // 1. Selamlama
         if (/^(selam|merhaba|sa|slm|hey|hi|hello|gunaydin|iyi aksamlar)[!.\s]*$/.test(norm)) {
           return `
-            <p class="font-bold text-white">Selam! Hoş geldin.</p>
-            <p class="text-[11px] text-gray-300">İstediğin modu/shaderı bulabilir, hata kodlarını çözebilir veya seni doğrudan istediğin bölüme götürebilirim. Ne yapmak istersin?</p>
+            <p class="font-extrabold text-white">Selam! McPusula Pro Rehber hizmetinde.</p>
+            <p class="text-[11px] text-gray-300">İstediğin mod veya shader adını yazabilir, <strong>Mod Listeni</strong> kontrol ettirebilir ya da kurulum rehberlerini açabilirsin:</p>
             <div class="flex flex-wrap gap-1.5">
-              ${navBtnHtml('Site Ne İşe Yarar?', "sendMcGuidePreset('Site ne işe yarar?')")}
-              ${navBtnHtml('Özel Kombo Kur', "guideNavigateTo('custom-combo')", 'amber')}
-              ${navBtnHtml('Uyum Simülasyonu', "guideNavigateTo('sim-compat')", 'sky')}
+              ${navBtnHtml('📋 Listemi Analiz Et', "switchMcGuideTab('list')")}
+              ${navBtnHtml('🛠️ Kurulum Rehberleri', "switchMcGuideTab('help')", 'sky')}
+              ${navBtnHtml('⚡ Özel Kombo Kur', "guideNavigateTo('custom-combo')", 'amber')}
             </div>
           `;
         }
 
-        // 1b. Destek, indirme ve kurulum yardımı
-        if (/(destek|yardim|nasil indir|indirme|link|kurulum|nasil kurul|calismiyor|gorunmuyor|hata aliyorum)/.test(norm) && !/(video|hata coz|exit code)/.test(norm)) {
+        // 2. Canlı Mod Listem analizi
+        if (/(listemi analiz|mod listem|sepet|listemde sorun|listemi kontrol)/.test(norm)) {
+          updateGuideTabUI('list');
+          return buildLiveCartAnalysisHtml();
+        }
+
+        // 3. Shader Nasıl Kurulur?
+        if (/(shader nasil|shader kur|iris nasil|oculus nasil|shader ac|shaderpaket|shaderpacks)/.test(norm)) {
+          const shdMods = ['sodium', 'iris', 'complementary-reimagined', 'bsl-shaders'].map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
           return `
-            <div class="font-extrabold text-modrinth">Kurulum, İndirme &amp; Teknik Destek</div>
-            <ul class="text-[11px] text-gray-300 space-y-1.5 list-disc pl-4">
-              <li><strong class="text-white">İndirme &amp; Fotoğraflar:</strong> Herhangi bir kartta <strong>İçeriği İncele</strong> butonuna basarak oyun içi görselleri gezebilir, <strong>Modrinth'den İndir</strong> veya <strong>CurseForge'dan İndir</strong> butonlarıyla doğrudan ilgili platforma yönlendirilebilirsin.</li>
-              <li><strong class="text-white">Yan Modlar (Eksik Dosya):</strong> Mod çalışmazsa karttaki <em>Gerekli Yan Modlar</em> uyarısını kontrol et (örn. Fabric API, Cloth Config, Architectury).</li>
-              <li><strong class="text-white">Çökme / Sürüm Sorunu:</strong> Aşağıdaki araçlarla mod listeni hemen test edebilir veya hata koduna göre çözüm alabilirsin.</li>
-            </ul>
+            <div class="font-extrabold text-purple-300">✨ Minecraft Shader Paketi Nasıl Kurulur?</div>
+            <ol class="text-[11px] text-gray-200 space-y-1.5 list-decimal pl-4">
+              <li><strong>Fabric Oynuyorsanız:</strong> Önce <code>mods</code> klasörüne <strong>Fabric API + Sodium + Iris Shaders</strong> modlarını kurun. (Forge/NeoForge için <strong>Embeddium + Oculus</strong> kullanın.)</li>
+              <li><strong>Shader Paketini İndirin:</strong> Complementary veya BSL gibi <code>.zip</code> uzantılı shader paketini <strong>klasöre çıkartmadan</strong> <code>.minecraft/shaderpacks</code> klasörüne atın.</li>
+              <li><strong>Oyun İçinden Seçin:</strong> <em>Ayarlar &rarr; Görüntü Ayarları &rarr; Shader Paketleri (veya O tuşu)</em> menüsünden paketi seçip Uygula'ya basın.</li>
+            </ol>
+            ${shdMods.length > 0 ? renderChatModCardsHtml(shdMods) : ''}
             <div class="flex flex-wrap gap-1.5 pt-1">
-              ${navBtnHtml('Uyum Testi Yap', "guideNavigateTo('sim-compat')", 'sky')}
-              ${navBtnHtml('Hata Çözücü', "guideNavigateTo('errors')", 'red')}
-              ${navBtnHtml('Video Rehberler', "guideNavigateTo('video-guide')")}
+              ${navBtnHtml('Canlı Shader Simülatörü →', "guideNavigateTo('sim-shader')", 'purple')}
+              ${navBtnHtml('Tüm Shaderlar (528)', "guideNavigateTo('cat-shader')")}
             </div>
           `;
         }
 
-        // 2. Site ne ise yarar / Ozellikler / Hakkinda
-        if (/(ne ise yarar|site hakk|nasil kullan|ozellik|amac|bu site|kimsin|neler var)/.test(norm)) {
+        // 3B. En İyi Shader Önerileri & Shader Arama
+        if (/^(shader|shaderlar|shaders)$/.test(norm) || /(en iyi shader|shader oner|populer shader|shader paketi|dusuk sistem shader)/.test(norm)) {
+          const topShaders = ['complementary-reimagined', 'bsl-shaders', 'bliss-shader', 'makeup-ultra-fast', 'iris'].map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
           return `
-            <div class="font-extrabold text-modrinth">McPusula Portalı Ne İşe Yarar?</div>
+            <div class="font-extrabold text-purple-300">🌅 En Popüler Minecraft Shader Paketleri</div>
+            <p class="text-[11px] text-gray-300">Hem yüksek sistem hem de düşük sistem (FPS dostu) için en çok indirilen shader paketleri:</p>
+            ${topShaders.length > 0 ? renderChatModCardsHtml(topShaders) : ''}
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${navBtnHtml('Shader Nasıl Kurulur?', "sendMcGuidePreset('Shader nasıl kurulur?')", 'purple')}
+              ${navBtnHtml('Canlı Shader Simülatörü →', "guideNavigateTo('sim-shader')", 'purple')}
+              ${navBtnHtml('Tüm Shaderlar (528)', "guideNavigateTo('cat-shader')")}
+            </div>
+          `;
+        }
+
+        // 4. Bedrock / MCPE (.mcaddon / .mcpack) Kurulumu
+        if (/(bedrock.*kur|mcpe.*kur|mcaddon|mcpack|telefona mod|mobil mod)/.test(norm)) {
+          const beMods = catalogueData.filter(m => m.edition === 'bedrock').slice(0, 3);
+          return `
+            <div class="font-extrabold text-teal-300">📱 Bedrock / MCPE (.mcaddon &amp; .mcpack) Kurulumu</div>
+            <ol class="text-[11px] text-gray-200 space-y-1.5 list-decimal pl-4">
+              <li><strong>Dosyayı İndirin:</strong> Sitedeki Bedrock kartından CurseForge sayfasına gidip <code>.mcaddon</code> veya <code>.mcpack</code> dosyasını indirin.</li>
+              <li><strong>Otomatik Aktarım:</strong> İndirilen dosyaya tıklayın (Android'de ZArchiver/Dosyalar ile <em>"Minecraft ile Aç"</em>, iOS'ta <em>Paylaş &rarr; Minecraft</em>, Windows'ta çift tık).</li>
+              <li><strong>Dünyada Aktif Edin:</strong> Dünya ayarlarından <strong>Kaynak Paketleri</strong> ve <strong>Davranış Paketleri (Behavior Packs)</strong> kısmından paketi etkinleştirip <strong>Deneysel Özellikler (Experiments)</strong> şalterlerini açın.</li>
+            </ol>
+            ${beMods.length > 0 ? renderChatModCardsHtml(beMods) : ''}
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${navBtnHtml('Bedrock Kataloğuna Git (193) →', "guideNavigateTo('catalog-bedrock')")}
+            </div>
+          `;
+        }
+
+        // 5. Java Mod Kurulumu
+        if (/(mod nasil kurul|mod kurma|mods klasor|fabric nasil kurul|forge nasil kurul|nasil indir)/.test(norm)) {
+          const coreMods = ['fabric-api', 'cloth-config', 'modmenu'].map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+          return `
+            <div class="font-extrabold text-modrinth">📦 Java Edition Mod Nasıl Kurulur?</div>
+            <ol class="text-[11px] text-gray-200 space-y-1.5 list-decimal pl-4">
+              <li><strong>Mod Yükleyici Seçin:</strong> Oynayacağınız sürüme uygun <strong>Fabric</strong>, <strong>Forge</strong> veya <strong>NeoForge</strong> yükleyicisini kurun.</li>
+              <li><strong>Yan Modları Unutmayın:</strong> Kartlarda turuncu yazan zorunlu yan modları (örn. <em>Fabric API, Cloth Config, Architectury</em>) mutlaka indirin.</li>
+              <li><strong>Klasöre Atın:</strong> İndirdiğiniz <code>.jar</code> dosyalarını <code>Win + R &rarr; %appdata%\\.minecraft\\mods</code> klasörüne atıp oyunu başlatın.</li>
+            </ol>
+            ${coreMods.length > 0 ? renderChatModCardsHtml(coreMods) : ''}
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${navBtnHtml('Uyum Simülatöründe Test Et →', "guideNavigateTo('sim-compat')", 'sky')}
+              ${navBtnHtml('Video Rehber İzle', "guideNavigateTo('video-guide', 'mod kurma')", 'red')}
+            </div>
+          `;
+        }
+
+        // 6. En İyi FPS Modları
+        if (/(en iyi fps|fps arttir|kasma|donma|performans mod)/.test(norm)) {
+          const fpsMods = ['sodium', 'lithium', 'ferrite-core', 'immediatelyfast', 'entityculling'].map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
+          return `
+            <div class="font-extrabold text-modrinth">🚀 FPS'i 3 Katına Çıkaran En İyi Optimizasyon Modları</div>
+            <p class="text-[11px] text-gray-300">Düşük ve orta sistemlerde kasma ve RAM tıkanmasını önleyen en popüler Fabric performans modları:</p>
+            ${renderChatModCardsHtml(fpsMods)}
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${navBtnHtml('Hazır Ultra FPS Kombosunu Aç →', "openComboPreview('combo-fps')", 'amber')}
+            </div>
+          `;
+        }
+
+        // 7. Hata Kodları & Çökme Çözücü
+        if (/(hata coz|exit code|coku|crash|-805306369|java 21|java 17)/.test(norm)) {
+          return `
+            <div class="font-extrabold text-red-400">🛠️ Minecraft Çökme &amp; Exit Code Kesin Çözümleri</div>
+            <div class="space-y-2 text-[11px] text-gray-200">
+              <div class="p-2 rounded-xl bg-red-500/10 border border-red-500/30">
+                <strong class="text-red-300">Exit Code: 1</strong> &rarr; Eksik yan mod (Fabric API, YACL, GeckoLib), aynı klasörde Fabric+Forge karışması veya yanlış Java sürümü (1.20.5+ için <strong>Java 21</strong> şarttır).
+              </div>
+              <div class="p-2 rounded-xl bg-orange-500/10 border border-orange-500/30">
+                <strong class="text-orange-300">Exit Code: -1</strong> &rarr; Render motoru çakışması! <strong>OptiFine</strong> ile Sodium, Iris veya VulkanMod aynı anda kuruluysa OptiFine'ı silin.
+              </div>
+              <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                <strong class="text-amber-300">Exit Code: -805306369</strong> &rarr; RAM yetersizliği. Launcher JVM ayarlarından <code>-Xmx4G</code> verin ve <strong>FerriteCore + ModernFix</strong> ekleyin.
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${navBtnHtml('📋 Mod Listemde Çakışma Var mı?', "switchMcGuideTab('list')")}
+              ${navBtnHtml('Hata Çözücü Penceresi', "guideNavigateTo('errors')", 'red')}
+            </div>
+          `;
+        }
+
+        // 8. Site Ne İşe Yarar?
+        if (/(ne ise yarar|site hakk|nasil kullan|ozellik|amac|bu site)/.test(norm)) {
+          return `
+            <div class="font-extrabold text-modrinth">🧭 McPusula Portalı Özeti</div>
             <ul class="text-[11px] text-gray-300 space-y-1.5 list-disc pl-4">
-              <li><strong class="text-white">5.500 Popüler İçerik Kataloğu:</strong> Doğrulanmış en popüler modlar, shaderlar, kaynak paketleri ve sunucu pluginleri (Paper/Spigot/Velocity) için profil görselli, önizleme fotoğraflı ve çalışan indirme linkleri sunar.</li>
-              <li><strong class="text-white">Mod Listem Dedektörü:</strong> Seçtiğin modları birbiriyle karşılaştırır; çakışmaları <span class="text-red-400 font-bold">kırmızı</span>, eksik yan modları <span class="text-amber-400 font-bold">turuncu</span> gösterir.</li>
-              <li><strong class="text-amber-300">Özel Kombolar &amp; Stüdyo:</strong> 20 hazır pakete ek olarak kendi temana (zombi, RPG, korku vb.) göre tek tıkla uyumlu kombo paketi oluşturabilirsin.</li>
-              <li><strong class="text-sky-300">3 Canlı Simülasyon:</strong> Uyum Simülasyonu, Aternos Sunucu Çökme Testi ve Kızaklı Shader Karşılaştırma araçlarıyla kurulum öncesi test yapabilirsin.</li>
-              <li><strong class="text-red-300">@frealnds Video &amp; Hata Çözücü:</strong> Exit Code 1, -1, -805306369 hataları ve 36+ rehber videosuna ulaşabilirsin.</li>
+              <li><strong class="text-white">5.500 Doğrulanmış İçerik:</strong> Java (5.307) &amp; Bedrock (193) için popüler mod, shader, kaynak paketi ve sunucu pluginleri.</li>
+              <li><strong class="text-amber-300">20 Hazır Kombo &amp; Stüdyo:</strong> Tek tıkla hazır mod paketleri veya kendi temanıza göre özel kombo üretimi.</li>
+              <li><strong class="text-sky-300">3 Canlı Simülatör:</strong> Uyum Simülasyonu, Aternos Sunucu RAM/TPS Testi ve Canlı Kızaklı Shader Karşılaştırma.</li>
             </ul>
             <div class="flex flex-wrap gap-1.5 pt-1">
               ${navBtnHtml('Özel Kombo Stüdyosu', "guideNavigateTo('custom-combo')", 'amber')}
-              ${navBtnHtml('Uyum Testi', "guideNavigateTo('sim-compat')", 'sky')}
-              ${navBtnHtml('Sunucu Testi', "guideNavigateTo('sim-server')")}
+              ${navBtnHtml('Uyum Simülasyonu', "guideNavigateTo('sim-compat')", 'sky')}
+              ${navBtnHtml('Aternos Sunucu Testi', "guideNavigateTo('sim-server')")}
             </div>
           `;
         }
 
-        // 3. Spesifik sayfa / arac yonlendirmeleri
+        // 9. Sayfa ve Simülasyon Yönlendirmeleri
         if (/(ozel kombo|kombo olustur|kombo ozellestir|kendi kombo)/.test(norm)) {
           if (wantsActionNav || norm.length < 28) guideNavigateTo('custom-combo');
           return `
-            <p><strong class="text-amber-300">Kombo Paketi Özelleştir Stüdyosu</strong> ile platform, yazılım ve sürümünü seçip istediğin temaya göre tek parça kombo paketi hazırlayabilirsin.</p>
+            <p><strong class="text-amber-300">Kombo Paketi Özelleştir Stüdyosu</strong> açıldı! Platform, yazılım ve sürümünüzü seçip istediğiniz temaya (zombi, korku, RPG, fabrika) göre paket oluşturabilirsiniz.</p>
             <div class="flex flex-wrap gap-1.5">
               ${navBtnHtml('Özel Kombo Stüdyosuna Git →', "guideNavigateTo('custom-combo')", 'amber')}
               ${navBtnHtml('20 Hazır Komboyu Gör', "guideNavigateTo('combos')")}
             </div>
           `;
         }
-
         if (/(hazir kombo|20 kombo|kombolar|kombo paketleri)/.test(norm)) {
           if (wantsActionNav) guideNavigateTo('combos');
           return `
-            <p><strong class="text-amber-300">Hazır Özel Kombolar</strong> sayfasında FPS, PvP, RPG, Korku, Mühendislik ve Bedrock için 20 test edilmiş paket seni bekliyor.</p>
+            <p><strong class="text-amber-300">20 Hazır Özel Kombo</strong> sayfasında FPS, PvP, RPG, Korku, Mühendislik ve Bedrock için test edilmiş paketler yer alır.</p>
             <div class="flex flex-wrap gap-1.5">
               ${navBtnHtml('20 Hazır Komboya Git →', "guideNavigateTo('combos')", 'amber')}
               ${navBtnHtml('Kendi Kombonu Yap', "guideNavigateTo('custom-combo')")}
             </div>
           `;
         }
-
         if (/(uyum sim|cakisma test|uyumluluk test)/.test(norm)) {
-          if (wantsActionNav) guideNavigateTo('sim-compat');
+          if (wantsActionNav || norm.length < 30) guideNavigateTo('sim-compat');
           return `
-            <p><strong class="text-sky-300">Uyum Simülasyonu</strong> sayfasında platformunu (Java/Bedrock), yapını (Fabric/Forge/NeoForge) ve sürümünü seçip modların birbirini çökertip çökertmeyeceğini canlı test edebilirsin.</p>
+            <p><strong class="text-sky-300">Uyum Simülasyonu</strong> sayfasında modların birbiriyle çakışıp çakışmadığını ve eksik yan modları canlı test edebilirsiniz.</p>
             <div class="flex flex-wrap gap-1.5">
               ${navBtnHtml('Uyum Simülasyonuna Git →', "guideNavigateTo('sim-compat')", 'sky')}
             </div>
           `;
         }
-
         if (/(aternos|sunucu sim|server sim|sunucu cok|tps test|ram test)/.test(norm)) {
-          if (wantsActionNav) guideNavigateTo('sim-server');
+          if (wantsActionNav || norm.length < 30) guideNavigateTo('sim-server');
           return `
-            <p><strong class="text-modrinth">Sunucu Simülasyonu (Aternos / Exaroton Testi)</strong> seçtiğin mod yükü, oyuncu sayısı ve chunk ayarına göre RAM ve TPS çökme riskini hesaplar.</p>
+            <p><strong class="text-modrinth">Aternos Sunucu Simülasyonu</strong> oyuncu sayısı, chunk (4-10) ve mod yüküne göre canlı RAM &amp; TPS çökme riskini hesaplar.</p>
             <div class="flex flex-wrap gap-1.5">
               ${navBtnHtml('Sunucu Simülasyonuna Git →', "guideNavigateTo('sim-server')")}
-              ${navBtnHtml('Aternos Lag Kurtarıcı Kombo', "openComboPreview('combo-aternos-saver')", 'amber')}
+              ${navBtnHtml('Aternos Kurtarıcı Kombo', "openComboPreview('combo-aternos-saver')", 'amber')}
             </div>
           `;
         }
-
         if (/(shader sim|shader karsilastir|kizak|perde)/.test(norm)) {
-          if (wantsActionNav) guideNavigateTo('sim-shader');
+          if (wantsActionNav || norm.length < 30) guideNavigateTo('sim-shader');
           return `
-            <p><strong class="text-purple-300">Shader Simülasyonu</strong> ile shadersız orijinal görüntü ile popüler shaderları canlı sürgülü perdeyle karşılaştırabilirsin.</p>
+            <p><strong class="text-purple-300">Shader Simülasyonu</strong> ile shadersız görüntü ile popüler shaderları canlı sürgülü perdeyle kıyaslayabilirsiniz.</p>
             <div class="flex flex-wrap gap-1.5">
-              ${navBtnHtml('Shader Simülasyonuna Git →', "guideNavigateTo('sim-shader')")}
-              ${navBtnHtml('Shaderlar Kategorisi', "guideNavigateTo('cat-shader')")}
+              ${navBtnHtml('Shader Simülasyonuna Git →', "guideNavigateTo('sim-shader')", 'purple')}
             </div>
           `;
         }
-
-        if (/(hata coz|exit code|coku|crash|-805306369|java 21|java 17)/.test(norm)) {
-          const isCodeQuestion = /(exit code|coku|-1\b|805306369|java)/.test(norm);
-          if (wantsActionNav && !isCodeQuestion) guideNavigateTo('errors');
-          return `
-            <div class="font-bold text-red-300">Hata &amp; Çökme Çözümleri</div>
-            <ul class="text-[11px] text-gray-300 space-y-1 list-disc pl-4">
-              <li><strong>Exit Code 1:</strong> Eksik yan mod (Fabric API, Architectury vb.), Fabric+Forge karışması veya yanlış Java sürümü (1.20.5+ için Java 21 gerekir).</li>
-              <li><strong>Exit Code -1:</strong> Genellikle OptiFine ile Sodium/Iris/VulkanMod çakışmasından kaynaklanır.</li>
-              <li><strong>Exit Code -805306369:</strong> RAM yetersiz; launcher'da <code>-Xmx4G</code> ayarla ve FerriteCore ekle.</li>
-            </ul>
-            <div class="flex flex-wrap gap-1.5">
-              ${navBtnHtml('Hata Çözücüyü Aç →', "guideNavigateTo('errors')", 'red')}
-              ${navBtnHtml('Modlarımı Test Et', "guideNavigateTo('sim-compat')", 'sky')}
-            </div>
-          `;
-        }
-
-        if (/(video|frealnds|youtube|rehber video|kurulum video)/.test(norm)) {
-          if (wantsActionNav) guideNavigateTo('video-guide');
-          return `
-            <p><strong class="text-red-400">@frealnds Video Rehberleri</strong> bölümünde mod kurma, bozuk skin, Aternos sunucu açma ve çoklu mod çözümleri için 36+ kısa rehber videosu bulunur.</p>
-            <div class="flex flex-wrap gap-1.5">
-              ${navBtnHtml('Video Rehberlere Git →', "guideNavigateTo('video-guide')", 'red')}
-            </div>
-          `;
-        }
-
-        if (/(mod listem|sepet|eklediklerim|listemi ac)/.test(norm)) {
-          if (wantsActionNav) guideNavigateTo('cart');
-          return `
-            <p><strong>Mod Listem</strong> çekmecesinde eklediğin tüm içerikleri indirip otomatik çakışma ve yan mod analizini görebilirsin.</p>
-            <div class="flex flex-wrap gap-1.5">
-              ${navBtnHtml('Mod Listemi Aç →', "guideNavigateTo('cart')")}
-            </div>
-          `;
-        }
-
-        if (wantsActionNav && /(bedrock|mcpe|mobil|telefon)/.test(norm)) {
-          guideNavigateTo('catalog-bedrock');
-          return `<p>Seni <strong class="text-emerald-400">Bedrock (MCPE)</strong> içerik kataloğuna geçirdim!</p>`;
-        }
-        if (wantsActionNav && /\bjava\b/.test(norm)) {
-          guideNavigateTo('catalog-java');
-          return `<p>Seni <strong class="text-modrinth">Java Edition</strong> kataloğuna geçirdim!</p>`;
-        }
-        if (wantsActionNav && /\bfabric\b/.test(norm)) {
-          guideNavigateTo('loader-fabric');
-          return `<p>Katalog <strong class="text-sky-300">Fabric</strong> filtresiyle açıldı.</p>`;
-        }
-        if (wantsActionNav && /\bforge\b/.test(norm)) {
-          guideNavigateTo('loader-forge');
-          return `<p>Katalog <strong class="text-orange-300">Forge</strong> filtresiyle açıldı.</p>`;
-        }
-        if (wantsActionNav && /\bneoforge\b/.test(norm)) {
-          guideNavigateTo('loader-neoforge');
-          return `<p>Katalog <strong class="text-amber-300">NeoForge</strong> filtresiyle açıldı.</p>`;
-        }
-        if (wantsActionNav && /(shaderlar|shaderlara|shaderlari|shader kategorisi)/.test(norm) && !/sim|karsilastir/.test(norm)) {
-          guideNavigateTo('cat-shader');
-          return `<p><strong class="text-purple-300">Shaderlar</strong> kategorisi açıldı.</p>`;
-        }
-        if (/(plugin|eklenti|antichat|anticheat|anti hile|luckperms|worldguard|paper|spigot|sunucu eklent)/.test(norm) && !/(mod|shader)/.test(norm)) {
+        if (/(plugin|eklenti|antichat|anticheat|anti hile|luckperms|worldguard|paper|spigot)/.test(norm) && !/(mod|shader)/.test(norm)) {
+          const plugItems = ['grim-anticheat', 'luckperms', 'essentialsx', 'worldguard'].map(id => catalogueData.find(m => m.id === id)).filter(Boolean);
           if (wantsActionNav || /^(plugin|pluginler|plugins|eklentiler)$/.test(norm)) guideNavigateTo('cat-plugin');
           return `
-            <p><strong class="text-cyan-300">Sunucu Pluginleri (Paper / Spigot / Velocity)</strong> bölümünde Grim &amp; Themis AntiCheat, LuckPerms, EssentialsX, WorldEdit, WorldGuard, CoreProtect, GeyserMC ve ViaVersion dahil 600 popüler sunucu eklentisini bulabilirsin.</p>
-            <div class="flex flex-wrap gap-1.5">
-              ${navBtnHtml('Plugins Kategorisine Git →', "guideNavigateTo('cat-plugin')")}
-              ${navBtnHtml('Aternos Sunucu Testi', "guideNavigateTo('sim-server')")}
+            <div class="font-extrabold text-cyan-300">🛡️ Popüler Sunucu Pluginleri (Paper / Spigot / Velocity)</div>
+            ${plugItems.length > 0 ? renderChatModCardsHtml(plugItems) : ''}
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${navBtnHtml('Tüm 600 Plugini Gör →', "guideNavigateTo('cat-plugin')")}
             </div>
           `;
         }
-        if (wantsActionNav && /(kaynak paket|doku paket|texture)/.test(norm)) {
-          guideNavigateTo('cat-resourcepack');
-          return `<p><strong>Kaynak Paketleri</strong> filtrelendi ve listeye inildi.</p>`;
-        }
-        if (wantsActionNav && /(ana sayfa|basa don|katalog|modlar)/.test(norm)) {
-          guideNavigateTo('home');
-          return `<p>Ana portal ve tam katalog görünüme dönüldü.</p>`;
-        }
 
-        // 4. Canli Katalog + Kombo Arama
+        // 10. Canlı Katalog + Kombo Arama (Görselli Kartlarla!)
         const searchRes = searchGuideCatalogAndCombos(rawText);
         if (searchRes.items.length > 0 || searchRes.combos.length > 0) {
-          let html = `<div class="font-bold text-white">"${escapeHtmlStr(rawText)}" için bulduklarım:</div>`;
+          let html = `<div class="font-extrabold text-white flex items-center justify-between"><span>🔎 "${escapeHtmlStr(rawText)}" İçin Sonuçlar</span><span class="text-[10px] text-modrinth">${searchRes.items.length} İçerik</span></div>`;
           if (searchRes.items.length > 0) {
-            html += `<div class="space-y-1.5">` + searchRes.items.map(it => {
-              const inList = modCart.includes(it.id);
-              return `
-                <div class="flex items-center justify-between gap-2 bg-black/40 border border-white/10 p-2 rounded-xl">
-                  <div onclick="openDetailModal('${it.id}')" class="min-w-0 flex-1 cursor-pointer">
-                    <div class="text-[11px] font-extrabold text-white hover:text-modrinth truncate">${escapeHtmlStr(getLocalizedTitle(it))}</div>
-                    <div class="text-[9px] text-gray-400 uppercase">${escapeHtmlStr(it.edition)} • ${escapeHtmlStr(it.loader)} • ${escapeHtmlStr(it.verText)}</div>
-                  </div>
-                  <div class="flex items-center gap-1 shrink-0">
-                    <button type="button" onclick="openDetailModal('${it.id}')" class="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[10px] font-bold text-white transition">İncele</button>
-                    <button type="button" onclick="toggleCartItem('${it.id}', event); showToast('${inList ? 'Listede zaten var' : 'Listeye eklendi'}');" class="px-2 py-1 rounded-lg bg-modrinth/20 hover:bg-modrinth hover:text-black text-[10px] font-bold text-modrinth transition">+</button>
-                  </div>
-                </div>
-              `;
-            }).join('') + `</div>`;
+            html += renderChatModCardsHtml(searchRes.items);
           }
           if (searchRes.combos.length > 0) {
-            html += `<div class="space-y-1">` + searchRes.combos.map(c => {
+            html += `<div class="space-y-1 pt-1">` + searchRes.combos.map(c => {
               const ct = c.i18n.tr || c.i18n.en;
               return `
-                <button type="button" onclick="openComboPreview('${c.id}')" class="w-full text-left px-2.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-400/35 text-[10px] font-bold text-amber-200 transition">
-                  Kombo Paketi: ${escapeHtmlStr(ct.title)} →
+                <button type="button" onclick="openComboPreview('${c.id}')" class="w-full text-left px-3 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-[10px] font-extrabold text-amber-200 transition flex items-center justify-between">
+                  <span>⚡ Hazır Kombo: ${escapeHtmlStr(ct.title)}</span>
+                  <span>İncele &rarr;</span>
                 </button>
               `;
             }).join('') + `</div>`;
@@ -12110,25 +12792,22 @@
           const safeQ = escapeHtmlStr(searchRes.searchTerm).replace(/'/g, '');
           html += `
             <div class="flex flex-wrap gap-1.5 pt-1">
-              ${navBtnHtml('Katalogda Tümünü Ara →', `guideNavigateTo('search', '${safeQ}')`)}
-              ${navBtnHtml('Özel Kombo Kur', `guideNavigateTo('custom-combo', '${safeQ}')`, 'amber')}
+              ${navBtnHtml('Katalogda Tümünü Filtrele →', `guideNavigateTo('search', '${safeQ}')`)}
+              ${navBtnHtml('Bu Temayla Kombo Kur', `guideNavigateTo('custom-combo', '${safeQ}')`, 'amber')}
             </div>
           `;
           return html;
         }
 
-        // 5. Genel rehber / nereye gidebilirsiniz menusu
+        // 11. Eşleşme Bulunamazsa Akıllı Yardım
         return `
-          <p class="text-[11px] text-gray-300">Aradığını bulman için yardımcı olabilirim. İstersen mod/shader adı yaz (örn: <strong class="text-white">sodium, zombi, harita, actions &amp; stuff</strong>) ya da aşağıdaki bölümlerden birine git:</p>
+          <div class="font-bold text-white">"${escapeHtmlStr(rawText)}" için doğrudan eşleşme bulamadım.</div>
+          <p class="text-[11px] text-gray-300">Mod/shader adı yazabilir (örn: <strong class="text-white">sodium, create, sesli konuşma, sırt çantası, korku, grim</strong>) veya aşağıdaki araçları kullanabilirsiniz:</p>
           <div class="flex flex-wrap gap-1.5">
-            ${navBtnHtml('Site Ne İşe Yarar?', "sendMcGuidePreset('Site ne işe yarar?')")}
-            ${navBtnHtml('Mod Kataloğu', "guideNavigateTo('cat-mod')")}
-            ${navBtnHtml('Plugins (AntiCheat / Sunucu)', "guideNavigateTo('cat-plugin')")}
+            ${navBtnHtml('📋 Mod Listemi Analiz Et', "switchMcGuideTab('list')")}
+            ${navBtnHtml('🛠️ Kurulum & Hata Rehberi', "switchMcGuideTab('help')", 'sky')}
+            ${navBtnHtml('⚡ Özel Kombo Kur', "guideNavigateTo('custom-combo')", 'amber')}
             ${navBtnHtml('20 Hazır Kombo', "guideNavigateTo('combos')", 'amber')}
-            ${navBtnHtml('Özel Kombo Kur', "guideNavigateTo('custom-combo')", 'amber')}
-            ${navBtnHtml('Uyum Simülasyonu', "guideNavigateTo('sim-compat')", 'sky')}
-            ${navBtnHtml('Aternos Testi', "guideNavigateTo('sim-server')")}
-            ${navBtnHtml('Hata Çözücü', "guideNavigateTo('errors')", 'red')}
           </div>
         `;
       }
@@ -12139,9 +12818,10 @@
         const msg = (inp.value || '').trim();
         if (!msg) return;
         inp.value = '';
+        updateGuideTabUI('explore');
         appendGuideBubble('user', msg);
         const replyHtml = buildGuideResponseHtml(msg);
-        setTimeout(() => appendGuideBubble('bot', replyHtml), 140);
+        showGuideTypingAndReply(replyHtml, 160);
       };
 
       window.sendMcGuidePreset = function(text) {
@@ -12151,7 +12831,7 @@
         }
         appendGuideBubble('user', text);
         const replyHtml = buildGuideResponseHtml(text);
-        setTimeout(() => appendGuideBubble('bot', replyHtml), 140);
+        showGuideTypingAndReply(replyHtml, 150);
       };
 
       document.addEventListener('keydown', (e) => {
@@ -12167,11 +12847,709 @@
       });
     })();
 
+    // REAL-TIME MINECRAFT VERTICAL WORLD (OVERWORLD -> UNDERGROUND MINES) & DIMENSIONS ENGINE
+    // Subtle, zero-latency (0ms scroll sync), low-contrast atmospheric Minecraft backdrop
+    (function initMcPusulaLiveBackground() {
+      const rootEl = document.getElementById('mcLiveBgRoot');
+      const canvas = document.getElementById('mcLiveBgCanvas');
+      if (!rootEl || !canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: true });
+      if (!ctx) return;
+
+      const reducedMotionQuery = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+      let prefersReducedMotion = !!(reducedMotionQuery && reducedMotionQuery.matches);
+      if (reducedMotionQuery && typeof reducedMotionQuery.addEventListener === 'function') {
+        reducedMotionQuery.addEventListener('change', (e) => { prefersReducedMotion = e.matches; });
+      }
+
+      const WORLD_THEMES = {
+        'portal-java': {
+          dimension: 'overworld', subMode: 'java',
+          skyTop: [7, 10, 16], skyMid: [10, 14, 22], skyBot: [9, 12, 18],
+          accent: [27, 217, 106], horizon: [27, 217, 106], heat: 0
+        },
+        'portal-bedrock': {
+          dimension: 'overworld', subMode: 'bedrock',
+          skyTop: [7, 11, 17], skyMid: [9, 16, 22], skyBot: [8, 13, 18],
+          accent: [16, 185, 129], horizon: [16, 185, 129], heat: 0
+        },
+        'portal-shader': {
+          dimension: 'overworld', subMode: 'java',
+          skyTop: [9, 10, 19], skyMid: [13, 15, 26], skyBot: [10, 12, 19],
+          accent: [168, 85, 247], horizon: [56, 189, 248], heat: 0
+        },
+        'portal-plugin': {
+          dimension: 'overworld', subMode: 'java',
+          skyTop: [7, 11, 18], skyMid: [10, 15, 24], skyBot: [9, 13, 19],
+          accent: [6, 182, 212], horizon: [27, 217, 106], heat: 0
+        },
+        'combos': {
+          dimension: 'end', subMode: 'end',
+          skyTop: [8, 6, 14], skyMid: [13, 9, 22], skyBot: [10, 7, 17],
+          accent: [192, 132, 252], horizon: [234, 179, 8], heat: 0
+        },
+        'compat-neutral': {
+          dimension: 'ancient', subMode: 'sculk',
+          skyTop: [5, 10, 14], skyMid: [7, 15, 20], skyBot: [6, 12, 16],
+          accent: [6, 182, 212], horizon: [56, 189, 248], heat: 0
+        },
+        'compat-green': {
+          dimension: 'ancient', subMode: 'emerald',
+          skyTop: [5, 12, 13], skyMid: [7, 18, 17], skyBot: [6, 14, 14],
+          accent: [27, 217, 106], horizon: [27, 217, 106], heat: 0
+        },
+        'compat-orange': {
+          dimension: 'ancient', subMode: 'amber',
+          skyTop: [12, 9, 8], skyMid: [18, 13, 10], skyBot: [14, 10, 8],
+          accent: [249, 115, 22], horizon: [251, 191, 36], heat: 0.4
+        },
+        'compat-red': {
+          dimension: 'ancient', subMode: 'redstone',
+          skyTop: [15, 6, 8], skyMid: [22, 8, 11], skyBot: [16, 7, 9],
+          accent: [239, 68, 68], horizon: [239, 68, 68], heat: 1.0
+        },
+        'server-low': {
+          dimension: 'nether', subMode: 'calm',
+          skyTop: [15, 7, 8], skyMid: [22, 10, 10], skyBot: [26, 11, 10],
+          accent: [249, 115, 22], horizon: [234, 88, 12], heat: 0.35
+        },
+        'server-mid': {
+          dimension: 'nether', subMode: 'warm',
+          skyTop: [18, 7, 8], skyMid: [28, 11, 10], skyBot: [34, 13, 10],
+          accent: [245, 158, 11], horizon: [249, 115, 22], heat: 0.68
+        },
+        'server-high': {
+          dimension: 'nether', subMode: 'overload',
+          skyTop: [22, 7, 8], skyMid: [34, 10, 10], skyBot: [42, 13, 9],
+          accent: [239, 68, 68], horizon: [249, 115, 22], heat: 1.0
+        },
+        'shader-complementary': {
+          dimension: 'shader', subMode: 'complementary',
+          skyTop: [11, 10, 22], skyMid: [20, 15, 34], skyBot: [26, 17, 30],
+          accent: [168, 85, 247], horizon: [251, 146, 60], heat: 0
+        },
+        'shader-bsl': {
+          dimension: 'shader', subMode: 'bsl',
+          skyTop: [16, 11, 17], skyMid: [28, 17, 21], skyBot: [34, 20, 18],
+          accent: [245, 158, 11], horizon: [251, 191, 36], heat: 0
+        },
+        'shader-bliss': {
+          dimension: 'shader', subMode: 'bliss',
+          skyTop: [7, 13, 20], skyMid: [11, 22, 28], skyBot: [14, 25, 25],
+          accent: [16, 185, 129], horizon: [56, 189, 248], heat: 0
+        },
+        'shader-prism': {
+          dimension: 'shader', subMode: 'prism',
+          skyTop: [8, 13, 24], skyMid: [14, 22, 36], skyBot: [18, 24, 36],
+          accent: [56, 189, 248], horizon: [244, 114, 182], heat: 0
+        }
+      };
+
+      let currentThemeKey = 'portal-java';
+      let activeTheme = WORLD_THEMES['portal-java'];
+      let viewW = 1280;
+      let viewH = 720;
+      let dpr = 1;
+      let stars = [];
+      let clouds = [];
+      let shootingStar = null;
+      let nextShootingStarDelay = 3.5;
+      let terrainCols = [];
+      let mineGrid = [];
+      let netherCols = [];
+      let dimensionEmbers = [];
+      let animFrameId = null;
+      let lastTime = performance.now();
+      let timeAcc = 0;
+
+      const BLOCK = 32; // Clean 32px Voxel Strata Grid
+
+      function rgb(arr, a) {
+        if (a === undefined) return `rgb(${Math.round(arr[0])},${Math.round(arr[1])},${Math.round(arr[2])})`;
+        return `rgba(${Math.round(arr[0])},${Math.round(arr[1])},${Math.round(arr[2])},${a})`;
+      }
+
+      function hash2D(x, y) {
+        let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263)) ^ 0x5bd1e995;
+        h = Math.imul(h ^ (h >>> 13), 1274126177);
+        return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+      }
+
+      function applyCssBackdropVars(t) {
+        const s = rootEl.style;
+        s.setProperty('--mc-sky-top', rgb(t.skyTop));
+        s.setProperty('--mc-sky-mid', rgb(t.skyMid));
+        s.setProperty('--mc-sky-bot', rgb(t.skyBot));
+        s.setProperty('--mc-sky-accent', rgb(t.accent, 0.08));
+        s.setProperty('--mc-horizon-glow', rgb(t.horizon, 0.11));
+      }
+
+      function detectActiveBgThemeKey() {
+        const isVisible = (id) => {
+          const el = document.getElementById(id);
+          return el && !el.classList.contains('hidden');
+        };
+        if (isVisible('simViewSection')) {
+          const box = document.getElementById('simReactorBox');
+          if (box) {
+            if (box.classList.contains('sim-effect-red')) return 'compat-red';
+            if (box.classList.contains('sim-effect-orange')) return 'compat-orange';
+            if (box.classList.contains('sim-effect-green')) return 'compat-green';
+          }
+          return 'compat-neutral';
+        }
+        if (isVisible('serverSimViewSection')) {
+          const card = document.getElementById('srvReactorCard');
+          if (card) {
+            if (card.classList.contains('srv-stage-5') || card.classList.contains('srv-stage-6')) return 'server-high';
+            if (card.classList.contains('srv-stage-3') || card.classList.contains('srv-stage-4')) return 'server-mid';
+          }
+          return 'server-low';
+        }
+        if (isVisible('shaderSimViewSection')) {
+          const sid = typeof activeShaderSimId === 'string' ? activeShaderSimId : 'complementary-reimagined';
+          if (sid.includes('bsl')) return 'shader-bsl';
+          if (sid.includes('bliss')) return 'shader-bliss';
+          if (sid.includes('makeup') || sid.includes('miniature')) return 'shader-prism';
+          return 'shader-complementary';
+        }
+        if (isVisible('combosHubViewSection') || isVisible('customComboBuilderSection')) {
+          return 'combos';
+        }
+        if (typeof activeEdition === 'string' && activeEdition === 'bedrock') {
+          return 'portal-bedrock';
+        }
+        if (typeof activeCategory === 'string') {
+          if (activeCategory === 'shader') return 'portal-shader';
+          if (activeCategory === 'plugin') return 'portal-plugin';
+        }
+        return 'portal-java';
+      }
+
+      window.syncMcLiveBgState = function(forceKey) {
+        const nextKey = forceKey && WORLD_THEMES[forceKey] ? forceKey : detectActiveBgThemeKey();
+        if (nextKey !== currentThemeKey) {
+          currentThemeKey = nextKey;
+          activeTheme = WORLD_THEMES[nextKey] || WORLD_THEMES['portal-java'];
+          applyCssBackdropVars(activeTheme);
+          drawScene(0);
+        }
+      };
+
+      function spawnShootingStar() {
+        const startX = viewW * (0.20 + Math.random() * 0.55);
+        const startY = 24 + Math.random() * (viewH * 0.22);
+        const dir = Math.random() > 0.25 ? 1 : -1;
+        shootingStar = {
+          x: startX,
+          y: startY,
+          vx: dir * (340 + Math.random() * 140),
+          vy: 130 + Math.random() * 70,
+          life: 0,
+          maxLife: 0.70 + Math.random() * 0.30
+        };
+      }
+
+      function buildWorldData() {
+        const isMob = viewW < 640;
+        const cols = Math.ceil(viewW / BLOCK) + 1;
+
+        // 1. Subtle Twinkling Sky Stars
+        const starCount = isMob ? 28 : 52;
+        stars = [];
+        for (let i = 0; i < starCount; i++) {
+          stars.push({
+            x: Math.floor((hash2D(i, 11) * viewW) / 2) * 2,
+            y: Math.floor((hash2D(i, 23) * (viewH * 0.60)) / 2) * 2,
+            size: hash2D(i, 37) > 0.80 ? 2 : 1.5,
+            speed: 1.1 + hash2D(i, 51) * 1.8,
+            phase: hash2D(i, 67) * Math.PI * 2
+          });
+        }
+
+        // 2. Soft Translucent Blocky Minecraft Clouds
+        const cloudCount = isMob ? 4 : 6;
+        clouds = [];
+        for (let i = 0; i < cloudCount; i++) {
+          const wBlocks = 4 + Math.floor(hash2D(i, 101) * 4);
+          clouds.push({
+            x: hash2D(i, 113) * (viewW + 240) - 120,
+            y: 42 + Math.floor(hash2D(i, 127) * (viewH * 0.26) / 8) * 8,
+            w: wBlocks * 22,
+            h: 12 + (i % 2) * 4,
+            speed: 6 + hash2D(i, 139) * 8
+          });
+        }
+
+        // 3. Calm Overworld Horizon Ridge & Underground Stone/Deepslate Strata (90 rows deep)
+        const totalRows = 90;
+        const baseSurfRow = Math.floor((viewH * 0.68) / BLOCK);
+        terrainCols = [];
+        mineGrid = [];
+
+        for (let c = 0; c < cols; c++) {
+          const hillOffset = Math.round(
+            Math.sin(c * 0.14) * 1.2 +
+            Math.cos(c * 0.28 + 0.6) * 0.8
+          );
+          const surfRow = Math.max(6, baseSurfRow - hillOffset);
+          terrainCols.push({ surfRow });
+
+          const colCells = [];
+          for (let r = 0; r < totalRows; r++) {
+            const depth = r - surfRow;
+            if (depth < 0) {
+              colCells.push(null);
+              continue;
+            }
+            if (depth === 0) {
+              colCells.push({ kind: 'grass', shade: hash2D(c, r) });
+              continue;
+            }
+            if (depth <= 2) {
+              colCells.push({ kind: 'dirt', shade: hash2D(c, r) });
+              continue;
+            }
+
+            // Subtle dark cave hollows
+            const caveNoise =
+              Math.sin(c * 0.24 + r * 0.20) * 0.5 +
+              Math.cos(c * 0.15 - r * 0.31) * 0.5;
+            if (depth > 5 && depth < 72 && caveNoise > 0.58) {
+              colCells.push({ kind: 'cave', depth });
+              continue;
+            }
+
+            // Clean Stone -> Deepslate strata with very sparse, subtle mineral glints
+            const isDeepslate = depth >= 26 + Math.floor(hash2D(c, r * 3) * 3);
+            const oreRoll = hash2D(c * 7 + 13, r * 11 + 29);
+            let ore = null;
+            if (depth >= 5 && depth < 18 && oreRoll < 0.045) {
+              ore = oreRoll < 0.025 ? 'iron' : 'copper';
+            } else if (depth >= 18 && depth < 30 && oreRoll < 0.040) {
+              ore = oreRoll < 0.020 ? 'gold' : 'emerald';
+            } else if (depth >= 30 && oreRoll < 0.038) {
+              ore = oreRoll < 0.022 ? 'diamond' : 'redstone';
+            }
+
+            colCells.push({
+              kind: isDeepslate ? 'deepslate' : 'stone',
+              depth,
+              ore,
+              shade: hash2D(c, r)
+            });
+          }
+          mineGrid.push(colCells);
+        }
+
+        // 4. Dimension Silhouette Columns (End / Nether / Ancient City)
+        netherCols = [];
+        for (let c = 0; c < cols; c++) {
+          const ceilBlocks = 1 + Math.floor(Math.abs(Math.sin(c * 0.22) * 1.8 + Math.cos(c * 0.37) * 1.2));
+          const floorBlocks = 1 + Math.floor(Math.abs(Math.cos(c * 0.18) * 1.8));
+          netherCols.push({
+            ceilBlocks,
+            floorBlocks,
+            hasGlow: (c % 9 === 4)
+          });
+        }
+
+        // 5. Subtle Ambient Motes (14-22 low-opacity particles)
+        const emberCount = isMob ? 12 : 20;
+        dimensionEmbers = [];
+        for (let i = 0; i < emberCount; i++) {
+          dimensionEmbers.push({
+            x: Math.random() * viewW,
+            y: Math.random() * viewH,
+            vx: (Math.random() - 0.5) * 10,
+            vy: -(8 + Math.random() * 14),
+            size: 2,
+            phase: Math.random() * Math.PI * 2
+          });
+        }
+      }
+
+      function resizeCanvas() {
+        viewW = window.innerWidth || 390;
+        viewH = window.innerHeight || 844;
+        dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        canvas.width = Math.round(viewW * dpr);
+        canvas.height = Math.round(viewH * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.imageSmoothingEnabled = false;
+        buildWorldData();
+        drawScene(0);
+      }
+
+      // Draw Sky: Subtle Twinkling Stars + Periodic Shooting Star + Understated Moon + Soft Drifting Clouds
+      function drawSkyAndClouds(dt, camY, isSunMode) {
+        const skyVis = Math.max(0, 1 - camY / (viewH * 0.88));
+        if (skyVis <= 0.01) return;
+
+        // 1. Subtle Twinkling Stars
+        for (let i = 0; i < stars.length; i++) {
+          const st = stars[i];
+          const sy = Math.round(st.y - camY * 0.35);
+          if (sy < -8 || sy > viewH) continue;
+          const twinkle = 0.15 + (Math.sin(timeAcc * st.speed + st.phase) * 0.5 + 0.5) * 0.35;
+          ctx.fillStyle = `rgba(216, 232, 255, ${(twinkle * skyVis).toFixed(3)})`;
+          ctx.fillRect(st.x, sy, st.size, st.size);
+        }
+
+        // 2. Periodic Shooting Star
+        if (!prefersReducedMotion && dt > 0) {
+          nextShootingStarDelay -= dt;
+          if (nextShootingStarDelay <= 0 && !shootingStar) {
+            spawnShootingStar();
+            nextShootingStarDelay = 6.5 + Math.random() * 5.0;
+          }
+        }
+        if (shootingStar) {
+          if (dt > 0) {
+            shootingStar.x += shootingStar.vx * dt;
+            shootingStar.y += shootingStar.vy * dt;
+            shootingStar.life += dt;
+          }
+          const prog = shootingStar.life / shootingStar.maxLife;
+          if (prog >= 1) {
+            shootingStar = null;
+          } else {
+            const sAlpha = Math.sin(prog * Math.PI) * skyVis * 0.55;
+            const sx = Math.round(shootingStar.x);
+            const sy = Math.round(shootingStar.y - camY * 0.30);
+            const stepX = shootingStar.vx > 0 ? -5 : 5;
+            for (let t = 0; t < 6; t++) {
+              const tailA = sAlpha * (1 - t / 6);
+              ctx.fillStyle = `rgba(226, 238, 255, ${tailA.toFixed(3)})`;
+              ctx.fillRect(sx + stepX * t, sy - t * 2, t === 0 ? 3 : 2, t === 0 ? 3 : 2);
+            }
+          }
+        }
+
+        // 3. Understated Minecraft Moon (or Soft Twilight Sun in Shader Sim)
+        const mSize = viewW < 640 ? 32 : 42;
+        const mx = Math.round(viewW * 0.85);
+        const my = Math.round(viewH * 0.15 - camY * 0.45);
+        if (my > -mSize * 2) {
+          const half = Math.round(mSize * 0.5);
+          if (isSunMode) {
+            const sunCol = activeTheme.horizon;
+            ctx.fillStyle = rgb(sunCol, (0.06 * skyVis).toFixed(3));
+            ctx.fillRect(mx - half - 12, my - half - 12, mSize + 24, mSize + 24);
+            ctx.fillStyle = `rgba(254, 240, 138, ${(0.24 * skyVis).toFixed(3)})`;
+            ctx.fillRect(mx - half, my - half, mSize, mSize);
+          } else {
+            ctx.fillStyle = `rgba(186, 230, 253, ${(0.04 * skyVis).toFixed(3)})`;
+            ctx.fillRect(mx - half - 10, my - half - 10, mSize + 20, mSize + 20);
+            ctx.fillStyle = `rgba(226, 236, 248, ${(0.22 * skyVis).toFixed(3)})`;
+            ctx.fillRect(mx - half, my - half, mSize, mSize);
+            const p = Math.max(4, Math.round(mSize / 6));
+            ctx.fillStyle = `rgba(71, 85, 105, ${(0.18 * skyVis).toFixed(3)})`;
+            ctx.fillRect(mx - half + p, my - half + p, p * 2, p);
+            ctx.fillRect(mx + Math.round(p * 0.3), my, p * 2, p * 2);
+          }
+        }
+
+        // 4. Soft Translucent Moving Clouds
+        for (let i = 0; i < clouds.length; i++) {
+          const cl = clouds[i];
+          if (!prefersReducedMotion && dt > 0) {
+            cl.x += cl.speed * dt;
+            if (cl.x > viewW + 60) cl.x = -cl.w - 60;
+          }
+          const cy = Math.round((cl.y - camY * 0.55) / 4) * 4;
+          if (cy < -36 || cy > viewH) continue;
+          const cx = Math.round(cl.x / 4) * 4;
+          ctx.fillStyle = isSunMode
+            ? rgb(activeTheme.horizon, (0.06 * skyVis).toFixed(3))
+            : `rgba(203, 213, 225, ${(0.05 * skyVis).toFixed(3)})`;
+          ctx.fillRect(cx, cy, cl.w, cl.h);
+          ctx.fillRect(cx + 16, cy - 6, cl.w - 32, 6);
+        }
+      }
+
+      // Draw Main Portal Vertical World: Instant 0ms Scroll from Night Sky to Underground Stone/Deepslate Strata
+      function drawOverworldAndUndergroundMines(dt, rawScrollY) {
+        const cols = mineGrid.length;
+        const totalRows = cols > 0 ? mineGrid[0].length : 0;
+        const maxCamY = Math.max(0, (totalRows * BLOCK) - viewH);
+        // Direct 1:1 instant scroll mapping (0ms delay!)
+        const camY = Math.min(maxCamY, rawScrollY * 0.78);
+
+        drawSkyAndClouds(dt, camY, false);
+
+        const isBedrockMode = activeTheme.subMode === 'bedrock';
+        const startRow = Math.max(0, Math.floor((camY - 64) / BLOCK));
+        const endRow = Math.min(totalRows - 1, Math.ceil((camY + viewH + 64) / BLOCK));
+
+        for (let c = 0; c < cols; c++) {
+          const x = c * BLOCK;
+          const colCells = mineGrid[c];
+          // Center vignette: keep the center reading area extra calm and subtle
+          const centerDist = Math.abs((x + BLOCK * 0.5) - viewW * 0.5) / (viewW * 0.5);
+          const visMul = 0.14 + Math.pow(centerDist, 1.5) * 0.24;
+
+          for (let r = startRow; r <= endRow; r++) {
+            const cell = colCells[r];
+            if (!cell) continue;
+            const y = Math.round(r * BLOCK - camY);
+
+            if (cell.kind === 'grass') {
+              ctx.fillStyle = `rgba(24, 22, 20, ${(0.85 * visMul).toFixed(3)})`;
+              ctx.fillRect(x, y, BLOCK, BLOCK);
+              ctx.fillStyle = isBedrockMode
+                ? `rgba(16, 185, 129, ${(0.42 * visMul).toFixed(3)})`
+                : `rgba(34, 156, 72, ${(0.42 * visMul).toFixed(3)})`;
+              ctx.fillRect(x, y, BLOCK, 4);
+            } else if (cell.kind === 'dirt') {
+              ctx.fillStyle = `rgba(22, 19, 18, ${(0.82 * visMul).toFixed(3)})`;
+              ctx.fillRect(x, y, BLOCK, BLOCK);
+            } else if (cell.kind === 'stone' || cell.kind === 'deepslate') {
+              const isDeep = cell.kind === 'deepslate';
+              const baseTone = isDeep
+                ? (13 + Math.round(cell.shade * 4))
+                : (19 + Math.round(cell.shade * 6));
+              ctx.fillStyle = `rgba(${baseTone}, ${baseTone + 3}, ${baseTone + 7}, ${(0.85 * visMul).toFixed(3)})`;
+              ctx.fillRect(x, y, BLOCK, BLOCK);
+
+              // Ultra-subtle voxel block seam
+              ctx.fillStyle = `rgba(255, 255, 255, ${(0.05 * visMul).toFixed(3)})`;
+              ctx.fillRect(x, y, BLOCK, 1);
+
+              // Sparse, muted mineral glint (only visible mainly along outer margins)
+              if (cell.ore && centerDist > 0.32) {
+                let oreCol = [148, 163, 184];
+                if (cell.ore === 'copper') oreCol = [180, 105, 70];
+                else if (cell.ore === 'gold') oreCol = [202, 168, 54];
+                else if (cell.ore === 'emerald') oreCol = [27, 185, 96];
+                else if (cell.ore === 'diamond') oreCol = [56, 175, 220];
+                else if (cell.ore === 'redstone') oreCol = [185, 60, 60];
+
+                ctx.fillStyle = rgb(oreCol, (visMul * 0.55).toFixed(3));
+                ctx.fillRect(x + 8, y + 10, 4, 4);
+                ctx.fillRect(x + 17, y + 15, 4, 4);
+              }
+            } else if (cell.kind === 'cave') {
+              ctx.fillStyle = `rgba(6, 8, 12, ${(0.65 * visMul).toFixed(3)})`;
+              ctx.fillRect(x, y, BLOCK, BLOCK);
+            }
+          }
+        }
+      }
+
+      // Draw THE END Atmosphere (Özel Kombolar & Kombo Stüdyosu) — Subtle & Clean
+      function drawEndDimension(dt) {
+        for (let i = 0; i < stars.length; i++) {
+          const st = stars[i];
+          const tw = 0.12 + (Math.sin(timeAcc * st.speed + st.phase) * 0.5 + 0.5) * 0.28;
+          ctx.fillStyle = `rgba(216, 180, 254, ${tw.toFixed(3)})`;
+          ctx.fillRect(st.x, st.y, st.size, st.size);
+        }
+
+        const cols = netherCols.length;
+        for (let c = 0; c < cols; c++) {
+          const x = c * BLOCK;
+          const nc = netherCols[c];
+          for (let r = 0; r < nc.floorBlocks; r++) {
+            const y = viewH - (r + 1) * BLOCK;
+            ctx.fillStyle = r === nc.floorBlocks - 1 ? 'rgba(180, 174, 128, 0.10)' : 'rgba(120, 114, 84, 0.08)';
+            ctx.fillRect(x, y, BLOCK, BLOCK);
+          }
+        }
+
+        drawDimensionMotes(dt, [192, 132, 252], [216, 180, 254], 0.8);
+      }
+
+      // Draw THE NETHER Atmosphere (Aternos Sunucu Simülasyonu) — Subtle & Clean
+      function drawNetherDimension(dt) {
+        const cols = netherCols.length;
+        const heat = activeTheme.heat || 0.35;
+
+        // Subtle Netherrack ceiling & floor silhouettes
+        for (let c = 0; c < cols; c++) {
+          const x = c * BLOCK;
+          const nc = netherCols[c];
+          for (let r = 0; r < nc.ceilBlocks; r++) {
+            ctx.fillStyle = 'rgba(56, 18, 20, 0.22)';
+            ctx.fillRect(x, r * BLOCK, BLOCK, BLOCK);
+          }
+          for (let r = 0; r < nc.floorBlocks; r++) {
+            ctx.fillStyle = 'rgba(48, 15, 16, 0.24)';
+            ctx.fillRect(x, viewH - (r + 1) * BLOCK, BLOCK, BLOCK);
+          }
+        }
+
+        // Soft warm magma underglow at the bottom edge
+        const lavaGrad = ctx.createLinearGradient(0, viewH - 110, 0, viewH);
+        lavaGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        lavaGrad.addColorStop(1, `rgba(234, 88, 12, ${(0.10 + heat * 0.08).toFixed(3)})`);
+        ctx.fillStyle = lavaGrad;
+        ctx.fillRect(0, viewH - 110, viewW, 110);
+
+        drawDimensionMotes(dt, [249, 115, 22], [251, 191, 36], 0.8 + heat * 0.5);
+      }
+
+      // Draw DEEP DARK / ANCIENT CITY Atmosphere (Uyum Simülasyonu) — Subtle & Clean
+      function drawAncientCityDimension(dt) {
+        const cols = netherCols.length;
+        const accent = activeTheme.accent;
+
+        for (let c = 0; c < cols; c++) {
+          const x = c * BLOCK;
+          const nc = netherCols[c];
+          for (let r = 0; r < nc.floorBlocks; r++) {
+            const y = viewH - (r + 1) * BLOCK;
+            ctx.fillStyle = 'rgba(15, 22, 30, 0.24)';
+            ctx.fillRect(x, y, BLOCK, BLOCK);
+            if (r === nc.floorBlocks - 1) {
+              ctx.fillStyle = rgb(accent, 0.16);
+              ctx.fillRect(x, y, BLOCK, 2);
+            }
+          }
+        }
+
+        const glowGrad = ctx.createLinearGradient(0, viewH - 100, 0, viewH);
+        glowGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+        glowGrad.addColorStop(1, rgb(accent, 0.10));
+        ctx.fillStyle = glowGrad;
+        ctx.fillRect(0, viewH - 100, viewW, 100);
+
+        drawDimensionMotes(dt, accent, activeTheme.horizon, 0.7);
+      }
+
+      // Draw SHADER TWILIGHT HORIZON Atmosphere (Shader Simülasyonu) — Subtle & Clean
+      function drawShaderLakeDimension(dt) {
+        drawSkyAndClouds(dt, 0, true);
+        const waterTopY = Math.round(viewH * 0.78);
+        const waterGrad = ctx.createLinearGradient(0, waterTopY, 0, viewH);
+        waterGrad.addColorStop(0, rgb(activeTheme.horizon, 0.10));
+        waterGrad.addColorStop(1, rgb(activeTheme.skyTop, 0.35));
+        ctx.fillStyle = waterGrad;
+        ctx.fillRect(0, waterTopY, viewW, viewH - waterTopY);
+      }
+
+      function drawDimensionMotes(dt, col1, col2, speedMul = 1) {
+        for (let i = 0; i < dimensionEmbers.length; i++) {
+          const m = dimensionEmbers[i];
+          if (!prefersReducedMotion && dt > 0) {
+            m.x += (m.vx + Math.sin(timeAcc * 1.5 + m.phase) * 6) * dt * speedMul;
+            m.y += m.vy * dt * speedMul;
+            if (m.y < -16) { m.y = viewH + 12; m.x = Math.random() * viewW; }
+            if (m.x < -16) m.x = viewW + 12;
+            else if (m.x > viewW + 16) m.x = -12;
+          }
+          const tw = 0.12 + (Math.sin(timeAcc * 2.5 + m.phase) * 0.5 + 0.5) * 0.16;
+          ctx.fillStyle = rgb(i % 2 === 0 ? col1 : col2, tw.toFixed(3));
+          ctx.fillRect(Math.round(m.x), Math.round(m.y), m.size, m.size);
+        }
+      }
+
+      function drawScene(dt) {
+        if (!prefersReducedMotion && dt > 0) {
+          timeAcc += dt;
+        }
+        // Instant 0ms scroll position read (zero lag!)
+        const rawScrollY = window.scrollY || window.pageYOffset || 0;
+
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, viewH);
+        bgGrad.addColorStop(0, rgb(activeTheme.skyTop));
+        bgGrad.addColorStop(0.58, rgb(activeTheme.skyMid));
+        bgGrad.addColorStop(1, rgb(activeTheme.skyBot));
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, viewW, viewH);
+
+        const dim = activeTheme.dimension;
+        if (dim === 'end') {
+          drawEndDimension(dt);
+        } else if (dim === 'nether') {
+          drawNetherDimension(dt);
+        } else if (dim === 'ancient') {
+          drawAncientCityDimension(dt);
+        } else if (dim === 'shader') {
+          drawShaderLakeDimension(dt);
+        } else {
+          drawOverworldAndUndergroundMines(dt, rawScrollY);
+        }
+      }
+
+      function renderFrame(now) {
+        animFrameId = requestAnimationFrame(renderFrame);
+        const dt = Math.min(0.05, Math.max(0.004, (now - lastTime) / 1000));
+        lastTime = now;
+        drawScene(dt);
+      }
+
+      // Immediate synchronous redraw on scroll so there is 0ms delay when scrolling
+      window.addEventListener('scroll', () => {
+        drawScene(0);
+      }, { passive: true });
+      window.addEventListener('resize', resizeCanvas, { passive: true });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+        } else if (!animFrameId) {
+          lastTime = performance.now();
+          animFrameId = requestAnimationFrame(renderFrame);
+        }
+      });
+
+      const watchedIds = [
+        'mainPortalView', 'simViewSection', 'serverSimViewSection',
+        'shaderSimViewSection', 'combosHubViewSection', 'customComboBuilderSection',
+        'simReactorBox', 'srvReactorCard'
+      ];
+      if (typeof MutationObserver === 'function') {
+        const observer = new MutationObserver(() => {
+          window.syncMcLiveBgState();
+        });
+        watchedIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+        });
+      }
+
+      ['filterEdition', 'filterCategory', 'filterLoader', 'selectShaderForComparison',
+       'openSimulationView', 'closeSimulationView', 'openServerSimulationView', 'closeServerSimulationView',
+       'openShaderSimulationView', 'closeShaderSimulationView', 'openCombosHubView', 'closeCombosHubView',
+       'openCustomComboBuilderView', 'closeCustomComboBuilderView', 'resetAllFilters'
+      ].forEach(fnName => {
+        const orig = window[fnName];
+        if (typeof orig === 'function') {
+          window[fnName] = function() {
+            const ret = orig.apply(this, arguments);
+            window.syncMcLiveBgState();
+            return ret;
+          };
+        }
+      });
+
+      resizeCanvas();
+      applyCssBackdropVars(activeTheme);
+      window.syncMcLiveBgState();
+      lastTime = performance.now();
+      animFrameId = requestAnimationFrame(renderFrame);
+    })();
+
     // INIT
     renderCombos();
     renderCards();
     updateCartUI();
     filterGuideVideosInline();
+    if (typeof window.syncNavCategoryGlider === 'function') {
+      window.syncNavCategoryGlider(activeCategory);
+      requestAnimationFrame(() => window.syncNavCategoryGlider(activeCategory));
+      window.addEventListener('load', () => window.syncNavCategoryGlider(activeCategory));
+    }
+    if (typeof window.selectLang === 'function') {
+      const _origSelectLang = window.selectLang;
+      window.selectLang = function() {
+        const res = _origSelectLang.apply(this, arguments);
+        if (typeof window.syncNavCategoryGlider === 'function') {
+          requestAnimationFrame(() => window.syncNavCategoryGlider(activeCategory));
+        }
+        return res;
+      };
+    }
     if (typeof window.fetchRealModrinthIcons === 'function') window.fetchRealModrinthIcons();
   </script>
 </body>

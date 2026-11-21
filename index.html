@@ -20,10 +20,10 @@
             modrinth: {
               DEFAULT: '#1bd96a',
               hover: '#15b858',
-              dark: '#0b0c0e',
-              card: '#14171c',
-              cardHover: '#1c2027',
-              border: '#262b35'
+              dark: '#090b0f',
+              card: '#12151b',
+              cardHover: '#171b22',
+              border: '#222833'
             },
             loader: {
               fabric: '#38bdf8',
@@ -41,8 +41,16 @@
     }
   </script>
   <style>
-    html { scroll-behavior: smooth; background-color: #07090d; overflow-x: clip; max-width: 100%; }
+    :root {
+      --mc-surface-base: #090b0f;
+      --mc-surface-card: #12151b;
+      --mc-surface-elevated: #171b22;
+      --mc-border-subtle: rgba(255, 255, 255, 0.08);
+      --mc-border-strong: rgba(255, 255, 255, 0.14);
+    }
+    html { scroll-behavior: smooth; background-color: var(--mc-surface-base); overflow-x: clip; max-width: 100%; }
     body { background-color: transparent; color: #e5e7eb; font-family: 'Inter', sans-serif; overflow-x: clip; max-width: 100%; -webkit-tap-highlight-color: transparent; }
+    .tabular-nums, code, #itemCount, #cartCountBadge, #modalVersions { font-variant-numeric: tabular-nums; }
     #mcLiveBgRoot {
       position: fixed;
       inset: 0;
@@ -158,57 +166,62 @@
     ::-webkit-scrollbar-thumb { background: #262b35; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #1bd96a; }
     .pixelated { image-rendering: pixelated; }
-    .glass { background: rgba(16, 19, 25, 0.84); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+    .glass { background: rgba(11, 14, 19, 0.82); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Özel Sarı Parlama (Üst Menü Kombolar & Özel Seçki) */
-    @keyframes subtleGoldGlow {
-      0%, 100% {
-        box-shadow: 0 0 12px rgba(251, 191, 36, 0.25), inset 0 0 8px rgba(251, 191, 36, 0.10);
-        border-color: rgba(251, 191, 36, 0.55);
-      }
-      50% {
-        box-shadow: 0 0 22px rgba(251, 191, 36, 0.48), inset 0 0 12px rgba(251, 191, 36, 0.18);
-        border-color: rgba(251, 191, 36, 0.85);
-      }
-    }
+    /* Seçkin Statik Altın Vurgu (Üst Menü Kombolar) */
     .combo-nav-glow {
-      animation: subtleGoldGlow 3s ease-in-out infinite;
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.14), rgba(245, 158, 11, 0.05));
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(245, 158, 11, 0.04));
+      border-color: rgba(251, 191, 36, 0.35);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
       color: #fde68a;
     }
     .combo-nav-glow:hover {
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.24), rgba(245, 158, 11, 0.12));
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(245, 158, 11, 0.10));
+      border-color: rgba(251, 191, 36, 0.70);
+      box-shadow: 0 4px 18px rgba(251, 191, 36, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
       color: #ffffff;
     }
 
-    /* Mod Listesi Çakışma (Kırmızı) ve Eksik Yan Mod (Turuncu) Işık Efektleri */
+    /* Mod Listesi Çakışma (Kırmızı) ve Eksik Yan Mod (Turuncu) Dengeli Uyarı Çerçevesi */
     @keyframes redConflictPulse {
       0%, 100% {
-        box-shadow: 0 0 14px rgba(239, 68, 68, 0.45), inset 0 0 8px rgba(239, 68, 68, 0.15);
-        border-color: #ef4444;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.28);
+        border-color: rgba(239, 68, 68, 0.75);
       }
       50% {
-        box-shadow: 0 0 26px rgba(239, 68, 68, 0.85), inset 0 0 14px rgba(239, 68, 68, 0.28);
+        box-shadow: 0 0 18px rgba(239, 68, 68, 0.45);
         border-color: #f87171;
       }
     }
     @keyframes orangeDepPulse {
       0%, 100% {
-        box-shadow: 0 0 14px rgba(249, 115, 22, 0.45), inset 0 0 8px rgba(249, 115, 22, 0.15);
-        border-color: #f97316;
+        box-shadow: 0 0 10px rgba(249, 115, 22, 0.26);
+        border-color: rgba(249, 115, 22, 0.75);
       }
       50% {
-        box-shadow: 0 0 26px rgba(249, 115, 22, 0.85), inset 0 0 14px rgba(249, 115, 22, 0.28);
+        box-shadow: 0 0 18px rgba(249, 115, 22, 0.42);
         border-color: #fb923c;
       }
     }
     .glow-red-alert {
-      animation: redConflictPulse 1.8s ease-in-out infinite;
+      animation: redConflictPulse 3s ease-in-out infinite;
     }
     .glow-orange-alert {
-      animation: orangeDepPulse 2s ease-in-out infinite;
+      animation: orangeDepPulse 3.2s ease-in-out infinite;
+    }
+
+    /* Pro Kart ve Bento Yüzey İyileştirmeleri */
+    .mc-pro-card {
+      background: linear-gradient(180deg, rgba(22, 26, 34, 0.92) 0%, rgba(16, 19, 25, 0.96) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 18px rgba(0, 0, 0, 0.25);
+    }
+    .mc-pro-card:hover {
+      border-color: rgba(27, 217, 106, 0.45);
+      background: linear-gradient(180deg, rgba(26, 31, 41, 0.96) 0%, rgba(18, 22, 29, 0.98) 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 30px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(27, 217, 106, 0.16);
     }
 
     /* Minecraft Beyaz Partiküllü "İçeriği İncele" Butonu */
@@ -230,14 +243,14 @@
     .mc-particle-btn {
       position: relative;
       overflow: hidden;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
-      border: 1px solid rgba(255,255,255,0.32);
-      box-shadow: 0 0 14px rgba(255,255,255,0.12);
+      background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
     .mc-particle-btn:hover {
-      border-color: rgba(255,255,255,0.72);
-      box-shadow: 0 0 22px rgba(255,255,255,0.28);
-      background: linear-gradient(135deg, rgba(255,255,255,0.20), rgba(255,255,255,0.08));
+      border-color: rgba(255,255,255,0.55);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.16);
+      background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
     }
     .mc-p {
       position: absolute;
@@ -260,9 +273,9 @@
       top: 0;
       left: 0;
       border-radius: 0.5rem;
-      background: rgba(27, 217, 106, 0.22);
-      border: 1px solid rgba(27, 217, 106, 0.45);
-      box-shadow: 0 0 14px rgba(27, 217, 106, 0.16);
+      background: rgba(27, 217, 106, 0.18);
+      border: 1px solid rgba(27, 217, 106, 0.38);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
       transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), width 0.34s cubic-bezier(0.22, 1, 0.36, 1), height 0.24s ease;
       pointer-events: none;
       z-index: 0;
@@ -296,33 +309,25 @@
     .mc-bolt-2 { animation: mcBoltFlash2 5.2s infinite 1.1s; will-change: transform, opacity; }
     .mc-bolt-3 { animation: mcBoltFlash1 6.0s infinite 2.4s; will-change: transform, opacity; }
 
-    /* ÜST MENÜ "UYUM SİMÜLASYONU" ÖZEL BUTON ANİMASYONU */
-    @keyframes simBtnPulse {
-      0%, 100% {
-        box-shadow: 0 0 14px rgba(56, 189, 248, 0.35), inset 0 0 10px rgba(168, 85, 247, 0.20);
-        border-color: rgba(56, 189, 248, 0.65);
-      }
-      50% {
-        box-shadow: 0 0 24px rgba(168, 85, 247, 0.60), 0 0 12px rgba(27, 217, 106, 0.35), inset 0 0 14px rgba(56, 189, 248, 0.30);
-        border-color: rgba(192, 132, 252, 0.95);
-      }
-    }
-    @keyframes simRadarSpin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    /* ÜST MENÜ "SİMÜLASYONLAR" RAFİNE BUTON STİLİ (HOVER'DA HAREKET) */
     .sim-nav-special {
-      animation: simBtnPulse 2.6s ease-in-out infinite;
-      background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(168, 85, 247, 0.18));
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.14), rgba(168, 85, 247, 0.14));
+      border-color: rgba(56, 189, 248, 0.42);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
       color: #e0f2fe;
     }
     .sim-nav-special:hover {
-      background: linear-gradient(135deg, rgba(14, 165, 233, 0.32), rgba(168, 85, 247, 0.32));
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.26), rgba(168, 85, 247, 0.26));
+      border-color: rgba(125, 211, 252, 0.75);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.22);
       color: #ffffff;
       transform: translateY(-1px);
     }
     .sim-radar-icon {
-      animation: simRadarSpin 8s linear infinite;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sim-nav-special:hover .sim-radar-icon {
+      transform: rotate(90deg);
     }
 
     /* UYUM SİMÜLASYONU 3 FARKLI EFEKTLİ DURUM (YEŞİL / TURUNCU / KIRMIZI) */
@@ -568,14 +573,17 @@
     <div class="mc-live-vignette"></div>
   </div>
 
-  <!-- TOP BANNER -->
-  <div class="relative z-30 bg-modrinth/10 border-b border-modrinth/20 py-1.5 sm:py-2 px-3 sm:px-4 text-center text-[11px] sm:text-xs font-medium text-modrinth flex items-center justify-center gap-2 backdrop-blur-sm leading-snug">
-    <span class="w-2 h-2 rounded-full bg-modrinth animate-pulse shrink-0"></span>
+  <!-- TOP BANNER (KAPATILABİLİR) -->
+  <div id="topNoticeBanner" class="relative z-30 bg-emerald-500/[0.07] border-b border-emerald-500/15 py-1.5 px-8 sm:px-10 text-center text-[11px] font-medium text-emerald-300/90 flex items-center justify-center gap-2 backdrop-blur-sm leading-snug">
+    <span class="w-1.5 h-1.5 rounded-full bg-modrinth shrink-0"></span>
     <span id="bannerText">Bu platform Minecraft Türkiye topluluğu için hazırlanmış, ticari amacı bulunmayan bağımsız bir mod, kombo ve teknik rehber projesidir.</span>
+    <button type="button" id="topBannerCloseBtn" onclick="dismissTopNoticeBanner()" class="absolute right-2 sm:right-3.5 top-1/2 -translate-y-1/2 p-1 rounded-lg text-emerald-300/70 hover:text-white hover:bg-white/10 transition" title="Duyuruyu kapat" aria-label="Duyuruyu kapat">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
   </div>
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-40 glass border-b border-modrinth-border px-3 sm:px-4 lg:px-8 py-2.5 sm:py-3">
+  <header class="sticky top-0 z-40 glass border-b border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.45)] px-3 sm:px-4 lg:px-8 py-2.5 sm:py-3">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
       
       <!-- LOGO -->
@@ -637,7 +645,6 @@
           <svg class="w-4 h-4 text-sky-300 sim-radar-icon shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
           <span id="navSimText">Simülasyonlar</span>
           <svg class="w-3.5 h-3.5 text-sky-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-          <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
         </button>
 
         <!-- 2 SEÇENEKLİ SİMÜLASYON SEÇİM MENÜSÜ -->
@@ -762,20 +769,21 @@
 
   <div id="mainPortalView" class="flex-1 flex flex-col">
   <!-- HERO SECTION -->
-  <section class="relative py-6 sm:py-8 px-3 sm:px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center z-30">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-modrinth-card border border-modrinth-border text-[10px] sm:text-[11px] font-semibold text-gray-300 mb-3 max-w-full">
-      <span class="w-2 h-2 rounded-full bg-modrinth shrink-0"></span>
-      <span id="heroTopBadge" class="truncate sm:whitespace-normal">5.500 Doğrulanmış Mod, Shader, Kaynak Paketi &amp; Plugin • 1.12.2 - 26.3</span>
+  <section class="relative py-7 sm:py-10 px-3 sm:px-4 max-w-7xl mx-auto w-full text-center flex flex-col items-center z-30">
+    <div class="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 w-[min(640px,92vw)] h-48 bg-modrinth/[0.08] blur-[72px] rounded-full"></div>
+    <div class="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#12151b]/90 border border-white/[0.1] text-[11px] font-semibold text-gray-300 mb-3.5 max-w-full shadow-sm">
+      <span class="w-1.5 h-1.5 rounded-full bg-modrinth shrink-0"></span>
+      <span id="heroTopBadge" class="truncate sm:whitespace-normal tabular-nums">5.500 Doğrulanmış Mod, Shader, Kaynak Paketi &amp; Plugin • 1.12.2 - 26.3</span>
     </div>
-    <h1 class="text-2xl sm:text-5xl font-black text-white tracking-tight mb-2.5 sm:mb-3 leading-tight">
-      <span id="heroTitle1">Minecraft Türkiye</span> <span class="text-modrinth" id="heroTitle2">Mod & Rehber Portalı</span>
+    <h1 class="relative text-2xl sm:text-5xl font-black text-white tracking-tight mb-2.5 sm:mb-3 leading-tight">
+      <span id="heroTitle1">Minecraft Türkiye</span> <span class="text-modrinth" id="heroTitle2">Mod &amp; Rehber Portalı</span>
     </h1>
-    <p class="text-gray-400 max-w-2xl text-xs sm:text-base mb-5 sm:mb-6 leading-relaxed" id="heroDesc">
+    <p class="relative text-gray-400 max-w-2xl text-xs sm:text-base mb-5 sm:mb-6 leading-relaxed" id="heroDesc">
       Java ve Bedrock (MCPE) sürümleri için doğrulanmış 5.500 mod, shader, kaynak paketi &amp; sunucu plugini, hazır kombolar ve canlı çakışma denetleyicisi.
     </p>
 
     <!-- EDITION TOGGLE -->
-    <div class="flex w-full max-w-md sm:w-auto sm:inline-flex p-1 bg-modrinth-card border border-modrinth-border rounded-xl mb-4 sm:mb-5 text-[11px] sm:text-xs font-bold shadow-xl">
+    <div class="relative flex w-full max-w-md sm:w-auto sm:inline-flex p-1 bg-[#12151b] border border-white/[0.09] rounded-xl mb-4 sm:mb-5 text-[11px] sm:text-xs font-bold shadow-xl">
       <button type="button" onclick="filterEdition('java', this)" class="edition-btn flex-1 justify-center px-3 sm:px-6 py-2.5 rounded-lg bg-modrinth text-black font-extrabold transition flex items-center gap-1.5 sm:gap-2" id="btnEdJava">
         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
         <span id="btnEdJavaText" class="truncate">Java Edition (90 İçerik)</span>
@@ -786,13 +794,14 @@
       </button>
     </div>
 
-    <!-- SEARCH BAR + INSTANT SEARCH RESULTS DROPDOWN RIGHT BELOW -->
+    <!-- COMMAND SEARCH BAR + INSTANT SEARCH RESULTS DROPDOWN RIGHT BELOW -->
     <div class="w-full max-w-2xl relative" id="searchWrapper">
-      <div class="w-full bg-modrinth-card border border-modrinth-border p-1.5 sm:p-2 rounded-2xl shadow-2xl focus-within:border-modrinth transition">
-        <div class="relative flex items-center">
+      <div class="w-full bg-[#12151b]/95 border border-white/[0.11] p-1.5 sm:p-2 rounded-2xl shadow-[0_14px_38px_rgba(0,0,0,0.45)] focus-within:border-modrinth/80 focus-within:shadow-[0_0_0_4px_rgba(27,217,106,0.12),0_16px_40px_rgba(0,0,0,0.5)] transition">
+        <div class="relative flex items-center gap-1">
           <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 absolute left-3.5 sm:left-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          <input type="text" id="searchInput" oninput="handleSearch()" onfocus="handleSearch()" placeholder="Mod, shader, kaynak paketi veya sürüm ara (Örn: sodium, create, 1.16.5, bedrock, iris)..." class="w-full bg-transparent pl-10 sm:pl-12 pr-16 sm:pr-24 py-2.5 sm:py-3 text-base sm:text-sm text-white focus:outline-none placeholder-gray-500 font-medium">
-          <button type="button" id="btnResetSearch" onclick="resetAllFilters()" class="text-[11px] font-semibold text-gray-400 hover:text-white bg-modrinth-dark border border-modrinth-border px-2.5 py-1.5 rounded-lg mr-1 transition shrink-0">Sıfırla</button>
+          <input type="text" id="searchInput" oninput="handleSearch()" onfocus="handleSearch()" placeholder="Mod, shader, kaynak paketi veya sürüm ara (Örn: sodium, create, 1.16.5, bedrock, iris)..." class="w-full bg-transparent pl-10 sm:pl-12 pr-2 py-2.5 sm:py-3 text-base sm:text-sm text-white focus:outline-none placeholder-gray-500 font-medium min-w-0">
+          <kbd class="hidden sm:inline-flex items-center px-2 py-1 rounded-md bg-white/[0.06] border border-white/10 text-[10px] font-mono text-gray-400 shrink-0 select-none">⌘K</kbd>
+          <button type="button" id="btnResetSearch" onclick="resetAllFilters()" class="text-[11px] font-semibold text-gray-400 hover:text-white bg-white/[0.05] border border-white/10 px-2.5 py-1.5 rounded-lg mr-1 transition shrink-0">Sıfırla</button>
         </div>
       </div>
 
@@ -811,6 +820,61 @@
           <button type="button" onclick="scrollToCatalogueFromSearch()" class="text-xs font-bold text-modrinth hover:underline shrink-0" id="instantScrollToCatalogBtn">Katalogda Tümünü Gör ↓</button>
         </div>
       </div>
+    </div>
+
+    <!-- HIZLI BAŞLAT BENTO ARAÇ ŞERİDİ -->
+    <div id="heroBentoToolsStrip" class="max-w-5xl w-full mt-6 grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 text-left">
+      <button type="button" onclick="openSimulationView()" class="mc-pro-card rounded-2xl p-3.5 sm:p-4 transition-all duration-200 hover:-translate-y-0.5 group flex flex-col justify-between min-w-0">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <div class="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-400/30 text-sky-300 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <span class="text-[10px] font-bold text-sky-300/80 group-hover:text-sky-300 transition">TEST →</span>
+        </div>
+        <div>
+          <div class="text-xs sm:text-[13px] font-bold text-white group-hover:text-sky-300 transition truncate">Uyum Simülasyonu</div>
+          <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-1">Çakışma ve eksik yan mod testi</p>
+        </div>
+      </button>
+
+      <button type="button" onclick="openServerSimulationView()" class="mc-pro-card rounded-2xl p-3.5 sm:p-4 transition-all duration-200 hover:-translate-y-0.5 group flex flex-col justify-between min-w-0">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <div class="w-8 h-8 rounded-xl bg-modrinth/15 border border-modrinth/30 text-modrinth flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+          </div>
+          <span class="text-[10px] font-bold text-modrinth/80 group-hover:text-modrinth transition">RAM / TPS →</span>
+        </div>
+        <div>
+          <div class="text-xs sm:text-[13px] font-bold text-white group-hover:text-modrinth transition truncate">Aternos Sunucu Testi</div>
+          <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-1">Canlı RAM, chunk ve çökme analizi</p>
+        </div>
+      </button>
+
+      <button type="button" onclick="openShaderSimulationView()" class="mc-pro-card rounded-2xl p-3.5 sm:p-4 transition-all duration-200 hover:-translate-y-0.5 group flex flex-col justify-between min-w-0">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <div class="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-400/30 text-purple-300 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          </div>
+          <span class="text-[10px] font-bold text-purple-300/80 group-hover:text-purple-300 transition">CANLI →</span>
+        </div>
+        <div>
+          <div class="text-xs sm:text-[13px] font-bold text-white group-hover:text-purple-300 transition truncate">Shader Karşılaştır</div>
+          <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-1">Kızaklı perde ile canlı fark görünümü</p>
+        </div>
+      </button>
+
+      <button type="button" onclick="openCustomComboBuilderView()" class="mc-pro-card rounded-2xl p-3.5 sm:p-4 transition-all duration-200 hover:-translate-y-0.5 group flex flex-col justify-between min-w-0">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <div class="w-8 h-8 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-300 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <span class="text-[10px] font-bold text-amber-300/80 group-hover:text-amber-300 transition">OLUŞTUR →</span>
+        </div>
+        <div>
+          <div class="text-xs sm:text-[13px] font-bold text-white group-hover:text-amber-300 transition truncate">Özel Kombo Stüdyosu</div>
+          <p class="text-[11px] text-gray-400 mt-0.5 line-clamp-1">Temana göre tek tıkla paket kur</p>
+        </div>
+      </button>
     </div>
   </section>
 
@@ -872,8 +936,20 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2 w-full xl:w-auto min-w-0">
+        <!-- GRID / LIST VIEW SWITCHER -->
+        <div id="catalogViewToggleWrap" class="inline-flex items-center p-1 rounded-xl bg-[#12151b] border border-white/[0.08] shrink-0">
+          <button type="button" id="btnViewGrid" onclick="setCatalogViewMode('grid')" class="flex items-center gap-1 px-2.5 py-1.5 sm:py-1 rounded-lg text-xs font-bold bg-modrinth text-black transition" title="Kart Görünümü">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <span id="btnViewGridText">Kart</span>
+          </button>
+          <button type="button" id="btnViewList" onclick="setCatalogViewMode('list')" class="flex items-center gap-1 px-2.5 py-1.5 sm:py-1 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition" title="Liste Görünümü">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <span id="btnViewListText">Liste</span>
+          </button>
+        </div>
+
         <!-- VERSION FILTERS -->
-        <div class="flex items-center gap-1 bg-modrinth-card p-1 rounded-xl border border-modrinth-border text-xs font-semibold overflow-x-auto no-scrollbar w-full xl:w-auto max-w-full min-w-0">
+        <div class="flex items-center gap-1 bg-modrinth-card p-1 rounded-xl border border-modrinth-border text-xs font-semibold overflow-x-auto no-scrollbar w-full sm:w-auto max-w-full min-w-0">
           <button type="button" onclick="filterVersion('all', this)" class="ver-btn px-2.5 py-1.5 sm:py-1 rounded-lg bg-white/10 text-white transition shrink-0" id="verAll">Tüm Sürümler</button>
           <button type="button" onclick="filterVersion('26.3', this)" class="ver-btn px-2.5 py-1.5 sm:py-1 rounded-lg text-gray-400 hover:text-white transition shrink-0">26.3</button>
           <button type="button" onclick="filterVersion('1.21', this)" class="ver-btn px-2.5 py-1.5 sm:py-1 rounded-lg text-gray-400 hover:text-white transition shrink-0">1.21.x</button>
@@ -934,29 +1010,34 @@
       </div>
 
       <!-- HIZLI SORUN ETİKETLERİ -->
-      <div class="mt-4 w-full max-w-4xl flex flex-col items-center gap-2">
-        <button type="button" id="btnShowAllGuideVideos" onclick="showAllGuideVideos()" class="text-[11px] font-bold px-3.5 py-1.5 rounded-lg bg-red-600/20 border border-red-500/40 text-red-300 hover:bg-red-600 hover:text-white transition">Tüm Rehber Videolarını Göster (36)</button>
+      <div class="mt-4 w-full max-w-4xl flex flex-col items-center gap-2.5">
+        <div class="flex flex-wrap items-center justify-center gap-2">
+          <button type="button" id="btnShowAllGuideVideos" onclick="showAllGuideVideos()" class="text-[11px] font-bold px-3.5 py-1.5 rounded-lg bg-red-600/15 border border-red-500/35 text-red-300 hover:bg-red-600 hover:text-white transition">Tüm Rehber Videolarını Göster (36)</button>
+          <button type="button" id="btnToggleMoreGuideTags" onclick="toggleExtraGuideTopics()" class="text-[11px] font-bold px-3.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/10 text-gray-300 hover:border-white/25 hover:text-white transition">+14 Konu Daha</button>
+        </div>
         <div class="flex items-center gap-1.5 overflow-x-auto sm:flex-wrap sm:justify-center no-scrollbar w-full pb-1 sm:pb-0">
-          <button type="button" onclick="setGuideQuery('yapışkan tuşlar')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Yapışkan Tuşlar Kapatma</button>
-          <button type="button" onclick="setGuideQuery('skyblock')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos SkyBlock Kurma</button>
-          <button type="button" onclick="setGuideQuery('sunucu lag azaltma')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucu Lag Azaltma</button>
-          <button type="button" onclick="setGuideQuery('1 den fazla dünya')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucuda Çoklu Dünya</button>
-          <button type="button" onclick="setGuideQuery('bedrock java combat')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Bedrock Java Combat</button>
-          <button type="button" onclick="setGuideQuery('müzik diski')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Müzik Diski Özelleştirme</button>
-          <button type="button" onclick="setGuideQuery('chunk arttırma')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos Chunk Arttırma</button>
-          <button type="button" onclick="setGuideQuery('anti hile')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Anti Hile & Anti Xray</button>
-          <button type="button" onclick="setGuideQuery('fabric ile forge bir arada')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Fabric + Forge Bir Arada</button>
-          <button type="button" onclick="setGuideQuery('java bedrock eski sürüm beraber')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Java + Bedrock Beraber Oynama</button>
-          <button type="button" onclick="setGuideQuery('nether portalı fix')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Nether Portalı Fix</button>
-          <button type="button" onclick="setGuideQuery('oyun içi konuşma')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Gerçekçi Oyun İçi Konuşma</button>
-          <button type="button" onclick="setGuideQuery('kendi modunu yap')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Kendi Modunu Yap</button>
-          <button type="button" onclick="setGuideQuery('bozuk skin')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucuda Bozuk Skin Çözümü</button>
-          <button type="button" onclick="setGuideQuery('mod kurma')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Orijinal & Crack Mod Kurulumu</button>
-          <button type="button" onclick="setGuideQuery('1 kişinin uyumasıyla')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Tek Kişi Uyuyunca Sabah Olması</button>
-          <button type="button" onclick="setGuideQuery('aternos modlu sunucu')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos Modlu Sunucu</button>
-          <button type="button" onclick="setGuideQuery('essential sunucusuz')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucu Kurmadan Arkadaşla Oynama</button>
-          <button type="button" onclick="setGuideQuery('bedrock')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Bedrock / MCPE Modları</button>
-          <button type="button" onclick="setGuideQuery('sinematik')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-red-500/50 hover:text-white transition">Replay & Sinematik Modu</button>
+          <button type="button" onclick="setGuideQuery('yapışkan tuşlar')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Yapışkan Tuşlar Kapatma</button>
+          <button type="button" onclick="setGuideQuery('skyblock')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos SkyBlock Kurma</button>
+          <button type="button" onclick="setGuideQuery('sunucu lag azaltma')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucu Lag Azaltma</button>
+          <button type="button" onclick="setGuideQuery('aternos modlu sunucu')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos Modlu Sunucu</button>
+          <button type="button" onclick="setGuideQuery('mod kurma')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Orijinal &amp; Crack Mod Kurulumu</button>
+          <button type="button" onclick="setGuideQuery('essential sunucusuz')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucu Kurmadan Arkadaşla Oynama</button>
+        </div>
+        <div id="guideExtraTagsWrap" class="hidden flex items-center gap-1.5 overflow-x-auto sm:flex-wrap sm:justify-center no-scrollbar w-full pb-1 sm:pb-0">
+          <button type="button" onclick="setGuideQuery('1 den fazla dünya')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucuda Çoklu Dünya</button>
+          <button type="button" onclick="setGuideQuery('bedrock java combat')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Bedrock Java Combat</button>
+          <button type="button" onclick="setGuideQuery('müzik diski')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Müzik Diski Özelleştirme</button>
+          <button type="button" onclick="setGuideQuery('chunk arttırma')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Aternos Chunk Arttırma</button>
+          <button type="button" onclick="setGuideQuery('anti hile')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Anti Hile &amp; Anti Xray</button>
+          <button type="button" onclick="setGuideQuery('fabric ile forge bir arada')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Fabric + Forge Bir Arada</button>
+          <button type="button" onclick="setGuideQuery('java bedrock eski sürüm beraber')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Java + Bedrock Beraber Oynama</button>
+          <button type="button" onclick="setGuideQuery('nether portalı fix')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Nether Portalı Fix</button>
+          <button type="button" onclick="setGuideQuery('oyun içi konuşma')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Gerçekçi Oyun İçi Konuşma</button>
+          <button type="button" onclick="setGuideQuery('kendi modunu yap')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Kendi Modunu Yap</button>
+          <button type="button" onclick="setGuideQuery('bozuk skin')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Sunucuda Bozuk Skin Çözümü</button>
+          <button type="button" onclick="setGuideQuery('1 kişinin uyumasıyla')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Tek Kişi Uyuyunca Sabah Olması</button>
+          <button type="button" onclick="setGuideQuery('bedrock')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Bedrock / MCPE Modları</button>
+          <button type="button" onclick="setGuideQuery('sinematik')" class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-modrinth-dark border border-white/[0.08] text-gray-300 hover:border-red-500/50 hover:text-white transition">Replay &amp; Sinematik Modu</button>
         </div>
       </div>
 
@@ -1820,60 +1901,87 @@
   </section>
 
   <!-- MODAL: DETAIL -->
-  <div id="detailModal" onclick="if(event.target===this)closeDetailModal()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2.5 sm:p-4 hidden">
-    <div class="bg-modrinth-card border border-modrinth-border rounded-2xl max-w-2xl w-full p-4 sm:p-6 relative max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto shadow-2xl">
-      <button type="button" onclick="closeDetailModal()" class="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 text-gray-400 hover:text-white bg-modrinth-border p-1.5 rounded-xl transition z-10">
+  <div id="detailModal" onclick="if(event.target===this)closeDetailModal()" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-2.5 sm:p-4 hidden">
+    <div class="bg-[#12151b]/95 border border-white/[0.12] rounded-3xl max-w-2xl w-full p-4 sm:p-6 relative max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto shadow-[0_24px_80px_rgba(0,0,0,0.85)]">
+      <!-- AMBIENT COVER HALO -->
+      <div id="modalHeroCoverBanner" class="pointer-events-none absolute inset-x-0 top-0 h-36 overflow-hidden rounded-t-3xl opacity-35">
+        <img id="modalHeroCoverImg" src="" alt="" referrerpolicy="no-referrer" class="w-full h-full object-cover blur-sm scale-105 hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-[#12151b]/75 to-[#12151b]"></div>
+      </div>
+
+      <button type="button" onclick="closeDetailModal()" class="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 text-gray-300 hover:text-white bg-white/10 hover:bg-white/20 border border-white/10 p-1.5 rounded-xl transition z-20">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
 
-      <div class="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
-        <div id="modalIconWrap" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-modrinth-dark border border-modrinth-border flex items-center justify-center overflow-hidden shrink-0"></div>
+      <div class="relative z-10 flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
+        <div id="modalIconWrap" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#090b0f] border border-white/15 flex items-center justify-center overflow-hidden shrink-0 shadow-lg"></div>
         <div class="pr-8 min-w-0 flex-1">
           <div class="flex items-center gap-1.5 flex-wrap mb-1.5" id="modalBadges"></div>
-          <h3 id="modalTitle" class="text-lg sm:text-2xl font-bold text-white break-words">Mod Başlığı</h3>
-          <div class="flex items-center gap-2 mt-1 flex-wrap">
-            <span class="text-xs font-bold text-modrinth bg-modrinth/10 border border-modrinth/30 px-2.5 py-0.5 rounded-md" id="modalVersions">1.16.5 - 26.3 arasında çalışıyor</span>
+          <h3 id="modalTitle" class="text-lg sm:text-2xl font-extrabold text-white break-words leading-snug">Mod Başlığı</h3>
+          <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+            <span class="text-xs font-bold text-modrinth bg-modrinth/10 border border-modrinth/30 px-2.5 py-0.5 rounded-md tabular-nums" id="modalVersions">1.16.5 - 26.3 arasında çalışıyor</span>
             <span class="text-xs text-gray-400 font-medium" id="modalEnvText">Client & Server</span>
           </div>
         </div>
       </div>
 
-      <!-- 4 ADET GÖRSEL ÖNİZLEME GALERİSİ (İNCELEME EKRANI) -->
-      <div id="modalGallerySection" class="mb-5 bg-modrinth-dark/90 border border-modrinth-border rounded-2xl p-2.5 sm:p-3">
-        <div class="flex items-center justify-between gap-2 mb-2">
-          <h4 class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-modrinth flex items-center gap-1.5 min-w-0">
-            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <span id="modalGalleryHeading" class="truncate">Oyun İçi Görseller & Önizleme Galerisi (4 Fotoğraf)</span>
-          </h4>
-          <span id="modalGalleryCounter" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-white/10 text-white border border-white/15 shrink-0">Fotoğraf 1 / 4</span>
-        </div>
-
-        <div class="relative rounded-xl overflow-hidden border border-modrinth-border bg-black aspect-video group">
-          <img id="modalGalleryMainImg" src="" alt="Mod Önizleme" referrerpolicy="no-referrer" class="w-full h-full object-cover transition duration-300">
-          <button type="button" id="modalPrevPhotoBtn" onclick="stepModalPhoto(-1)" class="absolute left-2 sm:left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/75 hover:bg-modrinth hover:text-black text-white border border-white/20 flex items-center justify-center transition shadow-lg" title="Önceki Fotoğraf">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-          </button>
-          <button type="button" id="modalNextPhotoBtn" onclick="stepModalPhoto(1)" class="absolute right-2 sm:right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/75 hover:bg-modrinth hover:text-black text-white border border-white/20 flex items-center justify-center transition shadow-lg" title="Sonraki Fotoğraf">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-          </button>
-          <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 sm:px-3.5 py-2 sm:py-2.5 flex items-center justify-between gap-2">
-            <span id="modalGalleryCaption" class="text-[11px] sm:text-xs font-bold text-white truncate">1. Oyun İçi Görünüm & Mekanik Önizlemesi</span>
-            <span id="modalGallerySubBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-modrinth/20 text-modrinth border border-modrinth/40 shrink-0">HD Önizleme</span>
-          </div>
-        </div>
-
-        <div id="modalGalleryThumbs" class="grid grid-cols-4 gap-2 mt-2.5"></div>
+      <!-- SEKMELER (GENEL BAKIŞ • KURULUM • UYUMLULUK) -->
+      <div id="detailModalTabs" class="relative z-10 grid grid-cols-3 gap-1.5 p-1 bg-[#090b0f]/90 border border-white/[0.08] rounded-2xl mb-4 text-[11px] sm:text-xs font-bold">
+        <button type="button" id="detTabOverview" onclick="switchDetailModalTab('overview')" class="py-2 px-2 rounded-xl bg-modrinth text-black font-extrabold transition truncate text-center">Genel Bakış &amp; Galeri</button>
+        <button type="button" id="detTabInstall" onclick="switchDetailModalTab('install')" class="py-2 px-2 rounded-xl text-gray-400 hover:text-white transition truncate text-center">Kurulum Adımları</button>
+        <button type="button" id="detTabCompat" onclick="switchDetailModalTab('compat')" class="py-2 px-2 rounded-xl text-gray-400 hover:text-white transition flex items-center justify-center gap-1.5 truncate">
+          <span id="detTabCompatLabel" class="truncate">Uyumluluk &amp; Yan Modlar</span>
+          <span id="detCompatCountBadge" class="hidden px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-400/20 text-amber-300 border border-amber-400/40 shrink-0 tabular-nums">0</span>
+        </button>
       </div>
 
-      <div class="space-y-4 mb-5 text-sm">
-        <div>
-          <h4 class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5" id="modalDescHeading">Teknik Açıklama & Ne İşe Yarar?</h4>
-          <p id="modalDesc" class="text-gray-200 leading-relaxed bg-modrinth-dark/80 p-3.5 rounded-xl border border-modrinth-border text-xs sm:text-sm"></p>
+      <!-- SEKME 1: GENEL BAKIŞ & GALERİ -->
+      <div id="modalTabOverviewPanel" class="relative z-10 space-y-4 mb-5">
+        <div id="modalGallerySection" class="bg-[#090b0f]/90 border border-white/[0.08] rounded-2xl p-2.5 sm:p-3">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <h4 class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-modrinth flex items-center gap-1.5 min-w-0">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span id="modalGalleryHeading" class="truncate">Oyun İçi Görseller & Önizleme Galerisi (4 Fotoğraf)</span>
+            </h4>
+            <span id="modalGalleryCounter" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-white/10 text-white border border-white/15 shrink-0 tabular-nums">Fotoğraf 1 / 4</span>
+          </div>
+
+          <div class="relative rounded-xl overflow-hidden border border-white/10 bg-black aspect-video group">
+            <img id="modalGalleryMainImg" src="" alt="Mod Önizleme" referrerpolicy="no-referrer" class="w-full h-full object-cover transition duration-300">
+            <button type="button" id="modalPrevPhotoBtn" onclick="stepModalPhoto(-1)" class="absolute left-2 sm:left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/75 hover:bg-modrinth hover:text-black text-white border border-white/20 flex items-center justify-center transition shadow-lg" title="Önceki Fotoğraf">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button type="button" id="modalNextPhotoBtn" onclick="stepModalPhoto(1)" class="absolute right-2 sm:right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/75 hover:bg-modrinth hover:text-black text-white border border-white/20 flex items-center justify-center transition shadow-lg" title="Sonraki Fotoğraf">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent px-3 sm:px-3.5 py-2 sm:py-2.5 flex items-center justify-between gap-2">
+              <span id="modalGalleryCaption" class="text-[11px] sm:text-xs font-bold text-white truncate">1. Oyun İçi Görünüm & Mekanik Önizlemesi</span>
+              <span id="modalGallerySubBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-modrinth/20 text-modrinth border border-modrinth/40 shrink-0">HD Önizleme</span>
+            </div>
+          </div>
+
+          <div id="modalGalleryThumbs" class="grid grid-cols-4 gap-2 mt-2.5"></div>
         </div>
 
+        <div>
+          <h4 class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5" id="modalDescHeading">Teknik Açıklama & Ne İşe Yarar?</h4>
+          <p id="modalDesc" class="text-gray-200 leading-relaxed bg-[#090b0f]/80 p-3.5 rounded-xl border border-white/[0.08] text-xs sm:text-sm"></p>
+        </div>
+      </div>
+
+      <!-- SEKME 2: KURULUM ADIMLARI -->
+      <div id="modalTabInstallPanel" class="hidden relative z-10 space-y-4 mb-5 text-sm">
+        <div>
+          <h4 class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5" id="modalStepsHeading">Kurulum Adımları</h4>
+          <ol id="modalSteps" class="list-decimal list-inside text-gray-300 space-y-2 bg-[#090b0f]/85 p-4 rounded-2xl border border-white/[0.08] text-xs sm:text-[13px] leading-relaxed"></ol>
+        </div>
+      </div>
+
+      <!-- SEKME 3: UYUMLULUK & YAN MODLAR -->
+      <div id="modalTabCompatPanel" class="hidden relative z-10 mb-5 text-sm">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <!-- GEREKLİ YAN MODLAR -->
-          <div id="modalDepsCard" class="bg-orange-500/5 border border-orange-500/30 rounded-xl p-3.5">
+          <div id="modalDepsCard" class="bg-orange-500/[0.06] border border-orange-500/30 rounded-2xl p-3.5">
             <h4 class="text-[11px] font-bold uppercase tracking-wider text-orange-400 mb-2 flex items-center gap-1.5">
               <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
               <span id="modalDepsHeading">Gerekli Yan Modlar (Bağımlılıklar)</span>
@@ -1882,7 +1990,7 @@
           </div>
 
           <!-- ÇAKIŞAN MODLAR -->
-          <div id="modalConflictsCard" class="bg-red-500/5 border border-red-500/30 rounded-xl p-3.5">
+          <div id="modalConflictsCard" class="bg-red-500/[0.06] border border-red-500/30 rounded-2xl p-3.5">
             <h4 class="text-[11px] font-bold uppercase tracking-wider text-red-400 mb-2 flex items-center gap-1.5">
               <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
               <span id="modalConflictsHeading">Çakışan Modlar (Uyumsuzluklar)</span>
@@ -1890,14 +1998,9 @@
             <div id="modalConflicts" class="text-xs text-gray-300 space-y-2"></div>
           </div>
         </div>
-
-        <div>
-          <h4 class="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5" id="modalStepsHeading">Kurulum Adımları</h4>
-          <ol id="modalSteps" class="list-decimal list-inside text-gray-300 space-y-1.5 bg-modrinth-dark/80 p-3.5 rounded-xl border border-modrinth-border text-xs"></ol>
-        </div>
       </div>
 
-      <div class="flex flex-col gap-2.5 pt-4 border-t border-modrinth-border">
+      <div class="relative z-10 flex flex-col gap-2.5 pt-4 border-t border-white/[0.08]">
         <div id="modalDownloadGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <a id="btnModrinth" href="https://modrinth.com" target="_blank" rel="noopener noreferrer" class="bg-modrinth hover:bg-modrinth-hover text-black font-bold py-2.5 px-4 rounded-xl text-center text-xs sm:text-sm transition flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
@@ -1909,7 +2012,7 @@
           </a>
         </div>
         <div class="grid grid-cols-1 gap-2.5">
-          <button type="button" id="modalAddCartBtn" class="w-full bg-modrinth-dark hover:bg-white/5 border border-modrinth-border text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2">
+          <button type="button" id="modalAddCartBtn" class="w-full bg-[#090b0f] hover:bg-white/5 border border-white/[0.1] text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2">
             <span>Mod Listesine Ekle</span>
           </button>
         </div>
@@ -4668,6 +4771,25 @@
         return;
       }
 
+      let gridMode = (typeof safeGetStorage === 'function' ? safeGetStorage('mcCatalogViewMode', 'grid') : 'grid') || 'grid';
+      window._catalogViewMode = gridMode === 'list' ? 'list' : 'grid';
+
+      function syncViewToggleButtons() {
+        const gBtn = document.getElementById('btnViewGrid');
+        const lBtn = document.getElementById('btnViewList');
+        const isList = window._catalogViewMode === 'list';
+        if (gBtn) gBtn.className = `flex items-center gap-1 px-2.5 py-1.5 sm:py-1 rounded-lg text-xs font-bold transition ${!isList ? 'bg-modrinth text-black font-extrabold shadow' : 'text-gray-400 hover:text-white'}`;
+        if (lBtn) lBtn.className = `flex items-center gap-1 px-2.5 py-1.5 sm:py-1 rounded-lg text-xs font-bold transition ${isList ? 'bg-modrinth text-black font-extrabold shadow' : 'text-gray-400 hover:text-white'}`;
+      }
+      syncViewToggleButtons();
+
+      const gridEl = document.getElementById('cardsGrid');
+      if (gridEl) {
+        gridEl.className = window._catalogViewMode === 'list'
+          ? 'grid grid-cols-1 gap-2.5'
+          : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4';
+      }
+
       const itemsToShow = filtered.slice(0, visibleCount);
       if (filtered.length > visibleCount) {
         loadMoreWrap.classList.remove('hidden');
@@ -4680,13 +4802,13 @@
       }
 
       itemsToShow.forEach(item => {
-        const loaderColor = item.loader === 'fabric' ? 'border-loader-fabric/40 text-loader-fabric bg-loader-fabric/10' :
-                            item.loader === 'forge' ? 'border-loader-forge/40 text-loader-forge bg-loader-forge/10' :
-                            item.loader === 'paper' ? 'border-cyan-400/40 text-cyan-300 bg-cyan-400/10' :
-                            item.loader === 'spigot' ? 'border-amber-400/40 text-amber-300 bg-amber-400/10' :
-                            item.loader === 'velocity' ? 'border-purple-400/40 text-purple-300 bg-purple-400/10' :
-                            item.loader === 'bedrock' ? 'border-loader-bedrock/40 text-loader-bedrock bg-loader-bedrock/10' :
-                            'border-loader-neoforge/40 text-loader-neoforge bg-loader-neoforge/10';
+        const loaderColor = item.loader === 'fabric' ? 'border-loader-fabric/35 text-loader-fabric bg-loader-fabric/10' :
+                            item.loader === 'forge' ? 'border-loader-forge/35 text-loader-forge bg-loader-forge/10' :
+                            item.loader === 'paper' ? 'border-cyan-400/35 text-cyan-300 bg-cyan-400/10' :
+                            item.loader === 'spigot' ? 'border-amber-400/35 text-amber-300 bg-amber-400/10' :
+                            item.loader === 'velocity' ? 'border-purple-400/35 text-purple-300 bg-purple-400/10' :
+                            item.loader === 'bedrock' ? 'border-loader-bedrock/35 text-loader-bedrock bg-loader-bedrock/10' :
+                            'border-loader-neoforge/35 text-loader-neoforge bg-loader-neoforge/10';
 
         const catLabel = item.category === 'plugin' ? (t.catPlugin || 'Plugin') : (item.category === 'shader' ? t.catShader : (item.category === 'resourcepack' ? t.catPack : t.catMod));
         const inCart = modCart.includes(item.id);
@@ -4694,40 +4816,97 @@
         const confCount = (item.conflicts || []).length;
         const locDesc = getLocalizedDesc(item);
         const locTitle = getLocalizedTitle(item);
+        const isList = window._catalogViewMode === 'list';
 
         const card = document.createElement('div');
-        card.className = "bg-modrinth-card border border-modrinth-border hover:border-modrinth/60 rounded-2xl p-4 transition duration-200 flex flex-col justify-between group hover:shadow-xl hover:-translate-y-0.5";
-        card.innerHTML = `
-          <div onclick="openDetailModal('${item.id}')" class="cursor-pointer">
-            <div class="flex items-start justify-between gap-2 mb-3">
-              ${getAvatarHTML(item, "w-11 h-11")}
-              <div class="flex flex-col items-end gap-1">
-                <div class="flex items-center gap-1">
-                  <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-white/5 text-gray-300 border border-white/10">${catLabel}</span>
-                  <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${loaderColor}">${item.loader}</span>
+        if (isList) {
+          card.className = "mc-pro-card rounded-2xl p-3.5 sm:p-4 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group";
+          card.innerHTML = `
+            <div onclick="openDetailModal('${item.id}')" class="flex items-start sm:items-center gap-3.5 min-w-0 flex-1 cursor-pointer">
+              ${getAvatarHTML(item, "w-11 h-11 shrink-0")}
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="font-bold text-white text-sm sm:text-[15px] group-hover:text-modrinth transition truncate">${locTitle}</h3>
+                  <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border tabular-nums ${loaderColor}">${item.loader} • ${item.verText}</span>
+                  <span class="text-[10px] font-medium text-gray-400">${catLabel}</span>
                 </div>
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-modrinth/10 text-modrinth border border-modrinth/25">${item.verText}</span>
+                <p class="text-xs text-gray-400 line-clamp-1 mt-1">${locDesc}</p>
               </div>
             </div>
-            <h3 class="font-bold text-white text-sm group-hover:text-modrinth transition mb-1">${locTitle}</h3>
-            <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-2.5">${locDesc}</p>
-            <div class="flex flex-wrap items-center gap-1.5 mb-3">
-              ${depCount > 0 ? `<span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-orange-500/10 text-orange-300 border border-orange-500/25">${t.depLabel} ${item.deps[0]}${depCount > 1 ? ' +' + (depCount - 1) : ''}</span>` : `<span class="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 text-gray-400">${t.noDepShort}</span>`}
-              ${confCount > 0 ? `<span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-red-500/10 text-red-300 border border-red-500/25">${confCount} ${t.conflictShort}</span>` : ''}
+            <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/[0.06]">
+              <div class="flex items-center gap-1.5">
+                ${depCount > 0 ? `<span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-300 border border-orange-500/25">${t.depLabel} ${item.deps[0]}${depCount > 1 ? ' +' + (depCount - 1) : ''}</span>` : ''}
+                ${confCount > 0 ? `<span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-red-500/10 text-red-300 border border-red-500/25">${confCount} ${t.conflictShort}</span>` : ''}
+              </div>
+              <div class="flex items-center gap-1.5 text-[11px]">
+                <button type="button" onclick="toggleCartItem('${item.id}', event)" class="px-2.5 py-1.5 rounded-xl font-bold transition ${inCart ? 'bg-modrinth text-black' : 'bg-white/[0.05] border border-white/10 text-gray-200 hover:border-modrinth hover:text-white'}">
+                  ${inCart ? t.btnInList : t.btnAddList}
+                </button>
+                <button type="button" onclick="openDetailModal('${item.id}')" class="px-2.5 py-1.5 rounded-xl bg-modrinth/12 text-modrinth font-bold hover:bg-modrinth/22 border border-modrinth/25 transition">${t.btnInspect}</button>
+              </div>
             </div>
-          </div>
-          <div class="pt-3 border-t border-modrinth-border/60 flex items-center justify-end gap-2 text-[10px]">
-            <div class="flex items-center gap-1.5 shrink-0">
-              <button type="button" onclick="toggleCartItem('${item.id}', event)" class="px-2 py-1 rounded-lg font-bold transition ${inCart ? 'bg-modrinth text-black' : 'bg-modrinth-dark border border-modrinth-border text-gray-300 hover:border-modrinth hover:text-white'}">
+          `;
+        } else {
+          card.className = "mc-pro-card rounded-2xl p-4 sm:p-5 transition-all duration-200 flex flex-col justify-between group hover:-translate-y-0.5 relative overflow-hidden";
+          card.innerHTML = `
+            <div class="pointer-events-none absolute -top-12 -right-12 w-28 h-28 rounded-full opacity-15 blur-2xl" style="background:${item.color || '#1bd96a'}"></div>
+            <div onclick="openDetailModal('${item.id}')" class="cursor-pointer relative z-10">
+              <div class="flex items-start justify-between gap-2.5 mb-3.5">
+                ${getAvatarHTML(item, "w-11 h-11 shrink-0")}
+                <span class="text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-lg border tabular-nums ${loaderColor} max-w-[65%] truncate">${item.loader} • ${item.verText}</span>
+              </div>
+              <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-0.5">${catLabel}</div>
+              <h3 class="font-bold text-white text-[15px] leading-snug group-hover:text-modrinth transition mb-1.5 line-clamp-1">${locTitle}</h3>
+              <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-3 min-h-[2.4rem]">${locDesc}</p>
+              ${(depCount > 0 || confCount > 0) ? `
+                <div class="flex flex-wrap items-center gap-1.5 mb-3">
+                  ${depCount > 0 ? `<span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-orange-500/10 text-orange-300 border border-orange-500/25">${t.depLabel} ${item.deps[0]}${depCount > 1 ? ' +' + (depCount - 1) : ''}</span>` : ''}
+                  ${confCount > 0 ? `<span class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-red-500/10 text-red-300 border border-red-500/25">${confCount} ${t.conflictShort}</span>` : ''}
+                </div>
+              ` : ''}
+            </div>
+            <div class="relative z-10 pt-3 border-t border-white/[0.06] flex items-center justify-end gap-1.5 text-[10px]">
+              <button type="button" onclick="toggleCartItem('${item.id}', event)" class="px-2.5 py-1 rounded-lg font-bold transition ${inCart ? 'bg-modrinth text-black' : 'bg-white/[0.05] border border-white/10 text-gray-300 hover:border-modrinth hover:text-white'}">
                 ${inCart ? t.btnInList : t.btnAddList}
               </button>
-              <button type="button" onclick="openDetailModal('${item.id}')" class="px-2 py-1 rounded-lg bg-modrinth/10 text-modrinth font-bold hover:bg-modrinth/20 transition">${t.btnInspect}</button>
+              <button type="button" onclick="openDetailModal('${item.id}')" class="px-2.5 py-1 rounded-lg bg-modrinth/12 text-modrinth font-bold hover:bg-modrinth/22 border border-modrinth/25 transition">${t.btnInspect}</button>
             </div>
-          </div>
-        `;
+          `;
+        }
         grid.appendChild(card);
       });
     }
+
+    window.setCatalogViewMode = function(mode) {
+      const m = mode === 'list' ? 'list' : 'grid';
+      window._catalogViewMode = m;
+      if (typeof safeSetStorage === 'function') safeSetStorage('mcCatalogViewMode', m);
+      renderCards();
+    };
+
+    window.dismissTopNoticeBanner = function() {
+      const b = document.getElementById('topNoticeBanner');
+      if (b) b.classList.add('hidden');
+    };
+
+    window.toggleExtraGuideTopics = function() {
+      const wrap = document.getElementById('guideExtraTagsWrap');
+      const btn = document.getElementById('btnToggleMoreGuideTags');
+      if (!wrap || !btn) return;
+      const isHidden = wrap.classList.contains('hidden');
+      wrap.classList.toggle('hidden', !isHidden);
+      const labels = {
+        tr: { more: '+14 Konu Daha', less: 'Daha Az Konu' },
+        en: { more: '+14 More Topics', less: 'Fewer Topics' },
+        az: { more: '+14 Mövzu Daha', less: 'Daha Az Mövzu' },
+        kz: { more: '+14 Тақырып', less: 'Азырақ Тақырып' },
+        uz: { more: '+14 Mavzu Yana', less: 'Kamroq Mavzu' },
+        kg: { more: '+14 Тема Дагы', less: 'Азыраак Тема' },
+        tm: { more: '+14 Tema Ýene', less: 'Az Tema' }
+      }[currentLang || 'tr'] || { more: '+14 More Topics', less: 'Fewer Topics' };
+      btn.innerText = isHidden ? labels.less : labels.more;
+      btn._origTrText = isHidden ? 'Daha Az Konu' : '+14 Konu Daha';
+    };
 
     function loadMoreItems() {
       visibleCount += 24;
@@ -5493,14 +5672,52 @@
       }
     };
 
+    window.switchDetailModalTab = function(tab) {
+      const panels = {
+        overview: document.getElementById('modalTabOverviewPanel'),
+        install: document.getElementById('modalTabInstallPanel'),
+        compat: document.getElementById('modalTabCompatPanel')
+      };
+      const btns = {
+        overview: document.getElementById('detTabOverview'),
+        install: document.getElementById('detTabInstall'),
+        compat: document.getElementById('detTabCompat')
+      };
+      Object.keys(panels).forEach(k => {
+        if (panels[k]) panels[k].classList.toggle('hidden', k !== tab);
+        if (btns[k]) {
+          if (k === tab) {
+            btns[k].className = 'py-2 px-2 rounded-xl bg-modrinth text-black font-extrabold transition truncate text-center shadow' + (k === 'compat' ? ' flex items-center justify-center gap-1.5' : '');
+          } else {
+            btns[k].className = 'py-2 px-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/[0.04] transition truncate text-center' + (k === 'compat' ? ' flex items-center justify-center gap-1.5' : '');
+          }
+        }
+      });
+    };
+
     // BEDROCK İÇİN SADECE CURSEFORGE BUTONU GÖSTEREN & TAM ÇEVİRİLİ DETAY MODALI
-    function openDetailModal(id) {
+    function openDetailModal(id, opts = {}) {
       const item = catalogueData.find(m => m.id === id);
       if (!item) return;
       const t = i18n[currentLang];
 
       document.getElementById('modalIconWrap').innerHTML = getAvatarHTML(item, "w-14 h-14");
       renderModalGallery(item, 0);
+
+      // Ambient blurred header cover image if gallery screenshot exists
+      const coverWrap = document.getElementById('modalHeroCoverBanner');
+      const coverImg = document.getElementById('modalHeroCoverImg');
+      const photos = typeof getItemGalleryPhotos === 'function' ? getItemGalleryPhotos(item) : [];
+      if (coverImg && coverWrap) {
+        if (photos.length > 0) {
+          coverImg.src = photos[0];
+          coverImg.classList.remove('hidden');
+        } else {
+          coverImg.classList.add('hidden');
+          coverImg.removeAttribute('src');
+        }
+      }
+
       document.getElementById('modalTitle').innerText = getLocalizedTitle(item);
       document.getElementById('modalVersions').innerText = `${item.verText} ${t.workRangeSuffix}`;
       document.getElementById('modalEnvText').innerText = `• ${getLocalizedEnv(item.env)}`;
@@ -5521,7 +5738,7 @@
             <div class="flex items-center justify-between gap-2 bg-modrinth-dark/90 border border-orange-500/30 px-2.5 py-1.5 rounded-lg">
               <span class="font-semibold text-orange-200">${dName}</span>
               ${depItem ? `
-                <button type="button" onclick="toggleCartItem('${depItem.id}'); openDetailModal('${item.id}');" class="text-[10px] font-bold px-2 py-0.5 rounded ${inList ? 'bg-modrinth/20 text-modrinth' : 'bg-orange-500 text-black hover:bg-orange-400'} transition">
+                <button type="button" onclick="toggleCartItem('${depItem.id}'); openDetailModal('${item.id}', { preserveTab: true });" class="text-[10px] font-bold px-2 py-0.5 rounded ${inList ? 'bg-modrinth/20 text-modrinth' : 'bg-orange-500 text-black hover:bg-orange-400'} transition">
                   ${inList ? t.depInList : t.addDepBtn}
                 </button>
               ` : ''}
@@ -5550,6 +5767,13 @@
         confBox.innerHTML = `<div class="text-gray-400 bg-modrinth-dark/60 px-2.5 py-2 rounded-lg border border-modrinth-border">${t.noConflicts}</div>`;
       }
 
+      const issueTotal = (item.deps || []).length + (item.conflicts || []).length;
+      const issueBadge = document.getElementById('detCompatCountBadge');
+      if (issueBadge) {
+        issueBadge.innerText = String(issueTotal);
+        issueBadge.classList.toggle('hidden', issueTotal === 0);
+      }
+
       const steps = document.getElementById('modalSteps');
       steps.innerHTML = getLocalizedModalStepsHTML(item);
       if (currentLang !== 'tr' && currentLang !== 'en') {
@@ -5570,10 +5794,13 @@
       const isAdded = modCart.includes(item.id);
       addBtn.className = isAdded
         ? "bg-modrinth text-black font-extrabold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2"
-        : "bg-modrinth-dark hover:bg-white/5 border border-modrinth-border text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2";
+        : "bg-[#090b0f] hover:bg-white/5 border border-white/[0.1] text-white font-semibold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2";
       addBtn.innerHTML = `<span>${isAdded ? t.btnInList : t.btnAddList}</span>`;
-      addBtn.onclick = () => { toggleCartItem(item.id); openDetailModal(item.id); };
+      addBtn.onclick = () => { toggleCartItem(item.id); openDetailModal(item.id, { preserveTab: true }); };
 
+      if (!opts || !opts.preserveTab) {
+        window.switchDetailModalTab('overview');
+      }
       document.getElementById('detailModal').classList.remove('hidden');
     }
 
@@ -6013,7 +6240,7 @@
     }
     function findMatchingFrealndsVideos(rawQuery) {
       const q = (rawQuery || '').trim().toLowerCase();
-      if (!q) return showAllGuidesFlag ? frealndsVideos : frealndsVideos.slice(0, 9);
+      if (!q) return showAllGuidesFlag ? frealndsVideos : frealndsVideos.slice(0, 6);
       const words = q.split(/\s+/).filter(w => w.length >= 2);
       if (words.length === 0) return [];
 
@@ -6054,10 +6281,10 @@
       container.innerHTML = `
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           ${matches.map(v => `
-            <div onclick="playFrealndsVideoInSite('${v.videoId}')" class="bg-modrinth-dark border border-modrinth-border hover:border-red-500/60 rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer transition shadow-lg hover:-translate-y-0.5">
+            <div onclick="playFrealndsVideoInSite('${v.videoId}')" class="mc-pro-card rounded-2xl overflow-hidden flex flex-col justify-between group cursor-pointer transition shadow-lg hover:-translate-y-0.5">
               <div>
-                <div class="relative aspect-video bg-black overflow-hidden">
-                  <img src="https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg" alt="${v.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 opacity-90 group-hover:opacity-100">
+                <div class="relative aspect-video bg-gradient-to-br from-[#14171c] to-[#090b0f] overflow-hidden">
+                  <img src="https://i.ytimg.com/vi/${v.videoId}/hqdefault.jpg" alt="${v.title}" loading="lazy" onerror="this.style.display='none'" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 opacity-90 group-hover:opacity-100">
                   <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-center justify-center">
                     <div class="w-11 h-11 rounded-full bg-red-600/95 text-white flex items-center justify-center shadow-[0_0_20px_rgba(220,38,38,0.7)] group-hover:scale-110 transition">
                       <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -7440,7 +7667,23 @@
         "Sunucu performansını ve bellek kullanımını optimize ederek yükü hafifletir.": "Optimizes server performance and memory usage to lighten server load.",
         "Yeni dünya yapıları, özel bloklar veya gelişmiş varlık yapay zekası barındırdığı için orta-yüksek RAM kullanır.": "Uses medium-to-high RAM due to custom world structures, blocks, or advanced entity AI.",
         "Diğer modların çalışmasını sağlayan hafif çekirdek kütüphane modudur.": "Lightweight core library mod required for other mods to function.",
-        "Eşya, blok veya oynanış mekanikleri için standart sunucu belleği kullanır.": "Uses standard server memory for items, blocks, or gameplay mechanics."
+        "Eşya, blok veya oynanış mekanikleri için standart sunucu belleği kullanır.": "Uses standard server memory for items, blocks, or gameplay mechanics.",
+        "Duyuruyu kapat": "Dismiss announcement",
+        "TEST →": "TEST →", "RAM / TPS →": "RAM / TPS →", "CANLI →": "LIVE →", "OLUŞTUR →": "BUILD →",
+        "Uyum Simülasyonu": "Compatibility Sim",
+        "Aternos Sunucu Testi": "Aternos Server Test",
+        "Çakışma ve eksik yan mod testi": "Conflict & dependency checker",
+        "Canlı RAM, chunk ve çökme analizi": "Live RAM, chunks & crash risk",
+        "Shader Karşılaştır": "Compare Shaders",
+        "Kızaklı perde ile canlı fark görünümü": "Live split-screen shader diff",
+        "Özel Kombo Stüdyosu": "Custom Combo Studio",
+        "Temana göre tek tıkla paket kur": "Build themed modpacks in 1 click",
+        "Kart": "Grid", "Kart Görünümü": "Card Grid View",
+        "Liste": "List", "Liste Görünümü": "Compact List View",
+        "+14 Konu Daha": "+14 More Topics", "Daha Az Konu": "Fewer Topics",
+        "Genel Bakış & Galeri": "Overview & Gallery",
+        "Kurulum Adımları": "Installation Steps",
+        "Uyumluluk & Yan Modlar": "Compatibility & APIs"
       },
       az: {
         "Seç": "Seç", "Kapat": "Bağla", "İncele": "İncələ", "Detay": "Detal", "Sıfırla": "Sıfırla", "Vazgeç": "Ləğv et",
@@ -7483,7 +7726,15 @@
         "Canlı Arama Sonuçları": "Canlı Axtarış Nəticələri", "Simülasyon Çekirdeği Hazır": "Simulyasiya Nüvəsi Hazırdır",
         "Yüksek FPS • Vanilya Sadık": "Yüksək FPS • Vanilə Sadiq", "Gerçekçi Bulut & Su Dalgaları": "Realist Bulud & Su Dalğaları", "Sinematik Gün Işığı & Atmosfer": "Kinematik Gün İşığı & Atmosfer",
         "Dinamik Gökyüzü & Hacimsel Sis": "Dinamik Səma & Həcmli Duman", "Düşük Sistem Dostu • Maksimum FPS": "Zəif Sistem Dostu • Maks FPS", "Hafif Gölge & Parlak Su Yansıması": "Yüngül Kölgə & Parlaq Su Əksi",
-        "Düşük Sistem": "Zəif Sistem", "Dengeli": "Balanslı", "Ultra Sistem": "Ultra Sistem", "KAYNAK PAKETİ": "RESURS PAKETİ", "YAN MOD": "YAN MOD", "ZORUNLU YAN MOD": "MƏCBURİ API", "Sonradan Eklendi": "Sonradan Əlavə Edildi"
+        "Düşük Sistem": "Zəif Sistem", "Dengeli": "Balanslı", "Ultra Sistem": "Ultra Sistem", "KAYNAK PAKETİ": "RESURS PAKETİ", "YAN MOD": "YAN MOD", "ZORUNLU YAN MOD": "MƏCBURİ API", "Sonradan Eklendi": "Sonradan Əlavə Edildi",
+        "Duyuruyu kapat": "Bildirişi bağla", "CANLI →": "CANLI →", "OLUŞTUR →": "YARAT →",
+        "Uyum Simülasyonu": "Uyğunluq Simulyasiyası", "Aternos Sunucu Testi": "Aternos Server Testi", "Çakışma ve eksik yan mod testi": "Toqquşma və əksik yan mod testi",
+        "Canlı RAM, chunk ve çökme analizi": "Canlı RAM, chunk və çökmə analizi",
+        "Shader Karşılaştır": "Şeyder Müqayisəsi", "Kızaklı perde ile canlı fark görünümü": "Sürüşkən pərdə ilə canlı fərq görünüşü",
+        "Özel Kombo Stüdyosu": "Xüsusi Kombo Studiyası", "Temana göre tek tıkla paket kur": "Temana uyğun tək kliklə paket qur",
+        "Kart": "Kart", "Kart Görünümü": "Kart Görünüşü", "Liste": "Siyahı", "Liste Görünümü": "Siyahı Görünüşü",
+        "+14 Konu Daha": "+14 Mövzu Daha", "Daha Az Konu": "Daha Az Mövzu",
+        "Genel Bakış & Galeri": "Ümumi Baxış & Qalereya", "Kurulum Adımları": "Quraşdırma Addımları", "Uyumluluk & Yan Modlar": "Uyğunluq & Yan Modlar"
       },
       kz: {
         "Seç": "Таңдау", "Kapat": "Жабуу", "İncele": "Қарау", "Detay": "Толығырақ", "Sıfırla": "Қалпына келтіру", "Vazgeç": "Бас тарту",
@@ -7514,7 +7765,15 @@
         "Canlı Arama Sonuçları": "Тікелей Іздеу Нәтижелері", "Simülasyon Çekirdeği Hazır": "Симуляция Өзегі Дайын",
         "Yüksek FPS • Vanilya Sadık": "Жоғары FPS • Ванильге Жақын", "Gerçekçi Bulut & Su Dalgaları": "Шынайы Бұлт & Су Толқындары", "Sinematik Gün Işığı & Atmosfer": "Кинематографиялық Күн & Атмосфера",
         "Dinamik Gökyüzü & Hacimsel Sis": "Динамикалық Аспан & Көлемді Тұман", "Düşük Sistem Dostu • Maksimum FPS": "Төмен Жүйеге Ыңғайлы • Макс FPS", "Hafif Gölge & Parlak Su Yansıması": "Жеңіл Көлеңке & Жарқын Су Шағылысы",
-        "Düşük Sistem": "Төмен Жүйе", "Dengeli": "Теңгерімді", "Ultra Sistem": "Ультра Жүйе", "KAYNAK PAKETİ": "РЕСУРС ПАКЕТІ", "YAN MOD": "ҚОСЫМША МОД", "ZORUNLU YAN MOD": "МІНДЕТТІ API", "Sonradan Eklendi": "Кейін Қосылды"
+        "Düşük Sistem": "Төмен Жүйе", "Dengeli": "Теңгерімді", "Ultra Sistem": "Ультра Жүйе", "KAYNAK PAKETİ": "РЕСУРС ПАКЕТІ", "YAN MOD": "ҚОСЫМША МОД", "ZORUNLU YAN MOD": "МІНДЕТТІ API", "Sonradan Eklendi": "Кейін Қосылды",
+        "Duyuruyu kapat": "Хабарландыруды жабу", "CANLI →": "ТІКЕЛЕЙ →", "OLUŞTUR →": "ҚҰРУ →",
+        "Uyum Simülasyonu": "Үйлесімділік Симуляторы", "Aternos Sunucu Testi": "Aternos Сервер Тесті", "Çakışma ve eksik yan mod testi": "Қайшылық және API тексерісі",
+        "Canlı RAM, chunk ve çökme analizi": "Тікелей RAM, чанк және құлау тесті",
+        "Shader Karşılaştır": "Шейдер Салыстыру", "Kızaklı perde ile canlı fark görünümü": "Сырғытпамен тікелей айырмашылық",
+        "Özel Kombo Stüdyosu": "Арнайы Комбо Студиясы", "Temana göre tek tıkla paket kur": "Тақырыпқа сай бір басумен жинақ құр",
+        "Kart": "Карта", "Kart Görünümü": "Карта Көрінісі", "Liste": "Тізім", "Liste Görünümü": "Тізім Көрінісі",
+        "+14 Konu Daha": "+14 Тақырып", "Daha Az Konu": "Азырақ Тақырып",
+        "Genel Bakış & Galeri": "Шолу & Галерея", "Kurulum Adımları": "Орнату Қадамдары", "Uyumluluk & Yan Modlar": "Үйлесімділік & API"
       },
       uz: {
         "Seç": "Tanlash", "Kapat": "Yopish", "İncele": "Ko'rish", "Detay": "Tafsilot", "Sıfırla": "Tozalash", "Vazgeç": "Bekor qilish",
@@ -7545,7 +7804,15 @@
         "Canlı Arama Sonuçları": "Jonli Qidiruv Natijalari", "Simülasyon Çekirdeği Hazır": "Simulyatsiya Yadrosi Tayyor",
         "Yüksek FPS • Vanilya Sadık": "Yuqori FPS • Vanilga Yaqin", "Gerçekçi Bulut & Su Dalgaları": "Haqiqiy Bulut & Suv To'lqinlari", "Sinematik Gün Işığı & Atmosfer": "Kinematografik Yorug'lik & Atmosfera",
         "Dinamik Gökyüzü & Hacimsel Sis": "Dinamik Osmon & Hajmli Tuman", "Düşük Sistem Dostu • Maksimum FPS": "Past Tizimga Mos • Maks FPS", "Hafif Gölge & Parlak Su Yansıması": "Yengil Soya & Yorqin Suv Aksi",
-        "Düşük Sistem": "Past Tizim", "Dengeli": "Muvozanatli", "Ultra Sistem": "Ultra Tizim", "KAYNAK PAKETİ": "RESURS PAKETI", "YAN MOD": "YON MOD", "ZORUNLU YAN MOD": "MAJBURIY API", "Sonradan Eklendi": "Keyin Qo'shildi"
+        "Düşük Sistem": "Past Tizim", "Dengeli": "Muvozanatli", "Ultra Sistem": "Ultra Tizim", "KAYNAK PAKETİ": "RESURS PAKETI", "YAN MOD": "YON MOD", "ZORUNLU YAN MOD": "MAJBURIY API", "Sonradan Eklendi": "Keyin Qo'shildi",
+        "Duyuruyu kapat": "E'lonni yopish", "CANLI →": "JONLI →", "OLUŞTUR →": "YARATISH →",
+        "Uyum Simülasyonu": "Moslik Simulyatsiyasi", "Aternos Sunucu Testi": "Aternos Server Testi", "Çakışma ve eksik yan mod testi": "Ziddiyat va API tekshiruvi",
+        "Canlı RAM, chunk ve çökme analizi": "Jonli RAM, chunk va qulash tahlili",
+        "Shader Karşılaştır": "Sheyder Solishtirish", "Kızaklı perde ile canlı fark görünümü": "Slayder orqali jonli farqni ko'ring",
+        "Özel Kombo Stüdyosu": "Maxsus Kombo Studiyasi", "Temana göre tek tıkla paket kur": "Mavzuga ko'ra 1 bosishda paket yig'",
+        "Kart": "Karta", "Kart Görünümü": "Karta Ko'rinishi", "Liste": "Ro'yxat", "Liste Görünümü": "Ro'yxat Ko'rinishi",
+        "+14 Konu Daha": "+14 Mavzu Yana", "Daha Az Konu": "Kamroq Mavzu",
+        "Genel Bakış & Galeri": "Umumiy Ko'rinish & Galereya", "Kurulum Adımları": "O'rnatish Qadamlari", "Uyumluluk & Yan Modlar": "Moslik & APIlar"
       },
       kg: {
         "Seç": "Тандоо", "Kapat": "Жабуу", "İncele": "Көрүү", "Detay": "Толук", "Sıfırla": "Тазалоо", "Vazgeç": "Баш тартуу",
@@ -7576,7 +7843,15 @@
         "Canlı Arama Sonuçları": "Түз Издөө Жыйынтыктары", "Simülasyon Çekirdeği Hazır": "Симуляция Өзөгү Даяр",
         "Yüksek FPS • Vanilya Sadık": "Жогорку FPS • Ванилге Жакын", "Gerçekçi Bulut & Su Dalgaları": "Реалдуу Булут & Суу Толкундары", "Sinematik Gün Işığı & Atmosfer": "Кинематографиялык Жарык & Атмосфера",
         "Dinamik Gökyüzü & Hacimsel Sis": "Динамикалык Асман & Көлөмдүү Туман", "Düşük Sistem Dostu • Maksimum FPS": "Төмөн Системага Ылайык • Макс FPS", "Hafif Gölge & Parlak Su Yansıması": "Жеңил Көлөкө & Жаркын Суу Чагылышы",
-        "Düşük Sistem": "Төмөн Система", "Dengeli": "Тең салмактуу", "Ultra Sistem": "Ультра Система", "KAYNAK PAKETİ": "РЕСУРС ПАКЕТИ", "YAN MOD": "КОШУМЧА МОД", "ZORUNLU YAN MOD": "МИЛДЕТТҮҮ API", "Sonradan Eklendi": "Кийин Кошулду"
+        "Düşük Sistem": "Төмөн Система", "Dengeli": "Тең салмактуу", "Ultra Sistem": "Ультра Система", "KAYNAK PAKETİ": "РЕСУРС ПАКЕТИ", "YAN MOD": "КОШУМЧА МОД", "ZORUNLU YAN MOD": "МИЛДЕТТҮҮ API", "Sonradan Eklendi": "Кийин Кошулду",
+        "Duyuruyu kapat": "Билдирүүнү жабуу", "CANLI →": "ТҮЗ →", "OLUŞTUR →": "ТҮЗҮҮ →",
+        "Uyum Simülasyonu": "Шайкештик Симулятору", "Aternos Sunucu Testi": "Aternos Сервер Тести", "Çakışma ve eksik yan mod testi": "Чыр жана API текшерүүсү",
+        "Canlı RAM, chunk ve çökme analizi": "Түз RAM, чанк жана кулоо анализи",
+        "Shader Karşılaştır": "Шейдер Салыштыруу", "Kızaklı perde ile canlı fark görünümü": "Сыдырма менен түз айырма",
+        "Özel Kombo Stüdyosu": "Атайын Комбо Студиясы", "Temana göre tek tıkla paket kur": "Темага жараша бир басууда түз",
+        "Kart": "Карта", "Kart Görünümü": "Карта Көрүнүшү", "Liste": "Тизме", "Liste Görünümü": "Тизме Көрүнүшү",
+        "+14 Konu Daha": "+14 Тема Дагы", "Daha Az Konu": "Азыраак Тема",
+        "Genel Bakış & Galeri": "Сереп & Галерея", "Kurulum Adımları": "Орнотуу Кадамдары", "Uyumluluk & Yan Modlar": "Шайкештик & API"
       },
       tm: {
         "Seç": "Saýla", "Kapat": "Ýap", "İncele": "Gör", "Detay": "Jikme-jik", "Sıfırla": "Arassala", "Vazgeç": "Ýatyr",
@@ -7607,7 +7882,15 @@
         "Canlı Arama Sonuçları": "Janly Gözleg Netijeleri", "Simülasyon Çekirdeği Hazır": "Simulýasiýa Ýadrosy Taýýar",
         "Yüksek FPS • Vanilya Sadık": "Ýokary FPS • Adaty Görünüş", "Gerçekçi Bulut & Su Dalgaları": "Hakyky Bulut & Suw Tolkunlary", "Sinematik Gün Işığı & Atmosfer": "Kinematiki Gün Yşygy & Atmosfera",
         "Dinamik Gökyüzü & Hacimsel Sis": "Dinamiki Asman & Göwrümli Duman", "Düşük Sistem Dostu • Maksimum FPS": "Pes Ulgama Laýyk • Maks FPS", "Hafif Gölge & Parlak Su Yansıması": "Ýeňil Kölege & Ýagty Suw Aksy",
-        "Düşük Sistem": "Pes Ulgam", "Dengeli": "Deňagramly", "Ultra Sistem": "Ultra Ulgam", "KAYNAK PAKETİ": "RESURS PAKETI", "YAN MOD": "GOŞMAÇA MOD", "ZORUNLU YAN MOD": "HÖKMANY API", "Sonradan Eklendi": "Soň Goşuldy"
+        "Düşük Sistem": "Pes Ulgam", "Dengeli": "Deňagramly", "Ultra Sistem": "Ultra Ulgam", "KAYNAK PAKETİ": "RESURS PAKETI", "YAN MOD": "GOŞMAÇA MOD", "ZORUNLU YAN MOD": "HÖKMANY API", "Sonradan Eklendi": "Soň Goşuldy",
+        "Duyuruyu kapat": "Bildirişi ýap", "CANLI →": "JANLY →", "OLUŞTUR →": "DÖRET →",
+        "Uyum Simülasyonu": "Laýyklyk Simulýatory", "Aternos Sunucu Testi": "Aternos Serwer Synagy", "Çakışma ve eksik yan mod testi": "Çaknyşyk we API barlagy",
+        "Canlı RAM, chunk ve çökme analizi": "Janly RAM, çank we çökme derňewi",
+        "Shader Karşılaştır": "Şeýder Deňeşdir", "Kızaklı perde ile canlı fark görünümü": "Süýşürgi bilen janly tapawut",
+        "Özel Kombo Stüdyosu": "Ýörite Kombo Studiýasy", "Temana göre tek tıkla paket kur": "Tema görä bir basmada paket gur",
+        "Kart": "Kart", "Kart Görünümü": "Kart Görnüşi", "Liste": "Sanaw", "Liste Görünümü": "Sanaw Görnüşi",
+        "+14 Konu Daha": "+14 Tema Ýene", "Daha Az Konu": "Az Tema",
+        "Genel Bakış & Galeri": "Umumy Syn & Galereýa", "Kurulum Adımları": "Gurnama Ädimleri", "Uyumluluk & Yan Modlar": "Laýyklyk & APIlar"
       }
     };
 
@@ -17061,6 +17344,24 @@
       };
     }
     if (typeof window.fetchRealModrinthIcons === 'function') window.fetchRealModrinthIcons();
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (typeof closeSimulationView === 'function') closeSimulationView();
+        ['simViewSection', 'serverSimViewSection', 'combosHubViewSection', 'shaderSimViewSection', 'customComboBuilderSection'].forEach(sid => {
+          const el = document.getElementById(sid);
+          if (el) el.classList.add('hidden');
+        });
+        const mv = document.getElementById('mainPortalView');
+        if (mv) mv.classList.remove('hidden');
+        const inp = document.getElementById('searchInput');
+        if (inp) {
+          inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          inp.focus();
+          inp.select();
+        }
+      }
+    });
   </script>
 </body>
 </html>
